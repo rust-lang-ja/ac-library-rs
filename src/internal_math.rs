@@ -1,6 +1,8 @@
+use std::mem::swap;
+
 mod atcoder {
+
     mod internal {
-        use std::mem::swap;
 
         /// # Arguments
         /// * `m` `1 <= m`
@@ -214,6 +216,9 @@ mod atcoder {
                 }
                 g += 1;
             }
+
+            // omitted
+            // template <int m> constexpr int primitive_root = primitive_root_constexpr(m);
         }
     }
 }
