@@ -1,7 +1,12 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+mod convolution;
+mod dsu;
+mod fenwicktree;
+mod lazysegtree;
+mod math;
+mod maxflow;
+mod mincostflow;
+mod modint;
+mod scc;
+mod segtree;
+mod string;
+mod twosat;
