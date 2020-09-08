@@ -18,3 +18,7 @@ pub(crate) mod internal_scc;
 pub(crate) mod internal_type_traits;
 
 pub use fenwicktree::FenwickTree;
+pub use modint::{
+    DynamicModInt, Id, Id0, IntoRepresentative, Mod1000000007, Mod998244353, ModInt,
+    ModInt1000000007, ModInt998244353, Modulus, StaticModInt,
+};
