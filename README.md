@@ -13,7 +13,7 @@ Our first milestone is 2020/09/20, when the first ACL contest is planned.
 We aim to implement the same toolset as original ACL(C++) on the day.
 
 We are trying to implement with the same files by referring to the original ACL's hpp.
-After that we try to improve develop flow, tests, or utility.
+After that we try to improve our development flow, tests, or utilities.
 
 ## How to contribute
 
