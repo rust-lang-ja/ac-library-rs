@@ -68,15 +68,15 @@ where
     }
 
     /// Returns (maximum flow, cost)
-    pub fn flow(&mut self, s: usize, t: usize, flow_limit: T) -> (T, T) {
-        self.slope(s, t, flow_limit).last().unwrap().clone()
+    pub fn flow(&mut self, source: usize, sink: usize, flow_limit: T) -> (T, T) {
+        *self.slope(source, sink, flow_limit).last().unwrap()
     }
 
-    pub fn slope(&mut self, s: usize, t: usize, flow_limit: T) -> Vec<(T, T)> {
+    pub fn slope(&mut self, source: usize, sink: usize, flow_limit: T) -> Vec<(T, T)> {
         let n = self.g.len();
-        assert!(s < n);
-        assert!(t < n);
-        assert_ne!(s, t);
+        assert!(source < n);
+        assert!(sink < n);
+        assert_ne!(source, sink);
 
         let mut dual = vec![T::zero(); n];
         let mut prev_v = vec![0; n];
@@ -86,26 +86,26 @@ where
         let mut prev_cost: Option<T> = None;
         let mut result = vec![(flow, cost)];
         while flow < flow_limit {
-            if !self.dual_ref(s, t, &mut dual, &mut prev_v, &mut prev_e) {
+            if !self.dual_ref(source, sink, &mut dual, &mut prev_v, &mut prev_e) {
                 break;
             }
             let mut c = flow_limit - flow;
 
-            let mut v = t;
-            while v != s {
+            let mut v = sink;
+            while v != source {
                 c = std::cmp::min(c, self.g[prev_v[v]][prev_e[v]].cap);
                 v = prev_v[v];
             }
 
-            let mut v = t;
-            while v != s {
+            let mut v = sink;
+            while v != source {
                 self.g[prev_v[v]][prev_e[v]].cap -= c;
                 let rev = self.g[prev_v[v]][prev_e[v]].rev;
                 self.g[v][rev].cap += c;
                 v = prev_v[v];
             }
 
-            let d = -dual[s];
+            let d = -dual[source];
             flow += c;
             cost += d * c;
             if prev_cost == Some(d) {
@@ -119,8 +119,8 @@ where
 
     fn dual_ref(
         &self,
-        s: usize,
-        t: usize,
+        source: usize,
+        sink: usize,
         dual: &mut [T],
         pv: &mut [usize],
         pe: &mut [usize],
@@ -130,14 +130,14 @@ where
         let mut vis = vec![false; n];
 
         let mut que = std::collections::BinaryHeap::new();
-        dist[s] = T::zero();
-        que.push((std::cmp::Reverse(T::zero()), s));
+        dist[source] = T::zero();
+        que.push((std::cmp::Reverse(T::zero()), source));
         while let Some((_, v)) = que.pop() {
             if vis[v] {
                 continue;
             }
             vis[v] = true;
-            if v == t {
+            if v == sink {
                 break;
             }
 
@@ -156,7 +156,7 @@ where
             }
         }
 
-        if !vis[t] {
+        if !vis[sink] {
             return false;
         }
 
@@ -164,7 +164,7 @@ where
             if !vis[v] {
                 continue;
             }
-            dual[v] = dual[v] - (dist[t] - dist[v]);
+            dual[v] -= dist[sink] - dist[v];
         }
         true
     }
