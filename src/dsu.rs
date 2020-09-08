@@ -1,7 +1,7 @@
-// Implement (union by size) + (path compression)
-// Reference:
-// Zvi Galil and Giuseppe F. Italiano,
-// Data structures and algorithms for disjoint set union problems
+/// Implement (union by size) + (path compression)
+/// Reference:
+/// Zvi Galil and Giuseppe F. Italiano,
+/// Data structures and algorithms for disjoint set union problems
 pub struct Dsu {
     n: usize,
     // root node: -1 * component size
