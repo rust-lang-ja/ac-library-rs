@@ -3,27 +3,23 @@ struct SimpleQueue<T> {
     pos: usize,
 }
 
-impl<T> SimpleQueue<T>
-where
-    T: Copy,
-{
-    fn reserve(&mut self, n: i32) {
-        let n = n as usize;
+impl<T> SimpleQueue<T> {
+    fn reserve(&mut self, n: usize) {
         if n > self.payload.len() {
             self.payload.reserve(n - self.payload.len());
         }
     }
 
-    fn size(&self) -> i32 {
-        (self.payload.len() - self.pos) as i32
+    fn size(&self) -> usize {
+        self.payload.len() - self.pos
     }
 
     fn empty(&self) -> bool {
         self.pos == self.payload.len()
     }
 
-    fn push(&mut self, t: &T) {
-        self.payload.push(*t);
+    fn push(&mut self, t: T) {
+        self.payload.push(t);
     }
 
     // Do we need mutable version?
