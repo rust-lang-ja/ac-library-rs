@@ -14,7 +14,7 @@ fn safe_mod(mut x: i64, m: i64) -> i64 {
     x
 }
 
-/// Fast moduler by barrett reduction
+/// Fast modular by barrett reduction
 /// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 /// NOTE: reconsider after Ice Lake
 struct Barrett {
@@ -76,7 +76,7 @@ impl Barrett {
 /// # Returns
 /// `(x ** n) % m`
 /* const */
-fn pow_mod_constexpr(x: i64, mut n: i64, m: i32) -> i64 {
+fn pow_mod(x: i64, mut n: i64, m: i32) -> i64 {
     if m == 1 {
         return 0;
     }
@@ -100,7 +100,7 @@ fn pow_mod_constexpr(x: i64, mut n: i64, m: i32) -> i64 {
 /// # Parameters
 /// * `n` `0 <= n`
 /* const */
-fn is_prime_constexpr(n: i32) -> bool {
+fn is_prime(n: i32) -> bool {
     let n = n as i64;
     match n {
         _ if n <= 1 => return false,
@@ -114,7 +114,7 @@ fn is_prime_constexpr(n: i32) -> bool {
     }
     for &a in &[2, 7, 61] {
         let mut t = d;
-        let mut y = pow_mod_constexpr(a, t, n as i32);
+        let mut y = pow_mod(a, t, n as i32);
         while t != n - 1 && y != 1 && y != n - 1 {
             y = y * y % n;
             t <<= 1;
@@ -175,7 +175,7 @@ fn inv_gcd(a: i64, b: i64) -> (i64, i64) {
 /// @param m must be prime
 /// @return primitive root (and minimum in now)
 /* const */
-fn primitive_root_constexpr(m: i32) -> i32 {
+fn primitive_root(m: i32) -> i32 {
     match m {
         2 => return 1,
         167_772_161 => return 3,
@@ -210,7 +210,7 @@ fn primitive_root_constexpr(m: i32) -> i32 {
     }
     let mut g = 2;
     loop {
-        if (0..cnt).any(|i| pow_mod_constexpr(g, ((m - 1) / divs[i]) as i64, m) == 1) {
+        if (0..cnt).any(|i| pow_mod(g, ((m - 1) / divs[i]) as i64, m) == 1) {
             break g as i32;
         }
         g += 1;
