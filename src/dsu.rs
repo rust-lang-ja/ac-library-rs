@@ -9,7 +9,6 @@ pub struct Dsu {
     parent_or_size: Vec<i32>,
 }
 
-
 impl Dsu {
     pub fn new(size: usize) -> Self {
         Self {
