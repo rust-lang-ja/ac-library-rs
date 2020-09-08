@@ -10,3 +10,5 @@ mod scc;
 mod segtree;
 mod string;
 mod twosat;
+
+pub use fenwicktree::FenwickTree;
