@@ -49,6 +49,25 @@ impl Dsu {
         let x = self.leader(a);
         -self.parent_or_size[x] as usize
     }
+    pub fn groups(&mut self) -> Vec<Vec<usize>> {
+        let mut leader_buf = vec![0; self.n];
+        let mut group_size = vec![0; self.n];
+        for i in 0..self.n {
+            leader_buf[i] = self.leader(i);
+            group_size[leader_buf[i]] += 1;
+        }
+        let mut result = vec![Vec::new(); self.n];
+        for i in 0..self.n {
+            result[i].reserve(group_size[i]);
+        }
+        for i in 0..self.n {
+            result[leader_buf[i]].push(i);
+        }
+        result
+            .into_iter()
+            .filter(|x| !x.is_empty())
+            .collect::<Vec<Vec<usize>>>()
+    }
 }
 
 #[cfg(test)]
@@ -64,5 +83,6 @@ mod tests {
         assert_eq!(d.same(0, 2), true);
         assert_eq!(d.size(0), 3);
         assert_eq!(d.same(0, 3), false);
+        assert_eq!(d.groups(), vec![vec![0, 1, 2], vec![3]]);
     }
 }

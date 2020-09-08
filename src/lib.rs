@@ -17,5 +17,5 @@ pub(crate) mod internal_queue;
 pub(crate) mod internal_scc;
 pub(crate) mod internal_type_traits;
 
-pub use fenwicktree::FenwickTree;
 pub use dsu::Dsu;
+pub use fenwicktree::FenwickTree;
