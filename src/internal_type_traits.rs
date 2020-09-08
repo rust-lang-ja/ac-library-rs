@@ -66,7 +66,7 @@ macro_rules! impl_integral {
 
                 #[inline]
                 fn one() -> Self {
-                    0
+                    1
                 }
             }
         )*
