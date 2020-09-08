@@ -1,8 +1,7 @@
-use std::mem::swap;
-
 mod atcoder {
 
     mod internal {
+        use std::mem::swap;
 
         /// # Arguments
         /// * `m` `1 <= m`
