@@ -25,6 +25,9 @@ struct Barrett {
 impl Barrett {
     /// # Arguments
     /// * `m` `1 <= m`
+    /// (Note: `m <= 2^31` should also hold, which is undocumented in the original library.
+    /// See the [pull reqeust commment](https://github.com/rust-lang-ja/ac-library-rs/pull/3#discussion_r484661007)
+    /// for more details.)
     fn new(m: u32) -> Barrett {
         Barrett {
             _m: m,
