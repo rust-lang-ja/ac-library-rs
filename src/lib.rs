@@ -18,3 +18,4 @@ pub(crate) mod internal_scc;
 pub(crate) mod internal_type_traits;
 
 pub use fenwicktree::FenwickTree;
+pub use string::{suffix_array, suffix_array_arbitrary, suffix_array_manual};
