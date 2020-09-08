@@ -233,7 +233,7 @@ where
                 break;
             }
         }
-        return res;
+        res
     }
 }
 
