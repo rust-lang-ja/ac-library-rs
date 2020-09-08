@@ -60,7 +60,7 @@ impl Barrett {
         let x = (((z as u128) * (self.im as u128)) >> 64) as u64;
         let mut v = (z - x * self._m as u64) as u32;
         if self._m <= v {
-            v += self._m;
+            v.wrapping_add(self._m);
         }
         v
     }
@@ -109,7 +109,7 @@ fn is_prime_constexpr(n: i32) -> bool {
     while d % 2 == 0 {
         d /= 2;
     }
-    for a in [2, 7, 61].iter().copied() {
+    for &a in &[2, 7, 61] {
         let mut t = d;
         let mut y = pow_mod_constexpr(a, t, n as i32);
         while t != n - 1 && y != 1 && y != n - 1 {
