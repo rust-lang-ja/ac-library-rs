@@ -8,9 +8,9 @@ pub struct FenwickTree<T> {
 impl<T: Clone + std::ops::AddAssign<T>> FenwickTree<T> {
     pub fn new(n: usize, e: T) -> Self {
         FenwickTree {
-            n: n,
+            n,
             ary: vec![e.clone(); n],
-            e: e,
+            e,
         }
     }
     pub fn accum(&self, mut idx: usize) -> T {
