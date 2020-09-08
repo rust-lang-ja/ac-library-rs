@@ -20,6 +20,6 @@ After that we try to improve develop flow, tests, or utility.
 1. Create an issue or a draft PR before you start working.
 2. Make a PR and pass tests.
 
-## More infomation
+## More information
 
 We have a slack workspace [rust-jp.rs](https://rust-jp.rs/). Please join it.
