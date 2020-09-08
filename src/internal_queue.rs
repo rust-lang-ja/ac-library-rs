@@ -1,3 +1,4 @@
+#[derive(Default)]
 pub(crate) struct SimpleQueue<T> {
     payload: Vec<T>,
     pos: usize,
