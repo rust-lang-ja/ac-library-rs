@@ -61,7 +61,7 @@ impl Barrett {
         let mut z = a as u64;
         z *= b as u64;
         let x = (((z as u128) * (self.im as u128)) >> 64) as u64;
-        let mut v = (z - x * self._m as u64) as u32;
+        let mut v = z.wrapping_sub(x.wrapping_mul(self._m as u64)) as u32;
         if self._m <= v {
             v = v.wrapping_add(self._m);
         }
