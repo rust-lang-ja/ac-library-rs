@@ -1,6 +1,6 @@
 # ac-library-rs
 
-ac-library-rs a rust port of AtCoder Library(ACL).
+ac-library-rs is a rust port of AtCoder Library (ACL).
 
 See below for ACL.
 
