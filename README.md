@@ -9,7 +9,7 @@ See below for ACLs.
 
 ## Progress
 
-Out first milestone is 2020/09/20, ACL contest planed.
+Our first milestone is 2020/09/20, when the first ACL contest is planned.
 We aim to implement the same toolset as original ACL(C++) on the day.
 
 We are trying to implement with the same files by referring to the original ACL's hpp.
