@@ -18,3 +18,4 @@ pub(crate) mod internal_scc;
 pub(crate) mod internal_type_traits;
 
 pub use fenwicktree::FenwickTree;
+pub use mincostflow::MinCostFlowGraph;
