@@ -9,11 +9,12 @@ pub struct Dsu {
     parent_or_size: Vec<i32>,
 }
 
+
 impl Dsu {
-    pub fn new(n: usize) -> Self {
+    pub fn new(size: usize) -> Self {
         Self {
-            n: n,
-            parent_or_size: vec![-1; n],
+            n: size,
+            parent_or_size: vec![-1; size],
         }
     }
     pub fn merge(&mut self, a: usize, b: usize) -> usize {
@@ -28,13 +29,13 @@ impl Dsu {
         }
         self.parent_or_size[x] += self.parent_or_size[y];
         self.parent_or_size[y] = x as i32;
-        return x;
+        x
     }
 
     pub fn same(&mut self, a: usize, b: usize) -> bool {
         assert!(a < self.n);
         assert!(b < self.n);
-        return self.leader(a) == self.leader(b);
+        self.leader(a) == self.leader(b)
     }
     pub fn leader(&mut self, a: usize) -> usize {
         assert!(a < self.n);
