@@ -10,6 +10,7 @@ pub struct Dsu {
 }
 
 impl Dsu {
+    // 0 <= size <= 10^8 is constrained.
     pub fn new(size: usize) -> Self {
         Self {
             n: size,
