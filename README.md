@@ -2,7 +2,7 @@
 
 ac-library-rs a rust port of AtCoder Library(ACL).
 
-See below for ACLs.
+See below for ACL.
 
 - [AtCoder Library (ACL) - AtCoder](https://atcoder.jp/posts/517)
 - [AtCoder Library - Codeforces](https://codeforces.com/blog/entry/82400)
