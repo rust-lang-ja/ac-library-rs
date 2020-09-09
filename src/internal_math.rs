@@ -31,7 +31,7 @@ impl Barrett {
     fn new(m: u32) -> Barrett {
         Barrett {
             _m: m,
-            im: (-1i64 as u64) / (m as u64) + 1,
+            im: (-1i64 as u64 / m as u64).wrapping_add(1),
         }
     }
 
