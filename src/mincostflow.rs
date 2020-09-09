@@ -50,6 +50,9 @@ where
         assert!(from < self.g.len());
         assert!(to < self.g.len());
         assert_ne!(from, to);
+        assert!(cap >= T::zero());
+        assert!(cost >= T::zero());
+
         self.pos.push((from, self.g[from].len()));
         self.cost_sum += cost;
 
