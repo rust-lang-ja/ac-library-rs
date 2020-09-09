@@ -65,7 +65,7 @@ where
         assert!(Cap::zero() <= cap);
         let m = self.pos.len();
         self.pos.push((from, self.g[from].len()));
-        let rev = self.g[to].len();
+        let rev = self.g[to].len() + if from == to { 1 } else { 0 };
         self.g[from].push(_Edge { to, rev, cap });
         let rev = self.g[from].len() - 1;
         self.g[to].push(_Edge {
