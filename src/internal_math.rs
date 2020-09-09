@@ -196,7 +196,7 @@ fn primitive_root(m: i32) -> i32 {
         x /= 2;
     }
     for i in (3..std::i32::MAX).step_by(2) {
-        if (i as i64) * (i as i64) <= (x as i64) {
+        if i as i64 * i as i64 > x as i64 {
             break;
         }
         if x % i == 0 {
@@ -213,7 +213,7 @@ fn primitive_root(m: i32) -> i32 {
     }
     let mut g = 2;
     loop {
-        if (0..cnt).any(|i| pow_mod(g, ((m - 1) / divs[i]) as i64, m) == 1) {
+        if (0..cnt).all(|i| pow_mod(g, ((m - 1) / divs[i]) as i64, m) != 1) {
             break g as i32;
         }
         g += 1;
@@ -221,3 +221,224 @@ fn primitive_root(m: i32) -> i32 {
 }
 // omitted
 // template <int m> constexpr int primitive_root = primitive_root_constexpr(m);
+
+#[cfg(test)]
+mod tests {
+    use crate::internal_math::{inv_gcd, is_prime, pow_mod, primitive_root, safe_mod, Barrett};
+    use std::collections::HashSet;
+
+    #[test]
+    fn test_safe_mod() {
+        assert_eq!(safe_mod(0, 3), 0);
+        assert_eq!(safe_mod(1, 3), 1);
+        assert_eq!(safe_mod(2, 3), 2);
+        assert_eq!(safe_mod(3, 3), 0);
+        assert_eq!(safe_mod(4, 3), 1);
+        assert_eq!(safe_mod(5, 3), 2);
+        assert_eq!(safe_mod(73, 11), 7);
+        assert_eq!(safe_mod(2306249155046129918, 6620319213327), 1374210749525);
+
+        assert_eq!(safe_mod(-1, 3), 2);
+        assert_eq!(safe_mod(-2, 3), 1);
+        assert_eq!(safe_mod(-3, 3), 0);
+        assert_eq!(safe_mod(-4, 3), 2);
+        assert_eq!(safe_mod(-5, 3), 1);
+        assert_eq!(safe_mod(-7170500492396019511, 777567337), 333221848);
+    }
+
+    #[test]
+    fn test_barrett() {
+        let b = Barrett::new(7);
+        assert_eq!(b.umod(), 7);
+        assert_eq!(b.mul(2, 3), 6);
+        assert_eq!(b.mul(4, 6), 3);
+        assert_eq!(b.mul(5, 0), 0);
+
+        let b = Barrett::new(998244353);
+        assert_eq!(b.umod(), 998244353);
+        assert_eq!(b.mul(2, 3), 6);
+        assert_eq!(b.mul(3141592, 653589), 919583920);
+        assert_eq!(b.mul(323846264, 338327950), 568012980);
+
+        // make `z - x * self._m as u64` overflow.
+        // Thanks @koba-e964 (at https://github.com/rust-lang-ja/ac-library-rs/pull/3#discussion_r484932161)
+        let b = Barrett::new(2147483647);
+        assert_eq!(b.umod(), 2147483647);
+        assert_eq!(b.mul(1073741824, 2147483645), 2147483646);
+    }
+
+    #[test]
+    fn test_pow_mod() {
+        assert_eq!(pow_mod(0, 0, 1), 0);
+        assert_eq!(pow_mod(0, 0, 3), 1);
+        assert_eq!(pow_mod(0, 0, 723), 1);
+        assert_eq!(pow_mod(0, 0, 998244353), 1);
+        assert_eq!(pow_mod(0, 0, i32::max_value()), 1);
+
+        assert_eq!(pow_mod(0, 1, 1), 0);
+        assert_eq!(pow_mod(0, 1, 3), 0);
+        assert_eq!(pow_mod(0, 1, 723), 0);
+        assert_eq!(pow_mod(0, 1, 998244353), 0);
+        assert_eq!(pow_mod(0, 1, i32::max_value()), 0);
+
+        assert_eq!(pow_mod(0, i64::max_value(), 1), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 3), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 723), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 998244353), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), i32::max_value()), 0);
+
+        assert_eq!(pow_mod(1, 0, 1), 0);
+        assert_eq!(pow_mod(1, 0, 3), 1);
+        assert_eq!(pow_mod(1, 0, 723), 1);
+        assert_eq!(pow_mod(1, 0, 998244353), 1);
+        assert_eq!(pow_mod(1, 0, i32::max_value()), 1);
+
+        assert_eq!(pow_mod(1, 1, 1), 0);
+        assert_eq!(pow_mod(1, 1, 3), 1);
+        assert_eq!(pow_mod(1, 1, 723), 1);
+        assert_eq!(pow_mod(1, 1, 998244353), 1);
+        assert_eq!(pow_mod(1, 1, i32::max_value()), 1);
+
+        assert_eq!(pow_mod(1, i64::max_value(), 1), 0);
+        assert_eq!(pow_mod(1, i64::max_value(), 3), 1);
+        assert_eq!(pow_mod(1, i64::max_value(), 723), 1);
+        assert_eq!(pow_mod(1, i64::max_value(), 998244353), 1);
+        assert_eq!(pow_mod(1, i64::max_value(), i32::max_value()), 1);
+
+        assert_eq!(pow_mod(i64::max_value(), 0, 1), 0);
+        assert_eq!(pow_mod(i64::max_value(), 0, 3), 1);
+        assert_eq!(pow_mod(i64::max_value(), 0, 723), 1);
+        assert_eq!(pow_mod(i64::max_value(), 0, 998244353), 1);
+        assert_eq!(pow_mod(i64::max_value(), 0, i32::max_value()), 1);
+
+        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 1), 0);
+        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 3), 1);
+        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 723), 640);
+        assert_eq!(
+            pow_mod(i64::max_value(), i64::max_value(), 998244353),
+            683296792
+        );
+        assert_eq!(
+            pow_mod(i64::max_value(), i64::max_value(), i32::max_value()),
+            1
+        );
+
+        assert_eq!(pow_mod(2, 3, 1_000_000_007), 8);
+        assert_eq!(pow_mod(5, 7, 1_000_000_007), 78125);
+        assert_eq!(pow_mod(123, 456, 1_000_000_007), 565291922);
+    }
+
+    #[test]
+    fn test_is_prime() {
+        assert!(!is_prime(0));
+        assert!(!is_prime(1));
+        assert!(is_prime(2));
+        assert!(is_prime(3));
+        assert!(!is_prime(4));
+        assert!(is_prime(5));
+        assert!(!is_prime(6));
+        assert!(is_prime(7));
+        assert!(!is_prime(8));
+        assert!(!is_prime(9));
+
+        // assert!(is_prime(57));
+        assert!(!is_prime(57));
+        assert!(!is_prime(58));
+        assert!(is_prime(59));
+        assert!(!is_prime(60));
+        assert!(is_prime(61));
+        assert!(!is_prime(62));
+
+        assert!(!is_prime(701928443));
+        assert!(is_prime(998244353));
+        assert!(!is_prime(1_000_000_000));
+        assert!(is_prime(1_000_000_007));
+
+        assert!(is_prime(i32::max_value()));
+    }
+
+    #[test]
+    fn is_prime_sieve() {
+        let n = 1_000_000;
+        let mut prime = vec![true; n];
+        prime[0] = false;
+        prime[1] = false;
+        for i in 0..n {
+            assert_eq!(prime[i], is_prime(i as i32));
+            if prime[i] {
+                for j in (2 * i..n).step_by(i) {
+                    prime[j] = false;
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_inv_gcd() {
+        for &(a, b, g) in &[
+            (0, 1, 1),
+            (0, 4, 4),
+            (0, 7, 7),
+            (2, 3, 1),
+            (-2, 3, 1),
+            (4, 6, 2),
+            (-4, 6, 2),
+            (13, 23, 1),
+            (57, 81, 3),
+            (12345, 67890, 15),
+            (-3141592 * 6535, 3141592 * 8979, 3141592),
+            (i64::max_value(), i64::max_value(), i64::max_value()),
+            (i64::min_value(), i64::max_value(), 1),
+        ] {
+            let (g_, x) = inv_gcd(a, b);
+            assert_eq!(g, g_);
+            let b_ = b as i128;
+            assert_eq!(((x as i128 * a as i128) % b_ + b_) % b_, g as i128 % b_);
+        }
+    }
+
+    #[test]
+    fn test_primitive_root() {
+        for &p in &[
+            2,
+            3,
+            5,
+            7,
+            233,
+            200003,
+            998244353,
+            1_000_000_007,
+            i32::max_value(),
+        ] {
+            assert!(is_prime(p));
+            let g = primitive_root(p);
+            if p != 2 {
+                assert_ne!(g, 1);
+            }
+
+            let q = p - 1;
+            for i in (2..i32::max_value()).take_while(|i| i * i <= q) {
+                if q % i != 0 {
+                    break;
+                }
+                for &r in &[i, q / i] {
+                    assert_ne!(pow_mod(g as i64, r as i64, p), 1);
+                }
+            }
+            assert_eq!(pow_mod(g as i64, q as i64, p), 1);
+
+            if p < 1_000_000 {
+                assert_eq!(
+                    (0..p - 1)
+                        .scan(1, |i, _| {
+                            *i = *i * g % p;
+                            Some(*i)
+                        })
+                        .collect::<HashSet<_>>()
+                        .len() as i32,
+                    p - 1
+                );
+            }
+        }
+    }
+}
