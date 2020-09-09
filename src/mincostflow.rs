@@ -69,7 +69,7 @@ where
 
     /// Returns (maximum flow, cost)
     pub fn flow(&mut self, source: usize, sink: usize, flow_limit: T) -> (T, T) {
-        *self.slope(source, sink, flow_limit).last().unwrap()
+        self.slope(source, sink, flow_limit).pop().unwrap()
     }
 
     pub fn slope(&mut self, source: usize, sink: usize, flow_limit: T) -> Vec<(T, T)> {
@@ -86,11 +86,11 @@ where
         let mut prev_cost: Option<T> = None;
         let mut result = vec![(flow, cost)];
         while flow < flow_limit {
-            if !self.dual_ref(source, sink, &mut dual, &mut prev_v, &mut prev_e) {
+            if !self.refine_dual(source, sink, &mut dual, &mut prev_v, &mut prev_e) {
                 break;
             }
-            let mut c = flow_limit - flow;
 
+            let mut c = flow_limit - flow;
             let mut v = sink;
             while v != source {
                 c = std::cmp::min(c, self.g[prev_v[v]][prev_e[v]].cap);
@@ -117,7 +117,7 @@ where
         result
     }
 
-    fn dual_ref(
+    fn refine_dual(
         &self,
         source: usize,
         sink: usize,
