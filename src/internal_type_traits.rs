@@ -14,9 +14,11 @@ use std::{
 // - `is_unsigned_int_t<T>` (probably won't be used directly in `modint.rs`)
 // - `to_unsigned_t<T>`     (not used in `fenwicktree.rs`)
 
-// We will remove unnecessary bounds later.
-
 /// Corresponds to `std::is_integral` in C++.
+// We will remove unnecessary bounds later.
+//
+// Maybe we should rename this to `PrimitiveInteger` or something, as it probably won't be used in the
+// same way as the original ACL.
 pub(crate) trait Integral:
     'static
     + Send
