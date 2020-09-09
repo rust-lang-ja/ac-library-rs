@@ -67,6 +67,7 @@ impl Threshold for DefaultThreshold {
     }
 }
 
+#[allow(clippy::cognitive_complexity)]
 fn sa_is<T: Threshold>(s: &[usize], upper: usize) -> Vec<usize> {
     let n = s.len();
     match n {
@@ -175,9 +176,8 @@ fn sa_is<T: Threshold>(s: &[usize], upper: usize) -> Vec<usize> {
             let mut r = sorted_lms[i];
             let end_l = if lms_map[l] < m { lms[lms_map[l]] } else { n };
             let end_r = if lms_map[r] < m { lms[lms_map[r]] } else { n };
-            let mut same = true;
-            if end_l - l != end_r - r {
-                same = false;
+            let same = if end_l - l != end_r - r {
+                false
             } else {
                 while l < end_l {
                     if s[l] != s[r] {
@@ -186,10 +186,8 @@ fn sa_is<T: Threshold>(s: &[usize], upper: usize) -> Vec<usize> {
                     l += 1;
                     r += 1;
                 }
-                if l == n || s[l] != s[r] {
-                    same = false;
-                }
-            }
+                l != n && s[l] == s[r]
+            };
             if !same {
                 rec_upper += 1;
             }
@@ -202,8 +200,8 @@ fn sa_is<T: Threshold>(s: &[usize], upper: usize) -> Vec<usize> {
         }
         induce(&mut sa, &mut sorted_lms);
     }
-    for i in 0..n {
-        sa[i] -= 1;
+    for elem in sa.iter_mut() {
+        *elem -= 1;
     }
     sa
 }
