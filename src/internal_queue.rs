@@ -33,8 +33,12 @@ impl<T> SimpleQueue<T> {
         self.pos = 0;
     }
 
-    pub(crate) fn pop(&mut self) -> &T {
-        self.pos += 1;
-        &self.payload[self.pos - 1]
+    pub(crate) fn pop(&mut self) -> Option<&T> {
+        if self.pos < self.payload.len() {
+            self.pos += 1;
+            Some(&self.payload[self.pos - 1])
+        } else {
+            None
+        }
     }
 }
