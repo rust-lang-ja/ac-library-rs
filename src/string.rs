@@ -234,8 +234,8 @@ pub fn suffix_array_arbitrary<T: Ord>(s: &[T]) -> Vec<usize> {
     sa_is_i32::<DefaultThreshold>(&s2, now)
 }
 
-pub fn suffix_array(s: impl IntoIterator<Item = char>) -> Vec<usize> {
-    let s2: Vec<usize> = s.into_iter().map(|x| x as usize).collect();
+pub fn suffix_array(s: &str) -> Vec<usize> {
+    let s2: Vec<usize> = s.bytes().map(|x| x as usize).collect();
     sa_is::<DefaultThreshold>(&s2, 255)
 }
 
@@ -334,7 +334,7 @@ mod tests {
         let sa_is = sa_is_i32::<ZeroThreshold>(&array, 255);
         assert_eq!(sa_is, expected_array);
 
-        let sa_str = suffix_array(str.chars());
+        let sa_str = suffix_array(str);
         assert_eq!(sa_str, expected_array);
     }
 
@@ -360,7 +360,7 @@ mod tests {
     #[test]
     fn test_lcp_0() {
         let str = "abracadabra";
-        let sa = suffix_array(str.chars());
+        let sa = suffix_array(str);
         let lcp = lcp_array(str, &sa);
         assert_eq!(lcp, &[1, 4, 1, 1, 0, 3, 0, 0, 0, 2]);
     }
@@ -368,7 +368,7 @@ mod tests {
     #[test]
     fn test_lcp_1() {
         let str = "mmiissiissiippii"; // an example taken from https://mametter.hatenablog.com/entry/20180130/p1
-        let sa = suffix_array(str.chars());
+        let sa = suffix_array(str);
         let lcp = lcp_array(str, &sa);
         assert_eq!(lcp, &[1, 2, 2, 6, 1, 1, 5, 0, 1, 0, 1, 0, 3, 1, 4]);
     }
