@@ -55,6 +55,8 @@ pub(crate) trait Integral:
 {
     fn zero() -> Self;
     fn one() -> Self;
+    fn min_value() -> Self;
+    fn max_value() -> Self;
 }
 
 macro_rules! impl_integral {
@@ -69,6 +71,16 @@ macro_rules! impl_integral {
                 #[inline]
                 fn one() -> Self {
                     1
+                }
+
+                #[inline]
+                fn min_value() -> Self {
+                    Self::min_value()
+                }
+
+                #[inline]
+                fn max_value() -> Self {
+                    Self::max_value()
                 }
             }
         )*
