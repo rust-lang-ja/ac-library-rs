@@ -14,7 +14,7 @@ pub struct MinCostFlowGraph<T> {
 
 impl<T> MinCostFlowGraph<T>
 where
-    T: Number + std::ops::Neg<Output = T>,
+    T: Integer + std::ops::Neg<Output = T>,
 {
     pub fn new(n: usize) -> Self {
         Self {
@@ -180,8 +180,8 @@ struct _Edge<T> {
     cost: T,
 }
 
-// TODO migrate to common type
-pub trait Number:
+// TODO After we have Integer trait in [crate::internal_type_traits], remove this trait and use the new one
+pub trait Integer:
     Copy
     + Ord
     + std::ops::Not<Output = Self>
@@ -217,7 +217,7 @@ pub trait Number:
 mod tests {
     use super::*;
 
-    impl Number for i64 {
+    impl Integer for i64 {
         fn zero() -> Self {
             0
         }
