@@ -77,18 +77,18 @@ where
     }
 }
 
-struct Edge<Cap> {
-    from: usize,
-    to: usize,
-    cap: Cap,
-    flow: Cap,
+pub struct Edge<Cap> {
+    pub from: usize,
+    pub to: usize,
+    pub cap: Cap,
+    pub flow: Cap,
 }
 
 impl<Cap> MfGraph<Cap>
 where
     Cap: MfCapacity,
 {
-    fn get_edge(&self, i: usize) -> Edge<Cap> {
+    pub fn get_edge(&self, i: usize) -> Edge<Cap> {
         let m = self.pos.len();
         assert!(i < m);
         let _e = &self.g[self.pos[i].0][self.pos[i].1];
@@ -100,11 +100,11 @@ where
             flow: _re.cap,
         }
     }
-    fn edges(&self) -> Vec<Edge<Cap>> {
+    pub fn edges(&self) -> Vec<Edge<Cap>> {
         let m = self.pos.len();
         (0..m).map(|i| self.get_edge(i)).collect()
     }
-    fn change_edge(&mut self, i: usize, new_cap: Cap, new_flow: Cap) {
+    pub fn change_edge(&mut self, i: usize, new_cap: Cap, new_flow: Cap) {
         let m = self.pos.len();
         assert!(i < m);
         assert!(Cap::zero() <= new_flow && new_flow <= new_cap);
