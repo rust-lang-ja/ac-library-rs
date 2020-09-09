@@ -47,6 +47,7 @@ impl Barrett {
     ///
     /// # Returns
     /// a * b % m
+    #[allow(clippy::many_single_char_names)]
     fn mul(&self, a: u32, b: u32) -> u32 {
         // [1] m = 1
         // a = b = im = 0, so okay
@@ -76,6 +77,7 @@ impl Barrett {
 /// # Returns
 /// `(x ** n) % m`
 /* const */
+#[allow(clippy::many_single_char_names)]
 fn pow_mod(x: i64, mut n: i64, m: i32) -> i64 {
     if m == 1 {
         return 0;
@@ -135,6 +137,7 @@ fn is_prime(n: i32) -> bool {
 /// # Returns
 /// (g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
 /* const */
+#[allow(clippy::many_single_char_names)]
 fn inv_gcd(a: i64, b: i64) -> (i64, i64) {
     let a = safe_mod(a, b);
     if a == 0 {
