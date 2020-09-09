@@ -62,7 +62,7 @@ where
     pub fn add_edge(&mut self, from: usize, to: usize, cap: Cap) -> usize {
         assert!(from < self._n);
         assert!(to < self._n);
-        assert!(Cap::zero() < cap);
+        assert!(Cap::zero() <= cap);
         let m = self.pos.len();
         self.pos.push((from, self.g[from].len()));
         let rev = self.g[to].len();
@@ -107,7 +107,7 @@ where
     fn change_edge(&mut self, i: usize, new_cap: Cap, new_flow: Cap) {
         let m = self.pos.len();
         assert!(i < m);
-        assert!(Cap::zero() < new_flow && new_flow <= new_cap);
+        assert!(Cap::zero() <= new_flow && new_flow <= new_cap);
         let (to, rev) = {
             let _e = &mut self.g[self.pos[i].0][self.pos[i].1];
             _e.cap = new_cap - new_flow;
@@ -233,6 +233,7 @@ where
                 break;
             }
         }
+        self.iter[v] = self.graph.g[v].len();
         res
     }
 }
