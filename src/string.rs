@@ -241,6 +241,78 @@ pub fn suffix_array(s: impl IntoIterator<Item = char>) -> Vec<usize> {
     sa_is::<DefaultThreshold>(&s2, 255)
 }
 
+// Reference:
+// T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
+// Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
+// Applications
+pub fn lcp_array_arbitrary<T: Ord>(s: &[T], sa: &[usize]) -> Vec<usize> {
+    let n = s.len();
+    assert!(n >= 1);
+    let mut rnk = vec![0; n];
+    for i in 0..n {
+        rnk[sa[i]] = i;
+    }
+    let mut lcp = vec![0; n - 1];
+    let mut h = 0;
+    for i in 0..n - 1 {
+        if h > 0 {
+            h -= 1;
+        }
+        if rnk[i] == 0 {
+            continue;
+        }
+        let j = sa[rnk[i] - 1];
+        while j + h < n && i + h < n {
+            if s[j + h] != s[i + h] {
+                break;
+            }
+            h += 1;
+        }
+        lcp[rnk[i] - 1] = h;
+    }
+    lcp
+}
+
+pub fn lcp_array(s: &str, sa: &[usize]) -> Vec<usize> {
+    let s: &[u8] = s.as_bytes();
+    lcp_array_arbitrary(s, sa)
+}
+
+// Reference:
+// D. Gusfield,
+// Algorithms on Strings, Trees, and Sequences: Computer Science and
+// Computational Biology
+pub fn z_algorithm_arbitrary<T: Ord>(s: &[T]) -> Vec<usize> {
+    let n = s.len();
+    if n == 0 {
+        return vec![];
+    }
+    let mut z = vec![0; n];
+    z[0] = 0;
+    let mut j = 0;
+    for i in 1..n {
+        let mut k = if j + z[j] <= i {
+            0
+        } else {
+            std::cmp::min(j + z[j] - i, z[i - j])
+        };
+        while i + k < n && s[k] == s[i + k] {
+            k += 1;
+        }
+        z[i] = k;
+        if j + z[j] < i + z[i] {
+            j = i;
+        }
+    }
+    z[0] = n;
+    z
+}
+
+pub fn z_algorithm(s: &str) -> Vec<usize> {
+    let s: &[u8] = s.as_bytes();
+    z_algorithm_arbitrary(s)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -285,5 +357,35 @@ mod tests {
     fn test_sa_2() {
         let str = "mmiissiissiippii"; // an example taken from https://mametter.hatenablog.com/entry/20180130/p1
         verify_all(str, &[15, 14, 10, 6, 2, 11, 7, 3, 1, 0, 13, 12, 9, 5, 8, 4]);
+    }
+
+    #[test]
+    fn test_lcp_0() {
+        let str = "abracadabra";
+        let sa = suffix_array(str.chars());
+        let lcp = lcp_array(str, &sa);
+        assert_eq!(lcp, &[1, 4, 1, 1, 0, 3, 0, 0, 0, 2]);
+    }
+
+    #[test]
+    fn test_lcp_1() {
+        let str = "mmiissiissiippii"; // an example taken from https://mametter.hatenablog.com/entry/20180130/p1
+        let sa = suffix_array(str.chars());
+        let lcp = lcp_array(str, &sa);
+        assert_eq!(lcp, &[1, 2, 2, 6, 1, 1, 5, 0, 1, 0, 1, 0, 3, 1, 4]);
+    }
+
+    #[test]
+    fn test_z_0() {
+        let str = "abracadabra";
+        let lcp = z_algorithm(str);
+        assert_eq!(lcp, &[11, 0, 0, 1, 0, 1, 0, 4, 0, 0, 1]);
+    }
+
+    #[test]
+    fn test_z_1() {
+        let str = "ababababa";
+        let lcp = z_algorithm(str);
+        assert_eq!(lcp, &[9, 0, 7, 0, 5, 0, 3, 0, 1]);
     }
 }
