@@ -1,6 +1,6 @@
 // Skipped:
 //
-// - `bsf` = `__builtin_ctz`: should equivalent to `{integer}::trailing_zeros`
+// - `bsf` = `__builtin_ctz`: is equivalent to `{integer}::trailing_zeros`
 
 #[allow(dead_code)]
 pub(crate) fn ceil_pow2(n: u32) -> u32 {
