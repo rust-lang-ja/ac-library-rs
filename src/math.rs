@@ -102,6 +102,8 @@ pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unreadable_literal)]
+    #![allow(clippy::cognitive_complexity)]
     use super::*;
     #[test]
     fn test_pow_mod() {
