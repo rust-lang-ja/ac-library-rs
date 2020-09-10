@@ -20,6 +20,7 @@ pub(crate) mod internal_type_traits;
 
 pub use dsu::Dsu;
 pub use fenwicktree::FenwickTree;
+pub use mincostflow::MinCostFlowGraph;
 pub use modint::{
     Barrett, DefaultId, DynamicModInt, Id, Mod1000000007, Mod998244353, ModInt, ModInt1000000007,
     ModInt998244353, Modulus, RemEuclidU32, StaticModInt,
