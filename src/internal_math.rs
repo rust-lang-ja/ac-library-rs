@@ -226,6 +226,7 @@ pub(crate) fn primitive_root(m: i32) -> i32 {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unreadable_literal)]
     use crate::internal_math::{inv_gcd, is_prime, pow_mod, primitive_root, safe_mod, Barrett};
     use std::collections::HashSet;
 
