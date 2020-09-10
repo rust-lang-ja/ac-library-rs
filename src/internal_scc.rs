@@ -55,7 +55,7 @@ impl SccGraph {
 
     /// return pair of (# of scc, scc id)
     pub fn scc_ids(&self) -> (usize, Vec<usize>) {
-        // In C++ ac-library, this function is implemented by using recursive labmda functions.
+        // In C++ ac-library, this function is implemented by using recursive lambda functions.
         // Instead, we use fn and struct for capturing environments.
         struct _Env {
             g: Csr<_Edge>,
