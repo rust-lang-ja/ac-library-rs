@@ -2,6 +2,7 @@ use crate::internal_math;
 
 use std::mem::swap;
 
+#[allow(clippy::many_single_char_names)]
 pub fn pow_mod(x: i64, mut n: i64, m: u32) -> u32 {
     assert!(0 <= n && 1 <= m);
 
@@ -25,7 +26,7 @@ pub fn inv_mod(x: i64, m: i64) -> i64 {
     z.1
 }
 
-pub fn crt(r: &Vec<i64>, m: &Vec<i64>) -> (i64, i64) {
+pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
     assert!(r.len() == m.len());
     // Contracts: 0 <= r0 < m0
     let (mut r0, mut m0) = (0, 1);
@@ -94,5 +95,5 @@ pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     }
     ans += (n - (x_max + a - 1) / a) * y_max;
     ans += floor_sum(y_max, a, m, (a - x_max % a) % a);
-    return ans;
+    ans
 }
