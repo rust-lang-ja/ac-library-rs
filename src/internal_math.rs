@@ -6,7 +6,7 @@ use std::mem::swap;
 /// # Returns
 /// x mod m
 /* const */
-fn safe_mod(mut x: i64, m: i64) -> i64 {
+pub(crate) fn safe_mod(mut x: i64, m: i64) -> i64 {
     x %= m;
     if x < 0 {
         x += m;
@@ -17,9 +17,9 @@ fn safe_mod(mut x: i64, m: i64) -> i64 {
 /// Fast modular by barrett reduction
 /// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 /// NOTE: reconsider after Ice Lake
-struct Barrett {
-    _m: u32,
-    im: u64,
+pub(crate) struct Barrett {
+    pub(crate) _m: u32,
+    pub(crate) im: u64,
 }
 
 impl Barrett {
@@ -28,7 +28,7 @@ impl Barrett {
     /// (Note: `m <= 2^31` should also hold, which is undocumented in the original library.
     /// See the [pull reqeust commment](https://github.com/rust-lang-ja/ac-library-rs/pull/3#discussion_r484661007)
     /// for more details.)
-    fn new(m: u32) -> Barrett {
+    pub(crate) fn new(m: u32) -> Barrett {
         Barrett {
             _m: m,
             im: (-1i64 as u64 / m as u64).wrapping_add(1),
@@ -37,7 +37,7 @@ impl Barrett {
 
     /// # Returns
     /// `m`
-    fn umod(&self) -> u32 {
+    pub(crate) fn umod(&self) -> u32 {
         self._m
     }
 
@@ -48,7 +48,7 @@ impl Barrett {
     /// # Returns
     /// a * b % m
     #[allow(clippy::many_single_char_names)]
-    fn mul(&self, a: u32, b: u32) -> u32 {
+    pub(crate) fn mul(&self, a: u32, b: u32) -> u32 {
         // [1] m = 1
         // a = b = im = 0, so okay
 
@@ -78,7 +78,7 @@ impl Barrett {
 /// `(x ** n) % m`
 /* const */
 #[allow(clippy::many_single_char_names)]
-fn pow_mod(x: i64, mut n: i64, m: i32) -> i64 {
+pub(crate) fn pow_mod(x: i64, mut n: i64, m: i32) -> i64 {
     if m == 1 {
         return 0;
     }
@@ -102,7 +102,7 @@ fn pow_mod(x: i64, mut n: i64, m: i32) -> i64 {
 /// # Parameters
 /// * `n` `0 <= n`
 /* const */
-fn is_prime(n: i32) -> bool {
+pub(crate) fn is_prime(n: i32) -> bool {
     let n = n as i64;
     match n {
         _ if n <= 1 => return false,
@@ -138,7 +138,7 @@ fn is_prime(n: i32) -> bool {
 /// (g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
 /* const */
 #[allow(clippy::many_single_char_names)]
-fn inv_gcd(a: i64, b: i64) -> (i64, i64) {
+pub(crate) fn inv_gcd(a: i64, b: i64) -> (i64, i64) {
     let a = safe_mod(a, b);
     if a == 0 {
         return (b, 0);
@@ -178,7 +178,7 @@ fn inv_gcd(a: i64, b: i64) -> (i64, i64) {
 /// @param m must be prime
 /// @return primitive root (and minimum in now)
 /* const */
-fn primitive_root(m: i32) -> i32 {
+pub(crate) fn primitive_root(m: i32) -> i32 {
     match m {
         2 => return 1,
         167_772_161 => return 3,
