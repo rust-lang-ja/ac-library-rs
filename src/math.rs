@@ -32,45 +32,44 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
     assert_eq!(r.len(), m.len());
     // Contracts: 0 <= r0 < m0
     let (mut r0, mut m0) = (0, 1);
-    for (ri, mi) in r.iter().zip(m.iter()) {
-        assert!(1 < *mi);
-        let mut r1 = internal_math::safe_mod(*ri, *mi);
-        let mut m1 = *mi;
-        if m0 < m1 {
-            swap(&mut r0, &mut r1);
-            swap(&mut m0, &mut m1);
+    for (&(mut ri), &(mut mi)) in r.iter().zip(m.iter()) {
+        assert!(1 < mi);
+        ri = internal_math::safe_mod(ri, mi);
+        if m0 < mi {
+            swap(&mut r0, &mut ri);
+            swap(&mut m0, &mut mi);
         }
-        if m0 % m1 == 0 {
-            if r0 % m1 != r1 {
+        if m0 % mi == 0 {
+            if r0 % mi != ri {
                 return (0, 0);
             }
             continue;
         }
-        // assume: m0 > m1, lcm(m0, m1) >= 2 * max(m0, m1)
+        // assume: m0 > mi, lcm(m0, mi) >= 2 * max(m0, mi)
 
-        // (r0, m0), (r1, m1) -> (r2, m2 = lcm(m0, m1));
+        // (r0, m0), (ri, mi) -> (r2, m2 = lcm(m0, m1));
         // r2 % m0 = r0
-        // r2 % m1 = r1
-        // -> (r0 + x*m0) % m1 = r1
-        // -> x*u0*g % (u1*g) = (r1 - r0) (u0*g = m0, u1*g = m1)
-        // -> x = (r1 - r0) / g * inv(u0) (mod u1)
+        // r2 % mi = ri
+        // -> (r0 + x*m0) % mi = ri
+        // -> x*u0*g % (u1*g) = (ri - r0) (u0*g = m0, u1*g = mi)
+        // -> x = (ri - r0) / g * inv(u0) (mod u1)
 
         // im = inv(u0) (mod u1) (0 <= im < u1)
-        let (g, im) = internal_math::inv_gcd(m0, m1);
-        let u1 = m1 / g;
-        // |r1 - r0| < (m0 + m1) <= lcm(m0, m1)
-        if (r1 - r0) % g != 0 {
+        let (g, im) = internal_math::inv_gcd(m0, mi);
+        let u1 = mi / g;
+        // |ri - r0| < (m0 + mi) <= lcm(m0, mi)
+        if (ri - r0) % g != 0 {
             return (0, 0);
         }
-        // u1 * u1 <= m1 * m1 / g / g <= m0 * m1 / g = lcm(m0, m1)
-        let x = (r1 - r0) / g % u1 * im % u1;
+        // u1 * u1 <= mi * mi / g / g <= m0 * mi / g = lcm(m0, mi)
+        let x = (ri - r0) / g % u1 * im % u1;
 
         // |r0| + |m0 * x|
         // < m0 + m0 * (u1 - 1)
-        // = m0 + m0 * m1 / g - m0
-        // = lcm(m0, m1)
+        // = m0 + m0 * mi / g - m0
+        // = lcm(m0, mi)
         r0 += x * m0;
-        m0 *= u1; // -> lcm(m0, m1)
+        m0 *= u1; // -> lcm(m0, mi)
         if r0 < 0 {
             r0 += m0
         };
