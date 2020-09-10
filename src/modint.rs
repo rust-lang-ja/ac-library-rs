@@ -4,7 +4,7 @@
 //!
 //! - Converted the struct names to PascalCase.
 //! - Renamed `mod` → `modulus`.
-//! - Moduluses are `u32`, not `i32`.
+//! - Moduli are `u32`, not `i32`.
 //! - `Id`s are `usize`, not `i32`.
 //! - The default `Id` is `0`, not `-1`.
 //! - The type of the argument of `pow` is `u64`, not `i64`.
