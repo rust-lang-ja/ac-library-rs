@@ -45,7 +45,7 @@ impl<M: Modulus> StaticModInt<M> {
     /// Creates a new `StaticModInt`.
     #[inline]
     pub fn new<T: RemEuclidU32>(val: T) -> Self {
-        Self::raw(val.into_representative(M::VALUE))
+        Self::raw(val.rem_euclid_u32(M::VALUE))
     }
 
     /// Corresponds to `atcoder::static_modint::raw` in the original ACL.
@@ -287,7 +287,7 @@ pub trait ModIntBase:
 
     #[inline]
     fn new<T: RemEuclidU32>(val: T) -> Self {
-        Self::raw(val.into_representative(Self::modulus()))
+        Self::raw(val.rem_euclid_u32(Self::modulus()))
     }
 
     #[inline]
@@ -306,15 +306,15 @@ pub trait ModIntBase:
 }
 
 pub trait RemEuclidU32 {
-    fn into_representative(self, modulus: u32) -> u32;
+    fn rem_euclid_u32(self, modulus: u32) -> u32;
 }
 
-macro_rules! impl_into_representative_for_small_signed {
+macro_rules! impl_rem_euclid_u32_for_small_signed {
     ($($ty:tt),*) => {
         $(
             impl RemEuclidU32 for $ty {
                 #[inline]
-                fn into_representative(self, modulus: u32) -> u32 {
+                fn rem_euclid_u32(self, modulus: u32) -> u32 {
                     (self as i64).rem_euclid(i64::from(modulus)) as _
                 }
             }
@@ -322,21 +322,21 @@ macro_rules! impl_into_representative_for_small_signed {
     }
 }
 
-impl_into_representative_for_small_signed!(i8, i16, i32, i64, isize);
+impl_rem_euclid_u32_for_small_signed!(i8, i16, i32, i64, isize);
 
 impl RemEuclidU32 for i128 {
     #[inline]
-    fn into_representative(self, modulus: u32) -> u32 {
+    fn rem_euclid_u32(self, modulus: u32) -> u32 {
         self.rem_euclid(i128::from(modulus)) as _
     }
 }
 
-macro_rules! impl_into_representative_for_small_unsigned {
+macro_rules! impl_rem_euclid_u32_for_small_unsigned {
     ($($ty:tt),*) => {
         $(
             impl RemEuclidU32 for $ty {
                 #[inline]
-                fn into_representative(self, modulus: u32) -> u32 {
+                fn rem_euclid_u32(self, modulus: u32) -> u32 {
                     self as u32 % modulus
                 }
             }
@@ -344,12 +344,12 @@ macro_rules! impl_into_representative_for_small_unsigned {
     }
 }
 
-macro_rules! impl_into_representative_for_large_unsigned {
+macro_rules! impl_rem_euclid_u32_for_large_unsigned {
     ($($ty:tt),*) => {
         $(
             impl RemEuclidU32 for $ty {
                 #[inline]
-                fn into_representative(self, modulus: u32) -> u32 {
+                fn rem_euclid_u32(self, modulus: u32) -> u32 {
                     (self % (modulus as $ty)) as _
                 }
             }
@@ -357,14 +357,14 @@ macro_rules! impl_into_representative_for_large_unsigned {
     }
 }
 
-impl_into_representative_for_small_unsigned!(u8, u16, u32);
-impl_into_representative_for_large_unsigned!(u64, u128);
+impl_rem_euclid_u32_for_small_unsigned!(u8, u16, u32);
+impl_rem_euclid_u32_for_large_unsigned!(u64, u128);
 
 #[cfg(target_pointer_width = "32")]
-impl_into_representative_for_small_unsigned!(usize);
+impl_rem_euclid_u32_for_small_unsigned!(usize);
 
 #[cfg(target_pointer_width = "64")]
-impl_into_representative_for_large_unsigned!(usize);
+impl_rem_euclid_u32_for_large_unsigned!(usize);
 
 trait InternalImplementations: ModIntBase {
     #[inline]
