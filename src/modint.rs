@@ -10,7 +10,7 @@
 //! - The type of the argument of `pow` is `u64`, not `i64`.
 //! - Modints implement `FromStr` and `Display`. Modints in the original ACL don't have `operator<<` or `operator>>`.
 
-use crate::internal_math::{self, Barrett};
+use crate::internal_math;
 use std::{
     cell::RefCell,
     convert::{Infallible, TryInto as _},
@@ -20,11 +20,12 @@ use std::{
     marker::PhantomData,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
     str::FromStr,
+    thread::LocalKey,
 };
 
 pub type ModInt1000000007 = StaticModInt<Mod1000000007>;
 pub type ModInt998244353 = StaticModInt<Mod998244353>;
-pub type ModInt = DynamicModInt<Id0>;
+pub type ModInt = DynamicModInt<DefaultId>;
 
 /// Corresponds to `atcoder::static_modint` in the original ACL.
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -146,13 +147,7 @@ pub struct DynamicModInt<I> {
 impl<I: Id> DynamicModInt<I> {
     #[inline]
     pub fn modulus() -> u32 {
-        BARRETTS.with(|bts| {
-            let mut bts = bts.borrow_mut();
-            if bts.len() <= I::VALUE {
-                bts.resize_with(I::VALUE + 1, default_barrett);
-            }
-            bts[I::VALUE].umod()
-        })
+        I::companion_barrett().with(|bt| bt.borrow().umod())
     }
 
     #[inline]
@@ -160,13 +155,7 @@ impl<I: Id> DynamicModInt<I> {
         if modulus == 0 {
             panic!("the modulus must not be 0");
         }
-        BARRETTS.with(|bts| {
-            let mut bts = bts.borrow_mut();
-            if bts.len() <= I::VALUE {
-                bts.resize_with(I::VALUE + 1, default_barrett);
-            }
-            bts[I::VALUE] = Barrett::new(modulus);
-        })
+        I::companion_barrett().with(|bt| *bt.borrow_mut() = Barrett::new(modulus))
     }
 
     #[inline]
@@ -221,23 +210,46 @@ impl<I: Id> ModIntBase for DynamicModInt<I> {
 }
 
 pub trait Id: 'static + Copy + Eq {
-    const VALUE: usize;
+    // TODO: Make `internal_math::Barret` `Copy`.
+    fn companion_barrett() -> &'static LocalKey<RefCell<Barrett>>;
 }
 
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
-pub enum Id0 {}
+pub enum DefaultId {}
 
-impl Id for Id0 {
-    const VALUE: usize = 0;
+impl Id for DefaultId {
+    fn companion_barrett() -> &'static LocalKey<RefCell<Barrett>> {
+        thread_local! {
+            static BARRETT: RefCell<Barrett> = RefCell::default();
+        }
+        &BARRETT
+    }
 }
 
-thread_local! {
-    static BARRETTS: RefCell<Vec<Barrett>> = RefCell::new(vec![default_barrett()]);
+pub struct Barrett(internal_math::Barrett);
+
+impl Barrett {
+    #[inline]
+    pub fn new(m: u32) -> Self {
+        Self(internal_math::Barrett::new(m))
+    }
+
+    #[inline]
+    fn umod(&self) -> u32 {
+        self.0.umod()
+    }
+
+    #[inline]
+    fn mul(&self, a: u32, b: u32) -> u32 {
+        self.0.mul(a, b)
+    }
 }
 
-#[inline]
-fn default_barrett() -> Barrett {
-    Barrett::new(998_244_353)
+impl Default for Barrett {
+    #[inline]
+    fn default() -> Self {
+        Self(internal_math::Barrett::new(998_244_353))
+    }
 }
 
 pub trait ModIntBase:
@@ -434,13 +446,7 @@ impl<M: Modulus> InternalImplementations for StaticModInt<M> {
 impl<I: Id> InternalImplementations for DynamicModInt<I> {
     #[inline]
     fn mul_impl(lhs: Self, rhs: Self) -> Self {
-        BARRETTS.with(|bts| {
-            let mut bts = bts.borrow_mut();
-            if bts.len() <= I::VALUE {
-                bts.resize_with(I::VALUE + 1, default_barrett);
-            }
-            Self::raw(bts[I::VALUE].mul(lhs.val, rhs.val))
-        })
+        I::companion_barrett().with(|bt| Self::raw(bt.borrow().mul(lhs.val, rhs.val)))
     }
 }
 
