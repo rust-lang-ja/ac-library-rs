@@ -1,3 +1,5 @@
+use crate::internal_type_traits::Integral;
+
 pub struct MinCostFlowEdge<T> {
     pub from: usize,
     pub to: usize,
@@ -14,7 +16,7 @@ pub struct MinCostFlowGraph<T> {
 
 impl<T> MinCostFlowGraph<T>
 where
-    T: Integer + std::ops::Neg<Output = T>,
+    T: Integral + std::ops::Neg<Output = T>,
 {
     pub fn new(n: usize) -> Self {
         Self {
@@ -180,48 +182,9 @@ struct _Edge<T> {
     cost: T,
 }
 
-// TODO After we have Integer trait in [crate::internal_type_traits], remove this trait and use the new one
-pub trait Integer:
-    Copy
-    + Ord
-    + std::ops::Not<Output = Self>
-    + std::ops::Add<Output = Self>
-    + std::ops::Sub<Output = Self>
-    + std::ops::Mul<Output = Self>
-    + std::ops::Div<Output = Self>
-    + std::ops::Rem<Output = Self>
-    + std::ops::AddAssign
-    + std::ops::SubAssign
-    + std::ops::MulAssign
-    + std::ops::DivAssign
-    + std::ops::RemAssign
-    + std::ops::BitOr<Output = Self>
-    + std::ops::BitAnd<Output = Self>
-    + std::ops::BitXor<Output = Self>
-    + std::ops::BitOrAssign
-    + std::ops::BitAndAssign
-    + std::ops::BitXorAssign
-    + std::ops::Shl<Output = Self>
-    + std::ops::Shr<Output = Self>
-    + std::ops::ShlAssign
-    + std::ops::ShrAssign
-    + std::fmt::Display
-    + std::fmt::Debug
-    + std::fmt::Binary
-    + std::fmt::Octal
-{
-    fn zero() -> Self;
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    impl Integer for i64 {
-        fn zero() -> Self {
-            0
-        }
-    }
 
     #[test]
     fn test_min_cost_flow() {
