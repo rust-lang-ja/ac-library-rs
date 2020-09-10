@@ -19,7 +19,7 @@ use std::{
 //
 // Maybe we should rename this to `PrimitiveInteger` or something, as it probably won't be used in the
 // same way as the original ACL.
-pub(crate) trait Integral:
+pub trait Integral:
     'static
     + Send
     + Sync
