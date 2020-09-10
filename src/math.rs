@@ -29,7 +29,7 @@ pub fn inv_mod(x: i64, m: i64) -> i64 {
 }
 
 pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
-    assert!(r.len() == m.len());
+    assert_eq!(r.len(), m.len());
     // Contracts: 0 <= r0 < m0
     let (mut r0, mut m0) = (0, 1);
     for (ri, mi) in r.iter().zip(m.iter()) {
