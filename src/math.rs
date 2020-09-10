@@ -99,3 +99,101 @@ pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     ans += floor_sum(y_max, a, m, (a - x_max % a) % a);
     ans
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_pow_mod() {
+        assert_eq!(pow_mod(0, 0, 1), 0);
+        assert_eq!(pow_mod(0, 0, 3), 1);
+        assert_eq!(pow_mod(0, 0, 723), 1);
+        assert_eq!(pow_mod(0, 0, 998244353), 1);
+        assert_eq!(pow_mod(0, 0, 2u32.pow(31)), 1);
+
+        assert_eq!(pow_mod(0, 1, 1), 0);
+        assert_eq!(pow_mod(0, 1, 3), 0);
+        assert_eq!(pow_mod(0, 1, 723), 0);
+        assert_eq!(pow_mod(0, 1, 998244353), 0);
+        assert_eq!(pow_mod(0, 1, 2u32.pow(31)), 0);
+
+        assert_eq!(pow_mod(0, i64::max_value(), 1), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 3), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 723), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 998244353), 0);
+        assert_eq!(pow_mod(0, i64::max_value(), 2u32.pow(31)), 0);
+
+        assert_eq!(pow_mod(1, 0, 1), 0);
+        assert_eq!(pow_mod(1, 0, 3), 1);
+        assert_eq!(pow_mod(1, 0, 723), 1);
+        assert_eq!(pow_mod(1, 0, 998244353), 1);
+        assert_eq!(pow_mod(1, 0, 2u32.pow(31)), 1);
+
+        assert_eq!(pow_mod(1, 1, 1), 0);
+        assert_eq!(pow_mod(1, 1, 3), 1);
+        assert_eq!(pow_mod(1, 1, 723), 1);
+        assert_eq!(pow_mod(1, 1, 998244353), 1);
+        assert_eq!(pow_mod(1, 1, 2u32.pow(31)), 1);
+
+        assert_eq!(pow_mod(1, i64::max_value(), 1), 0);
+        assert_eq!(pow_mod(1, i64::max_value(), 3), 1);
+        assert_eq!(pow_mod(1, i64::max_value(), 723), 1);
+        assert_eq!(pow_mod(1, i64::max_value(), 998244353), 1);
+        assert_eq!(pow_mod(1, i64::max_value(), 2u32.pow(31)), 1);
+
+        assert_eq!(pow_mod(i64::max_value(), 0, 1), 0);
+        assert_eq!(pow_mod(i64::max_value(), 0, 3), 1);
+        assert_eq!(pow_mod(i64::max_value(), 0, 723), 1);
+        assert_eq!(pow_mod(i64::max_value(), 0, 998244353), 1);
+        assert_eq!(pow_mod(i64::max_value(), 0, 2u32.pow(31)), 1);
+
+        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 1), 0);
+        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 3), 1);
+        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 723), 640);
+        assert_eq!(
+            pow_mod(i64::max_value(), i64::max_value(), 998244353),
+            683296792
+        );
+        assert_eq!(
+            pow_mod(i64::max_value(), i64::max_value(), 2u32.pow(31)),
+            2147483647
+        );
+
+        assert_eq!(pow_mod(2, 3, 1_000_000_007), 8);
+        assert_eq!(pow_mod(5, 7, 1_000_000_007), 78125);
+        assert_eq!(pow_mod(123, 456, 1_000_000_007), 565291922);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_inv_mod_1() {
+        inv_mod(271828, 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_inv_mod_2() {
+        inv_mod(3141592, 1000000008);
+    }
+
+    #[test]
+    fn test_crt() {
+        let a = [44, 23, 13];
+        let b = [13, 50, 22];
+        assert_eq!(crt(&a, &b), (1773, 7150));
+        let a = [12345, 67890, 99999];
+        let b = [13, 444321, 95318];
+        assert_eq!(crt(&a, &b), (103333581255, 550573258014));
+    }
+
+    #[test]
+    fn test_floor_sum() {
+        assert_eq!(floor_sum(0, 1, 0, 0), 0);
+        assert_eq!(floor_sum(1_000_000_000, 1, 1, 1), 500_000_000_500_000_000);
+        assert_eq!(
+            floor_sum(1_000_000_000, 1_000_000_000, 999_999_999, 999_999_999),
+            499_999_999_500_000_000
+        );
+        assert_eq!(floor_sum(332955, 5590132, 2231, 999423), 22014575);
+    }
+}
