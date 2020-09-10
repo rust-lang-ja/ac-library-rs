@@ -44,7 +44,7 @@ impl<M: Modulus> StaticModInt<M> {
 
     /// Creates a new `StaticModInt`.
     #[inline]
-    pub fn new<T: IntoRepresentative>(val: T) -> Self {
+    pub fn new<T: RemEuclidU32>(val: T) -> Self {
         Self::raw(val.into_representative(M::VALUE))
     }
 
@@ -159,7 +159,7 @@ impl<I: Id> DynamicModInt<I> {
     }
 
     #[inline]
-    pub fn new<T: IntoRepresentative>(val: T) -> Self {
+    pub fn new<T: RemEuclidU32>(val: T) -> Self {
         <Self as ModIntBase>::new(val)
     }
 
@@ -286,7 +286,7 @@ pub trait ModIntBase:
     fn inv(self) -> Self;
 
     #[inline]
-    fn new<T: IntoRepresentative>(val: T) -> Self {
+    fn new<T: RemEuclidU32>(val: T) -> Self {
         Self::raw(val.into_representative(Self::modulus()))
     }
 
@@ -305,14 +305,14 @@ pub trait ModIntBase:
     }
 }
 
-pub trait IntoRepresentative {
+pub trait RemEuclidU32 {
     fn into_representative(self, modulus: u32) -> u32;
 }
 
 macro_rules! impl_into_representative_for_small_signed {
     ($($ty:tt),*) => {
         $(
-            impl IntoRepresentative for $ty {
+            impl RemEuclidU32 for $ty {
                 #[inline]
                 fn into_representative(self, modulus: u32) -> u32 {
                     (self as i64).rem_euclid(i64::from(modulus)) as _
@@ -324,7 +324,7 @@ macro_rules! impl_into_representative_for_small_signed {
 
 impl_into_representative_for_small_signed!(i8, i16, i32, i64, isize);
 
-impl IntoRepresentative for i128 {
+impl RemEuclidU32 for i128 {
     #[inline]
     fn into_representative(self, modulus: u32) -> u32 {
         self.rem_euclid(i128::from(modulus)) as _
@@ -334,7 +334,7 @@ impl IntoRepresentative for i128 {
 macro_rules! impl_into_representative_for_small_unsigned {
     ($($ty:tt),*) => {
         $(
-            impl IntoRepresentative for $ty {
+            impl RemEuclidU32 for $ty {
                 #[inline]
                 fn into_representative(self, modulus: u32) -> u32 {
                     self as u32 % modulus
@@ -347,7 +347,7 @@ macro_rules! impl_into_representative_for_small_unsigned {
 macro_rules! impl_into_representative_for_large_unsigned {
     ($($ty:tt),*) => {
         $(
-            impl IntoRepresentative for $ty {
+            impl RemEuclidU32 for $ty {
                 #[inline]
                 fn into_representative(self, modulus: u32) -> u32 {
                     (self % (modulus as $ty)) as _
@@ -469,7 +469,7 @@ macro_rules! impl_basic_traits {
             }
         }
 
-        impl<$generic_param: $generic_param_bound, V: IntoRepresentative> From<V> for $self {
+        impl<$generic_param: $generic_param_bound, V: RemEuclidU32> From<V> for $self {
             #[inline]
             fn from(from: V) -> Self {
                 Self::new(from)
