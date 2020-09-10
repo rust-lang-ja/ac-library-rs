@@ -416,11 +416,7 @@ trait InternalImplementations: ModIntBase {
         Self::raw(val)
     }
 
-    #[inline]
-    fn mul_impl(lhs: Self, rhs: Self) -> Self {
-        let modulus = Self::modulus();
-        Self::raw((u64::from(lhs.val()) * u64::from(rhs.val()) % u64::from(modulus)) as u32)
-    }
+    fn mul_impl(lhs: Self, rhs: Self) -> Self;
 
     #[inline]
     fn div_impl(lhs: Self, rhs: Self) -> Self {
@@ -428,7 +424,25 @@ trait InternalImplementations: ModIntBase {
     }
 }
 
-impl<Z: ModIntBase> InternalImplementations for Z {}
+impl<M: Modulus> InternalImplementations for StaticModInt<M> {
+    #[inline]
+    fn mul_impl(lhs: Self, rhs: Self) -> Self {
+        Self::raw((u64::from(lhs.val()) * u64::from(rhs.val()) % u64::from(M::VALUE)) as u32)
+    }
+}
+
+impl<I: Id> InternalImplementations for DynamicModInt<I> {
+    #[inline]
+    fn mul_impl(lhs: Self, rhs: Self) -> Self {
+        BARRETTS.with(|bts| {
+            let mut bts = bts.borrow_mut();
+            if bts.len() <= I::VALUE {
+                bts.resize_with(I::VALUE + 1, default_barrett);
+            }
+            Self::raw(bts[I::VALUE].mul(lhs.val, rhs.val))
+        })
+    }
+}
 
 macro_rules! impl_basic_traits {
     () => {};
