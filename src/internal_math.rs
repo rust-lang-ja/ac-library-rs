@@ -362,7 +362,7 @@ mod tests {
     }
 
     #[test]
-    fn is_prime_sieve() {
+    fn test_is_prime_sieve() {
         let n = 1_000_000;
         let mut prime = vec![true; n];
         prime[0] = false;
