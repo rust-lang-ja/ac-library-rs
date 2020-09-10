@@ -1,3 +1,5 @@
+// remove this after dependencies has been added
+#![allow(dead_code)]
 use std::mem::swap;
 
 /// # Arguments
