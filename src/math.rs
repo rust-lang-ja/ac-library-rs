@@ -4,8 +4,10 @@ use std::mem::swap;
 
 #[allow(clippy::many_single_char_names)]
 pub fn pow_mod(x: i64, mut n: i64, m: u32) -> u32 {
-    assert!(0 <= n && 1 <= m);
-
+    assert!(0 <= n && 1 <= m && m <= 2u32.pow(31));
+    if m == 1 {
+        return 0;
+    }
     let bt = internal_math::Barrett::new(m);
     let mut r = 1;
     let mut y = internal_math::safe_mod(x, m as i64) as u32;
