@@ -47,7 +47,7 @@ mod tests {
     }
 
     #[test]
-    fn solve_alpc_scc_sample1() {
+    fn solve_alpc_g_sample1() {
         // https://atcoder.jp/contests/practice2/tasks/practice2_g
         let n: usize = 6;
         let edges = vec![(1, 4), (5, 2), (3, 0), (5, 5), (4, 1), (0, 3), (4, 2)];
