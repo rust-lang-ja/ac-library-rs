@@ -1,3 +1,6 @@
+[workspace]
+members = ["xtask/"]
+
 [package]
 name = "ac-library-rs"
 version = "0.1.0"

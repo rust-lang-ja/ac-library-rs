@@ -1,0 +1,20 @@
+[package]
+name = "xtask"
+version = "0.0.0"
+authors = ["rust-lang-ja developers"]
+edition = "2018"
+license = "CC0-1.0"
+repository = "https://github.com/rust-lang-ja/ac-library-rs"
+publish = false
+
+[dependencies]
+anyhow = "1.0.32"
+atty = "0.2.14"
+cargo_metadata = "0.11.2"
+duct = "0.13.4"
+proc-macro2 = { version = "1.0.21", features = ["span-locations"] }
+quote = "1.0.7"
+structopt = "0.3.17"
+syn = { version = "1.0.40", features = ["full"] }
+tempfile = "3.1.0"
+termcolor = "1.1.0"
