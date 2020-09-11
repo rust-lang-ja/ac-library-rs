@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 #[derive(Default)]
 pub(crate) struct SimpleQueue<T> {
     payload: Vec<T>,
