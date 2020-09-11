@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 #[derive(Default)]
 pub(crate) struct SimpleQueue<T> {
     payload: Vec<T>,
@@ -24,8 +26,12 @@ impl<T> SimpleQueue<T> {
     }
 
     // Do we need mutable version?
-    pub(crate) fn front(&self) -> &T {
-        &self.payload[self.pos]
+    pub(crate) fn front(&self) -> Option<&T> {
+        if self.pos < self.payload.len() {
+            Some(&self.payload[self.pos])
+        } else {
+            None
+        }
     }
 
     pub(crate) fn clear(&mut self) {
@@ -40,5 +46,59 @@ impl<T> SimpleQueue<T> {
         } else {
             None
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::internal_queue::SimpleQueue;
+
+    #[allow(clippy::cognitive_complexity)]
+    #[test]
+    fn test_simple_queue() {
+        let mut queue = SimpleQueue::default();
+
+        assert_eq!(queue.size(), 0);
+        assert!(queue.empty());
+        assert!(queue.front().is_none());
+        assert!(queue.pop().is_none());
+
+        queue.push(123);
+
+        assert_eq!(queue.size(), 1);
+        assert!(!queue.empty());
+        assert_eq!(queue.front(), Some(&123));
+
+        queue.push(456);
+
+        assert_eq!(queue.size(), 2);
+        assert!(!queue.empty());
+        assert_eq!(queue.front(), Some(&123));
+
+        assert_eq!(queue.pop(), Some(&123));
+        assert_eq!(queue.size(), 1);
+        assert!(!queue.empty());
+        assert_eq!(queue.front(), Some(&456));
+
+        queue.push(789);
+        queue.push(789);
+        queue.push(456);
+        queue.push(456);
+
+        assert_eq!(queue.size(), 5);
+        assert!(!queue.empty());
+        assert_eq!(queue.front(), Some(&456));
+
+        assert_eq!(queue.pop(), Some(&456));
+        assert_eq!(queue.size(), 4);
+        assert!(!queue.empty());
+        assert_eq!(queue.front(), Some(&789));
+
+        queue.clear();
+
+        assert_eq!(queue.size(), 0);
+        assert!(queue.empty());
+        assert!(queue.front().is_none());
+        assert!(queue.pop().is_none());
     }
 }
