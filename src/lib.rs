@@ -27,7 +27,7 @@ pub use modint::{
     ModInt998244353, Modulus, RemEuclidU32, StaticModInt,
 };
 pub use scc::SccGraph;
-pub use segtree::{Monoid, Segtree};
+pub use segtree::{Monoid, Segtree, Max};
 pub use string::{
     lcp_array, lcp_array_arbitrary, suffix_array, suffix_array_arbitrary, suffix_array_manual,
     z_algorithm, z_algorithm_arbitrary,
