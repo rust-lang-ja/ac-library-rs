@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::internal_queue::SimpleQueue;
 use std::cmp::min;
 use std::iter;

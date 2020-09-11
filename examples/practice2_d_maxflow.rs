@@ -1,7 +1,8 @@
 use ac_library_rs::MfGraph;
 use std::io::Read;
-use std::iter;
 
+#[allow(clippy::many_single_char_names)]
+#[allow(clippy::needless_range_loop)]
 fn main() {
     const N: usize = 128;
 
