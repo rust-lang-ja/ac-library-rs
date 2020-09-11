@@ -34,7 +34,8 @@ where
     }
 }
 
-pub struct Edge<Cap> {
+#[derive(Debug, PartialEq, Eq)]
+pub struct Edge<Cap: Integral> {
     pub from: usize,
     pub to: usize,
     pub cap: Cap,
@@ -221,4 +222,103 @@ struct _Edge<Cap> {
     to: usize,
     rev: usize,
     cap: Cap,
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{Edge, MfGraph};
+
+    #[test]
+    fn test_max_flow_wikipedia() {
+        // From https://commons.wikimedia.org/wiki/File:Min_cut.png
+        // Under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/deed.en
+        let mut graph = MfGraph::new(6);
+        assert_eq!(graph.add_edge(0, 1, 3), 0);
+        assert_eq!(graph.add_edge(0, 2, 3), 1);
+        assert_eq!(graph.add_edge(1, 2, 2), 2);
+        assert_eq!(graph.add_edge(1, 3, 3), 3);
+        assert_eq!(graph.add_edge(2, 4, 2), 4);
+        assert_eq!(graph.add_edge(3, 4, 4), 5);
+        assert_eq!(graph.add_edge(3, 5, 2), 6);
+        assert_eq!(graph.add_edge(4, 5, 3), 7);
+
+        assert_eq!(graph.flow(0, 5), 5);
+
+        let edges = graph.edges();
+        {
+            #[rustfmt::skip]
+            assert_eq!(
+                edges,
+                vec![
+                    Edge { from: 0, to: 1, cap: 3, flow: 3 },
+                    Edge { from: 0, to: 2, cap: 3, flow: 2 },
+                    Edge { from: 1, to: 2, cap: 2, flow: 0 },
+                    Edge { from: 1, to: 3, cap: 3, flow: 3 },
+                    Edge { from: 2, to: 4, cap: 2, flow: 2 },
+                    Edge { from: 3, to: 4, cap: 4, flow: 1 },
+                    Edge { from: 3, to: 5, cap: 2, flow: 2 },
+                    Edge { from: 4, to: 5, cap: 3, flow: 3 },
+                ]
+            );
+        }
+        assert_eq!(
+            graph.min_cut(0),
+            vec![true, false, true, false, false, false]
+        );
+    }
+
+    #[test]
+    fn test_max_flow_wikipedia_multiple_edges() {
+        // From https://commons.wikimedia.org/wiki/File:Min_cut.png
+        // Under CC BY-SA 3.0 https://creativecommons.org/licenses/by-sa/3.0/deed.en
+        let mut graph = MfGraph::new(6);
+        for &(u, v, c) in &[
+            (0, 1, 3),
+            (0, 2, 3),
+            (1, 2, 2),
+            (1, 3, 3),
+            (2, 4, 2),
+            (3, 4, 4),
+            (3, 5, 2),
+            (4, 5, 3),
+        ] {
+            for _ in 0..c {
+                graph.add_edge(u, v, 1);
+            }
+        }
+
+        assert_eq!(graph.flow(0, 5), 5);
+        assert_eq!(
+            graph.min_cut(0),
+            vec![true, false, true, false, false, false]
+        );
+    }
+
+    #[test]
+    fn test_max_flow_misawa() {
+        // Originally by @MiSawa
+        // From https://gist.github.com/MiSawa/47b1d99c372daffb6891662db1a2b686
+        let n = 100;
+
+        let mut graph = MfGraph::new((n + 1) * 2 + 5);
+        let (s, a, b, c, t) = (0, 1, 2, 3, 4);
+        graph.add_edge(s, a, 1);
+        graph.add_edge(s, b, 2);
+        graph.add_edge(b, a, 2);
+        graph.add_edge(c, t, 2);
+        for i in 0..n {
+            let i = 2 * i + 5;
+            for j in 0..2 {
+                for k in 2..4 {
+                    graph.add_edge(i + j, i + k, 3);
+                }
+            }
+        }
+        for j in 0..2 {
+            graph.add_edge(a, 5 + j, 3);
+            graph.add_edge(2 * n + 5 + j, c, 3);
+        }
+
+        assert_eq!(graph.flow(s, t), 2);
+    }
 }
