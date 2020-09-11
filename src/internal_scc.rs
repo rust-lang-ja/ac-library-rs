@@ -5,7 +5,7 @@ pub struct Csr<E> {
 
 impl<E> Csr<E>
 where
-    E: Copy + Clone,
+    E: Copy,
 {
     pub fn new(n: usize, edges: &[(usize, E)], init: E) -> Self {
         let mut csr = Csr {
