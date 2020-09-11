@@ -18,7 +18,7 @@ impl TwoSAT {
         self.scc
             .add_edge(2 * i + if f { 0 } else { 1 }, 2 * j + if g { 1 } else { 0 });
         self.scc
-            .add_edge(2 * j + if f { 0 } else { 1 }, 2 * i + if g { 1 } else { 0 });
+            .add_edge(2 * j + if g { 0 } else { 1 }, 2 * i + if f { 1 } else { 0 });
     }
     pub fn satisfiable(&mut self) -> bool {
         let id = self.scc.scc_ids().1;
