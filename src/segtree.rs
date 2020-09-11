@@ -25,7 +25,6 @@ impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
         ret
     }
 }
-
 impl<M: Monoid> Segtree<M> {
     pub fn set(&mut self, mut p: usize, x: M::S) {
         assert!(p <= self.n);
