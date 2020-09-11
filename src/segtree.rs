@@ -1,10 +1,30 @@
 use crate::internal_bit::ceil_pow2;
+use crate::internal_type_traits::Integral;
+use std::cmp::max;
+use std::marker::PhantomData;
 
 // TODO Should I split monoid-related traits to another module?
 pub trait Monoid {
     type S: Copy;
     fn identity() -> Self::S;
     fn binary_operation(a: Self::S, b: Self::S) -> Self::S;
+}
+pub struct Max<S>(PhantomData<fn() -> S>);
+
+// TODO We should not restrict to integral
+impl<S> Monoid for Max<S>
+where
+    S: Integral,
+{
+    type S = S;
+
+    fn identity() -> Self::S {
+        S::min_value()
+    }
+
+    fn binary_operation(a: Self::S, b: Self::S) -> Self::S {
+        max(a, b)
+    }
 }
 
 impl<M: Monoid> Segtree<M> {
@@ -149,6 +169,16 @@ impl<M: Monoid> Segtree<M> {
     }
 }
 
+// Maybe we can use this someday
+// ```
+// for i in 0..=self.log {
+//     for j in 0..1 << i {
+//         print!("{}\t", self.d[(1 << i) + j]);
+//     }
+//     println!();
+// }
+// ```
+
 #[derive(Default)]
 pub struct Segtree<M>
 where
@@ -159,4 +189,81 @@ where
     size: usize,
     log: usize,
     d: Vec<M::S>,
+}
+
+#[cfg(test)]
+mod test {
+    use crate::segtree::Max;
+    use crate::Segtree;
+
+    #[test]
+    fn test_max_from_vec() {
+        let base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
+        let n = base.len();
+        let segtree: Segtree<Max<_>> = base.clone().into();
+        check_segtree(&base, &segtree);
+
+        let mut segtree = Segtree::<Max<_>>::new(n);
+        let mut internal = vec![i32::min_value(); n];
+        for i in 0..n {
+            segtree.set(i, base[i]);
+            internal[i] = base[i];
+            check_segtree(&internal, &segtree);
+        }
+
+        segtree.set(6, 5);
+        internal[6] = 5;
+        check_segtree(&internal, &segtree);
+
+        segtree.set(6, 0);
+        internal[6] = 0;
+        check_segtree(&internal, &segtree);
+    }
+
+    fn check_segtree(base: &[i32], segtree: &Segtree<Max<i32>>) {
+        let n = base.len();
+        #[allow(clippy::needless_range_loop)]
+        for i in 0..n {
+            assert_eq!(segtree.get(i), base[i]);
+        }
+        for i in 0..=n {
+            for j in i..=n {
+                assert_eq!(
+                    segtree.prod(i, j),
+                    base[i..j].iter().max().copied().unwrap_or(i32::min_value())
+                );
+            }
+        }
+        assert_eq!(
+            segtree.all_prod(),
+            base.iter().max().copied().unwrap_or(i32::min_value())
+        );
+        for k in 0..=10 {
+            let f = |x| x < k;
+            for i in 0..=n {
+                assert_eq!(
+                    Some(segtree.max_right(i, f)),
+                    (i..=n)
+                        .filter(|&j| f(base[i..j]
+                            .iter()
+                            .max()
+                            .copied()
+                            .unwrap_or(i32::min_value())))
+                        .max()
+                );
+            }
+            for j in 0..=n {
+                assert_eq!(
+                    Some(segtree.min_left(j, f)),
+                    (0..=j)
+                        .filter(|&i| f(base[i..j]
+                            .iter()
+                            .max()
+                            .copied()
+                            .unwrap_or(i32::min_value())))
+                        .min()
+                );
+            }
+        }
+    }
 }
