@@ -1,56 +1,12 @@
 #![allow(dead_code)]
 use crate::internal_queue::SimpleQueue;
+use crate::internal_type_traits::Integral;
 use std::cmp::min;
 use std::iter;
-use std::ops::{Add, AddAssign, Sub, SubAssign};
-
-// Maybe it should be in a separate module
-pub trait MfCapacity:
-    Copy + Ord + Add<Output = Self> + AddAssign + Sub<Output = Self> + SubAssign
-{
-    fn zero() -> Self;
-    fn max_value() -> Self;
-}
-
-impl MfCapacity for i32 {
-    fn zero() -> Self {
-        0
-    }
-    fn max_value() -> Self {
-        std::i32::MAX
-    }
-}
-
-impl MfCapacity for i64 {
-    fn zero() -> Self {
-        0
-    }
-    fn max_value() -> Self {
-        std::i64::MAX
-    }
-}
-
-impl MfCapacity for u32 {
-    fn zero() -> Self {
-        0
-    }
-    fn max_value() -> Self {
-        std::u32::MAX
-    }
-}
-
-impl MfCapacity for u64 {
-    fn zero() -> Self {
-        0
-    }
-    fn max_value() -> Self {
-        std::u64::MAX
-    }
-}
 
 impl<Cap> MfGraph<Cap>
 where
-    Cap: MfCapacity,
+    Cap: Integral,
 {
     pub fn new(n: usize) -> MfGraph<Cap> {
         MfGraph {
@@ -87,7 +43,7 @@ pub struct Edge<Cap> {
 
 impl<Cap> MfGraph<Cap>
 where
-    Cap: MfCapacity,
+    Cap: Integral,
 {
     pub fn get_edge(&self, i: usize) -> Edge<Cap> {
         let m = self.pos.len();
@@ -200,7 +156,7 @@ struct FlowCalculator<'a, Cap> {
 
 impl<Cap> FlowCalculator<'_, Cap>
 where
-    Cap: MfCapacity,
+    Cap: Integral,
 {
     fn bfs(&mut self) {
         self.level.iter_mut().for_each(|e| *e = -1);
