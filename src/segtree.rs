@@ -1,14 +1,15 @@
 use crate::internal_bit::ceil_pow2;
 
+// TODO Should I split monoid-related traits to another module?
 pub trait Monoid {
     type S: Copy;
-    const IDENTITY: Self::S;
+    fn identity() -> Self::S;
     fn binary_operation(a: Self::S, b: Self::S) -> Self::S;
 }
 
 impl<M: Monoid> Segtree<M> {
     pub fn new(n: usize) -> Segtree<M> {
-        vec![M::IDENTITY; n].into()
+        vec![M::identity(); n].into()
     }
 }
 impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
@@ -16,10 +17,10 @@ impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
         let n = v.len();
         let log = ceil_pow2(n as u32) as usize;
         let size = 1 << log;
-        let mut d = vec![M::IDENTITY; 2 * size];
+        let mut d = vec![M::identity(); 2 * size];
         d[size..(size + n)].clone_from_slice(&v);
         let mut ret = Segtree { n, size, log, d };
-        for i in (1..n).rev() {
+        for i in (1..size).rev() {
             ret.update(i);
         }
         ret
@@ -42,8 +43,8 @@ impl<M: Monoid> Segtree<M> {
 
     pub fn prod(&self, mut l: usize, mut r: usize) -> M::S {
         assert!(l <= r && r <= self.n);
-        let mut sml = M::IDENTITY;
-        let mut smr = M::IDENTITY;
+        let mut sml = M::identity();
+        let mut smr = M::identity();
         l += self.size;
         r += self.size;
 
@@ -72,12 +73,12 @@ impl<M: Monoid> Segtree<M> {
         F: Fn(M::S) -> bool,
     {
         assert!(l <= self.n);
-        assert!(f(M::IDENTITY));
+        assert!(f(M::identity()));
         if l == self.n {
             return self.n;
         }
         l += self.size;
-        let mut sm = M::IDENTITY;
+        let mut sm = M::identity();
         while {
             // do
             while l % 2 == 0 {
@@ -110,12 +111,12 @@ impl<M: Monoid> Segtree<M> {
         F: Fn(M::S) -> bool,
     {
         assert!(r <= self.n);
-        assert!(f(M::IDENTITY));
+        assert!(f(M::identity()));
         if r == 0 {
             return 0;
         }
         r += self.size;
-        let mut sm = M::IDENTITY;
+        let mut sm = M::identity();
         while {
             // do
             r -= 1;
