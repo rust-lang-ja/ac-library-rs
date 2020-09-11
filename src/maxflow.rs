@@ -295,6 +295,7 @@ mod test {
     }
 
     #[test]
+    #[allow(clippy::many_single_char_names)]
     fn test_max_flow_misawa() {
         // Originally by @MiSawa
         // From https://gist.github.com/MiSawa/47b1d99c372daffb6891662db1a2b686
