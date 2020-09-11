@@ -26,8 +26,12 @@ impl<T> SimpleQueue<T> {
     }
 
     // Do we need mutable version?
-    pub(crate) fn front(&self) -> &T {
-        &self.payload[self.pos]
+    pub(crate) fn front(&self) -> Option<&T> {
+        if self.pos < self.payload.len() {
+            Some(&self.payload[self.pos])
+        } else {
+            None
+        }
     }
 
     pub(crate) fn clear(&mut self) {
