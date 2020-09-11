@@ -158,7 +158,7 @@ where
         let mut que = SimpleQueue::default();
         que.push(s);
         while !que.empty() {
-            let &p = que.front();
+            let &p = que.front().unwrap();
             que.pop();
             visited[p] = true;
             for e in &self.g[p] {
@@ -192,7 +192,7 @@ where
         self.que.clear();
         self.que.push(self.s);
         while !self.que.empty() {
-            let v = *self.que.front();
+            let v = *self.que.front().unwrap();
             self.que.pop();
             for e in &self.graph.g[v] {
                 if e.cap == Cap::zero() || self.level[e.to] >= 0 {
