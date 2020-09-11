@@ -118,13 +118,28 @@ where
         _re.cap = new_flow;
     }
 
+    /// `s != t` must hold, otherwise it panics.
     pub fn flow(&mut self, s: usize, t: usize) -> Cap {
         self.flow_with_capacity(s, t, Cap::max_value())
     }
+    /// # Parameters
+    /// * `s != t` must hold, otherwise it panics.
+    /// * `flow_limit >= 0`
     pub fn flow_with_capacity(&mut self, s: usize, t: usize, flow_limit: Cap) -> Cap {
         let n_ = self._n;
         assert!(s < n_);
         assert!(t < n_);
+        // By the definition of max flow in appendix.html, this function should return 0
+        // when the same vertices are provided.  On the other hand, it is reasonable to
+        // return infinity-like value too, which is what the original implementation
+        // (and this implementation without the following assertion) does.
+        // Since either return value is confusing, we'd rather deny the parameters
+        // of the two same vertices.
+        // For more details, see https://github.com/rust-lang-ja/ac-library-rs/pull/24#discussion_r485343451
+        // and https://github.com/atcoder/ac-library/issues/5 .
+        assert_ne!(s, t);
+        // Additional constraint
+        assert!(Cap::zero() <= flow_limit);
 
         let mut calc = FlowCalculator {
             graph: self,
