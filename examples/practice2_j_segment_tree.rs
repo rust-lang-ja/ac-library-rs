@@ -8,7 +8,7 @@ fn main() {
 
     let n: usize = input.next().unwrap().parse().unwrap();
     let q: usize = input.next().unwrap().parse().unwrap();
-    let mut segtree = Segtree::<Max<u32>>::new(n+1);
+    let mut segtree = Segtree::<Max<u32>>::new(n + 1);
     for i in 1..=n {
         segtree.set(i, input.next().unwrap().parse().unwrap());
     }
@@ -22,7 +22,7 @@ fn main() {
             2 => {
                 let l = input.next().unwrap().parse().unwrap();
                 let r: usize = input.next().unwrap().parse().unwrap();
-                println!("{}", segtree.prod(l, r+1));
+                println!("{}", segtree.prod(l, r + 1));
             }
             3 => {
                 let x = input.next().unwrap().parse().unwrap();
