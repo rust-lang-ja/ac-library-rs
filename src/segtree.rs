@@ -224,6 +224,7 @@ mod test {
         check_segtree(&internal, &segtree);
     }
 
+    //noinspection DuplicatedCode
     fn check_segtree(base: &[i32], segtree: &Segtree<Max<i32>>) {
         let n = base.len();
         #[allow(clippy::needless_range_loop)]

@@ -285,3 +285,106 @@ where
         self.lz[k] = F::identity_map();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{LazySegtree, MapMonoid, Max};
+
+    struct MaxAdd;
+    impl MapMonoid for MaxAdd {
+        type M = Max<i32>;
+        type F = i32;
+
+        fn identity_map() -> Self::F {
+            0
+        }
+
+        fn mapping(f: i32, x: i32) -> i32 {
+            f + x
+        }
+
+        fn composition(f: i32, g: i32) -> i32 {
+            f + g
+        }
+    }
+
+    #[test]
+    fn test_max_add_lazy_segtree() {
+        let base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
+        let n = base.len();
+        let mut segtree: LazySegtree<MaxAdd> = base.clone().into();
+        check_segtree(&base, &mut segtree);
+
+        let mut segtree = LazySegtree::<MaxAdd>::new(n);
+        let mut internal = vec![i32::min_value(); n];
+        for i in 0..n {
+            segtree.set(i, base[i]);
+            internal[i] = base[i];
+            check_segtree(&internal, &mut segtree);
+        }
+
+        segtree.set(6, 5);
+        internal[6] = 5;
+        check_segtree(&internal, &mut segtree);
+
+        segtree.apply(5, 1);
+        internal[5] += 1;
+        check_segtree(&internal, &mut segtree);
+
+        segtree.set(6, 0);
+        internal[6] = 0;
+        check_segtree(&internal, &mut segtree);
+
+        segtree.apply_range(3, 8, 2);
+        internal[3..8].iter_mut().for_each(|e| *e += 2);
+        check_segtree(&internal, &mut segtree);
+    }
+
+    //noinspection DuplicatedCode
+    fn check_segtree(base: &[i32], segtree: &mut LazySegtree<MaxAdd>) {
+        let n = base.len();
+        #[allow(clippy::needless_range_loop)]
+        for i in 0..n {
+            assert_eq!(segtree.get(i), base[i]);
+        }
+        for i in 0..=n {
+            for j in i..=n {
+                assert_eq!(
+                    segtree.prod(i, j),
+                    base[i..j].iter().max().copied().unwrap_or(i32::min_value())
+                );
+            }
+        }
+        assert_eq!(
+            segtree.all_prod(),
+            base.iter().max().copied().unwrap_or(i32::min_value())
+        );
+        for k in 0..=10 {
+            let f = |x| x < k;
+            for i in 0..=n {
+                assert_eq!(
+                    Some(segtree.max_right(i, f)),
+                    (i..=n)
+                        .filter(|&j| f(base[i..j]
+                            .iter()
+                            .max()
+                            .copied()
+                            .unwrap_or(i32::min_value())))
+                        .max()
+                );
+            }
+            for j in 0..=n {
+                assert_eq!(
+                    Some(segtree.min_left(j, f)),
+                    (0..=j)
+                        .filter(|&i| f(base[i..j]
+                            .iter()
+                            .max()
+                            .copied()
+                            .unwrap_or(i32::min_value())))
+                        .min()
+                );
+            }
+        }
+    }
+}
