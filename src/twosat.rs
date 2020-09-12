@@ -1,13 +1,13 @@
 use crate::internal_scc;
 
-pub struct TwoSAT {
+pub struct TwoSat {
     n: usize,
     scc: internal_scc::SccGraph,
     answer: Vec<bool>,
 }
-impl TwoSAT {
+impl TwoSat {
     pub fn new(n: usize) -> Self {
-        TwoSAT {
+        TwoSat {
             n,
             answer: vec![false; n],
             scc: internal_scc::SccGraph::new(2 * n),
@@ -47,7 +47,7 @@ mod tests {
         let x = [1, 2, 0i32];
         let y = [4, 5, 6];
 
-        let mut t = TwoSAT::new(n);
+        let mut t = TwoSat::new(n);
 
         for i in 0..n {
             for j in i + 1..n {
@@ -86,7 +86,7 @@ mod tests {
         let x = [1, 2, 0i32];
         let y = [4, 5, 6];
 
-        let mut t = TwoSAT::new(n);
+        let mut t = TwoSat::new(n);
 
         for i in 0..n {
             for j in i + 1..n {
