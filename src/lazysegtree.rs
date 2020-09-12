@@ -286,6 +286,32 @@ where
     }
 }
 
+// TODO is it useful?
+use std::fmt::{Debug, Error, Formatter, Write};
+impl<F> Debug for LazySegtree<F>
+where
+    F: MapMonoid,
+    F::F: Debug,
+    <F::M as Monoid>::S: Debug,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        for i in 0..self.log {
+            for j in 0..1 << i {
+                f.write_fmt(format_args!(
+                    "{:?}[{:?}]\t",
+                    self.d[(1 << i) + j],
+                    self.lz[(1 << i) + j]
+                ))?;
+            }
+            f.write_char('\n')?;
+        }
+        for i in 0..self.size {
+            f.write_fmt(format_args!("{:?}\t", self.d[self.size + i]))?;
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{LazySegtree, MapMonoid, Max};
