@@ -117,8 +117,8 @@ impl<M: Modulus> ModIntBase for StaticModInt<M> {
 pub trait Modulus: 'static + Copy + Eq {
     const VALUE: u32;
     const HINT_VALUE_IS_PRIME: bool;
-    // does not work well
-    //const _STATIC_ASSERT_VALUE_IS_NON_ZERO: () = [()][(Self::VALUE == 0) as usize];
+
+    fn butterfly_cache() -> &'static LocalKey<RefCell<Option<ButterflyCache<Self>>>>;
 }
 
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -127,6 +127,13 @@ pub enum Mod1000000007 {}
 impl Modulus for Mod1000000007 {
     const VALUE: u32 = 1_000_000_007;
     const HINT_VALUE_IS_PRIME: bool = true;
+
+    fn butterfly_cache() -> &'static LocalKey<RefCell<Option<ButterflyCache<Self>>>> {
+        thread_local! {
+            static BUTTERFLY_CACHE: RefCell<Option<ButterflyCache<Mod1000000007>>> = RefCell::default();
+        }
+        &BUTTERFLY_CACHE
+    }
 }
 
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
@@ -135,6 +142,18 @@ pub enum Mod998244353 {}
 impl Modulus for Mod998244353 {
     const VALUE: u32 = 998_244_353;
     const HINT_VALUE_IS_PRIME: bool = true;
+
+    fn butterfly_cache() -> &'static LocalKey<RefCell<Option<ButterflyCache<Self>>>> {
+        thread_local! {
+            static BUTTERFLY_CACHE: RefCell<Option<ButterflyCache<Mod998244353>>> = RefCell::default();
+        }
+        &BUTTERFLY_CACHE
+    }
+}
+
+pub struct ButterflyCache<M> {
+    pub(crate) sum_e: Vec<StaticModInt<M>>,
+    pub(crate) sum_ie: Vec<StaticModInt<M>>,
 }
 
 #[derive(Copy, Clone, Eq, PartialEq)]
