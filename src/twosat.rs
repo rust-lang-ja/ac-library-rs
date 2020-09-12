@@ -30,7 +30,7 @@ impl TwoSat {
         }
         true
     }
-    pub fn answer(&self) -> &Vec<bool> {
+    pub fn answer(&self) -> &[bool] {
         &self.answer
     }
 }
