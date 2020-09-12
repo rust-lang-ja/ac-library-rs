@@ -20,6 +20,7 @@ pub(crate) mod internal_type_traits;
 
 pub use dsu::Dsu;
 pub use fenwicktree::FenwickTree;
+pub use lazysegtree::{LazySegtree, MapMonoid};
 pub use math::{crt, floor_sum, inv_mod, pow_mod};
 pub use mincostflow::MinCostFlowGraph;
 pub use modint::{
