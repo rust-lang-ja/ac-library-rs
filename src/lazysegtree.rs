@@ -3,7 +3,7 @@ use crate::Monoid;
 
 pub trait MapMonoid {
     type M: Monoid;
-    type F: Copy;
+    type F: Clone;
     // type S = <Self::M as Monoid>::S;
     fn identity_element() -> <Self::M as Monoid>::S {
         Self::M::identity()
@@ -274,14 +274,14 @@ where
         self.d[k] = F::binary_operation(self.d[2 * k].clone(), self.d[2 * k + 1].clone());
     }
     fn all_apply(&mut self, k: usize, f: F::F) {
-        self.d[k] = F::mapping(f, self.d[k].clone());
+        self.d[k] = F::mapping(f.clone(), self.d[k].clone());
         if k < self.size {
-            self.lz[k] = F::composition(f, self.lz[k]);
+            self.lz[k] = F::composition(f, self.lz[k].clone());
         }
     }
     fn push(&mut self, k: usize) {
-        self.all_apply(2 * k, self.lz[k]);
-        self.all_apply(2 * k + 1, self.lz[k]);
+        self.all_apply(2 * k, self.lz[k].clone());
+        self.all_apply(2 * k + 1, self.lz[k].clone());
         self.lz[k] = F::identity_map();
     }
 }
