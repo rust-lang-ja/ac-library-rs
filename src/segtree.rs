@@ -196,7 +196,7 @@ where
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use crate::segtree::Max;
     use crate::Segtree;
 
