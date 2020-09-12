@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 
 // TODO Should I split monoid-related traits to another module?
 pub trait Monoid {
-    type S: Copy;
+    type S: Clone;
     fn identity() -> Self::S;
     fn binary_operation(a: Self::S, b: Self::S) -> Self::S;
 }
@@ -63,7 +63,7 @@ impl<M: Monoid> Segtree<M> {
 
     pub fn get(&self, p: usize) -> M::S {
         assert!(p < self.n);
-        self.d[p + self.size]
+        self.d[p + self.size].clone()
     }
 
     pub fn prod(&self, mut l: usize, mut r: usize) -> M::S {
@@ -75,12 +75,12 @@ impl<M: Monoid> Segtree<M> {
 
         while l < r {
             if l & 1 != 0 {
-                sml = M::binary_operation(sml, self.d[l]);
+                sml = M::binary_operation(sml, self.d[l].clone());
                 l += 1;
             }
             if r & 1 != 0 {
                 r -= 1;
-                smr = M::binary_operation(self.d[r], smr);
+                smr = M::binary_operation(self.d[r].clone(), smr);
             }
             l >>= 1;
             r >>= 1;
@@ -90,7 +90,7 @@ impl<M: Monoid> Segtree<M> {
     }
 
     pub fn all_prod(&self) -> M::S {
-        self.d[1]
+        self.d[1].clone()
     }
 
     pub fn max_right<F>(&self, mut l: usize, f: F) -> usize
@@ -109,18 +109,18 @@ impl<M: Monoid> Segtree<M> {
             while l % 2 == 0 {
                 l >>= 1;
             }
-            if !f(M::binary_operation(sm, self.d[l])) {
+            if !f(M::binary_operation(sm.clone(), self.d[l].clone())) {
                 while l < self.size {
                     l *= 2;
-                    let res = M::binary_operation(sm, self.d[l]);
-                    if f(res) {
+                    let res = M::binary_operation(sm.clone(), self.d[l].clone());
+                    if f(res.clone()) {
                         sm = res;
                         l += 1;
                     }
                 }
                 return l - self.size;
             }
-            sm = M::binary_operation(sm, self.d[l]);
+            sm = M::binary_operation(sm.clone(), self.d[l].clone());
             l += 1;
             // while
             {
@@ -148,18 +148,18 @@ impl<M: Monoid> Segtree<M> {
             while r > 1 && r % 2 == 1 {
                 r >>= 1;
             }
-            if !f(M::binary_operation(self.d[r], sm)) {
+            if !f(M::binary_operation(self.d[r].clone(), sm.clone())) {
                 while r < self.size {
                     r = 2 * r + 1;
-                    let res = M::binary_operation(self.d[r], sm);
-                    if f(res) {
+                    let res = M::binary_operation(self.d[r].clone(), sm.clone());
+                    if f(res.clone()) {
                         sm = res;
                         r -= 1;
                     }
                 }
                 return r + 1 - self.size;
             }
-            sm = M::binary_operation(self.d[r], sm);
+            sm = M::binary_operation(self.d[r].clone(), sm.clone());
             // while
             {
                 let r = r as isize;
@@ -170,7 +170,7 @@ impl<M: Monoid> Segtree<M> {
     }
 
     fn update(&mut self, k: usize) {
-        self.d[k] = M::binary_operation(self.d[2 * k], self.d[2 * k + 1]);
+        self.d[k] = M::binary_operation(self.d[2 * k].clone(), self.d[2 * k + 1].clone());
     }
 }
 
