@@ -27,6 +27,11 @@ where
     }
 }
 
+impl<M: Monoid> Default for Segtree<M> {
+    fn default() -> Self {
+        Segtree::new(0)
+    }
+}
 impl<M: Monoid> Segtree<M> {
     pub fn new(n: usize) -> Segtree<M> {
         vec![M::identity(); n].into()
@@ -179,7 +184,6 @@ impl<M: Monoid> Segtree<M> {
 // }
 // ```
 
-#[derive(Default)]
 pub struct Segtree<M>
 where
     M: Monoid,
