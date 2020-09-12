@@ -37,6 +37,7 @@ impl TwoSAT {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::many_single_char_names)]
     use super::*;
     #[test]
     fn solve_alpc_h_sample1() {
