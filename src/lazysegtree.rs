@@ -220,7 +220,7 @@ impl<F: MapMonoid> LazySegtree<F> {
         assert!(r <= self.n);
         assert!(g(F::identity_element()));
         if r == 0 {
-            return self.n;
+            return 0;
         }
         r += self.size;
         for i in (1..=self.log).rev() {
