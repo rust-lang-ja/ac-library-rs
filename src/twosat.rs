@@ -15,10 +15,8 @@ impl TwoSat {
     }
     pub fn add_clause(&mut self, i: usize, f: bool, j: usize, g: bool) {
         assert!(i < self.n && j < self.n);
-        self.scc
-            .add_edge(2 * i + if f { 0 } else { 1 }, 2 * j + if g { 1 } else { 0 });
-        self.scc
-            .add_edge(2 * j + if g { 0 } else { 1 }, 2 * i + if f { 1 } else { 0 });
+        self.scc.add_edge(2 * i + !f as usize, 2 * j + g as usize);
+        self.scc.add_edge(2 * j + !g as usize, 2 * i + f as usize);
     }
     pub fn satisfiable(&mut self) -> bool {
         let id = self.scc.scc_ids().1;
