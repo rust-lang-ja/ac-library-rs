@@ -201,7 +201,7 @@ mod test {
     use crate::Segtree;
 
     #[test]
-    fn test_max_from_vec() {
+    fn test_max_segtree() {
         let base = vec![3, 1, 4, 1, 5, 9, 2, 6, 5, 3];
         let n = base.len();
         let segtree: Segtree<Max<_>> = base.clone().into();
