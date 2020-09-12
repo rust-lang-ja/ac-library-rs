@@ -9,8 +9,8 @@ pub trait Monoid {
     fn identity() -> Self::S;
     fn binary_operation(a: Self::S, b: Self::S) -> Self::S;
 }
-pub struct Max<S>(PhantomData<fn() -> S>);
 
+pub struct Max<S>(PhantomData<fn() -> S>);
 // TODO We should not restrict to integral
 impl<S> Monoid for Max<S>
 where
