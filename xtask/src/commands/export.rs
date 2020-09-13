@@ -43,7 +43,7 @@ pub(crate) fn run(opt: OptExport, shell: &mut Shell) -> anyhow::Result<()> {
     let syn::File { items, .. } =
         syn::parse_file(&code).with_context(|| format!("`{}` is broken", src_path.display()))?;
 
-    let mut acc = "".to_owned();
+    let mut acc = vec!["".to_owned(), "".to_owned()];
 
     for item in items {
         match item {
@@ -55,6 +55,7 @@ pub(crate) fn run(opt: OptExport, shell: &mut Shell) -> anyhow::Result<()> {
                 semi: Some(_),
                 ..
             }) => {
+                let acc = &mut acc[1];
                 let path = src_path
                     .with_file_name(ident.to_string())
                     .with_extension("rs");
@@ -75,32 +76,33 @@ pub(crate) fn run(opt: OptExport, shell: &mut Shell) -> anyhow::Result<()> {
                     });
 
                 for attr in attrs {
-                    acc += &attr.to_token_stream().to_string();
-                    acc += "\n";
+                    *acc += &attr.to_token_stream().to_string();
+                    *acc += "\n";
                 }
-                acc += &vis.to_token_stream().to_string();
-                acc += " mod ";
-                acc += &ident.to_string();
-                acc += " {\n";
+                *acc += &vis.to_token_stream().to_string();
+                *acc += " mod ";
+                *acc += &ident.to_string();
+                *acc += " {\n";
                 if is_safe_to_indent {
                     for line in content.lines() {
-                        acc += "    ";
-                        acc += line;
-                        acc += "\n";
+                        *acc += "    ";
+                        *acc += line;
+                        *acc += "\n";
                     }
                 } else {
-                    acc += &content;
+                    *acc += &content;
                 }
-                acc += "}\n";
+                *acc += "}\n";
             }
             item => {
-                acc += &item.to_token_stream().to_string();
-                acc += "\n";
+                let acc = &mut acc[0];
+                *acc += &item.to_token_stream().to_string();
+                *acc += "\n";
             }
         }
     }
 
-    acc = rustfmt(&acc)?;
+    let acc = rustfmt(&acc.join("\n"))?;
 
     shell.status(
         "Expanded",
