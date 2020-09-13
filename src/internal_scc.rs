@@ -35,7 +35,6 @@ struct _Edge {
 /// Reference:
 /// R. Tarjan,
 /// Depth-First Search and Linear Graph Algorithms
-#[derive(Default)]
 pub struct SccGraph {
     n: usize,
     edges: Vec<(usize, _Edge)>,
