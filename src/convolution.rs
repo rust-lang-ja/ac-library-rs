@@ -1,8 +1,14 @@
 use crate::{
     internal_bit, internal_math,
-    modint::{ButterflyCache, Modulus, StaticModInt},
+    modint::{ButterflyCache, Modulus, RemEuclidU32, StaticModInt},
 };
-use std::{cell::RefCell, cmp, thread::LocalKey};
+use std::{
+    cell::RefCell,
+    cmp,
+    convert::{TryFrom, TryInto as _},
+    fmt,
+    thread::LocalKey,
+};
 
 #[allow(clippy::many_single_char_names)]
 pub fn convolution<M: Modulus>(
@@ -41,6 +47,26 @@ pub fn convolution<M: Modulus>(
         *a *= iz;
     }
     a
+}
+
+pub fn convolution_raw<
+    T: RemEuclidU32 + TryFrom<u32, Error = E> + Clone,
+    E: fmt::Debug,
+    M: Modulus,
+>(
+    a: &[T],
+    b: &[T],
+) -> Vec<T> {
+    let a = a.iter().cloned().map(Into::into).collect::<Vec<_>>();
+    let b = b.iter().cloned().map(Into::into).collect::<Vec<_>>();
+    convolution::<M>(&a, &b)
+        .into_iter()
+        .map(|z| {
+            z.val()
+                .try_into()
+                .expect("the numeric type is smaller than the modulus")
+        })
+        .collect()
 }
 
 #[allow(clippy::many_single_char_names)]
@@ -84,17 +110,9 @@ pub fn convolution_i64(a: &[i64], b: &[i64]) -> Vec<i64> {
     let i2 = internal_math::inv_gcd(M1M3 as _, M2 as _).1;
     let i3 = internal_math::inv_gcd(M1M2 as _, M3 as _).1;
 
-    let (c1, c2, c3) = {
-        fn c<M: Modulus>(a: &[i64], b: &[i64]) -> Vec<i64> {
-            let a = a.iter().copied().map(Into::into).collect::<Vec<_>>();
-            let b = b.iter().copied().map(Into::into).collect::<Vec<_>>();
-            convolution::<M>(&a, &b)
-                .into_iter()
-                .map(|z| z.val().into())
-                .collect()
-        }
-        (c::<M1>(a, b), c::<M2>(a, b), c::<M3>(a, b))
-    };
+    let c1 = convolution_raw::<i64, _, M1>(a, b);
+    let c2 = convolution_raw::<i64, _, M2>(a, b);
+    let c3 = convolution_raw::<i64, _, M3>(a, b);
 
     c1.into_iter()
         .zip(c2)
