@@ -21,6 +21,7 @@ pub(crate) mod internal_type_traits;
 pub use dsu::Dsu;
 pub use fenwicktree::FenwickTree;
 pub use math::{crt, floor_sum, inv_mod, pow_mod};
+pub use maxflow::{Edge, MfGraph};
 pub use mincostflow::MinCostFlowGraph;
 pub use modint::{
     Barrett, DefaultId, DynamicModInt, Id, Mod1000000007, Mod998244353, ModInt, ModInt1000000007,
