@@ -1,13 +1,32 @@
+macro_rules! modulus {
+    ($($name:ident),*) => {
+        $(
+            #[derive(Copy, Clone, Eq, PartialEq)]
+            enum $name {}
+
+            impl Modulus for $name {
+                const VALUE: u32 = $name as _;
+                const HINT_VALUE_IS_PRIME: bool = true;
+
+                fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<crate::modint::ButterflyCache<Self>>>> {
+                    thread_local! {
+                        static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<crate::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
+                    }
+                    &BUTTERFLY_CACHE
+                }
+            }
+        )*
+    };
+}
+
 use crate::{
     internal_bit, internal_math,
     modint::{ButterflyCache, Modulus, RemEuclidU32, StaticModInt},
 };
 use std::{
-    cell::RefCell,
     cmp,
     convert::{TryFrom, TryInto as _},
     fmt,
-    thread::LocalKey,
 };
 
 #[allow(clippy::many_single_char_names)]
@@ -77,28 +96,7 @@ pub fn convolution_i64(a: &[i64], b: &[i64]) -> Vec<i64> {
     const M1M2: u64 = M1 * M2;
     const M1M2M3: u64 = M1M2.wrapping_mul(M3);
 
-    macro_rules! moduli {
-        ($($name:ident),*) => {
-            $(
-                #[derive(Copy, Clone, Eq, PartialEq)]
-                enum $name {}
-
-                impl Modulus for $name {
-                    const VALUE: u32 = $name as _;
-                    const HINT_VALUE_IS_PRIME: bool = true;
-
-                    fn butterfly_cache() -> &'static LocalKey<RefCell<Option<ButterflyCache<Self>>>> {
-                        thread_local! {
-                            static BUTTERFLY_CACHE: RefCell<Option<ButterflyCache<$name>>> = RefCell::default();
-                        }
-                        &BUTTERFLY_CACHE
-                    }
-                }
-            )*
-        };
-    }
-
-    moduli!(M1, M2, M3);
+    modulus!(M1, M2, M3);
 
     if a.is_empty() || b.is_empty() {
         return vec![];
@@ -229,4 +227,86 @@ fn prepare<M: Modulus>() -> ButterflyCache<M> {
         })
         .collect();
     ButterflyCache { sum_e, sum_ie }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::modint::{Mod998244353, Modulus, StaticModInt};
+    use rand::{rngs::ThreadRng, Rng as _};
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L73-L85
+    #[test]
+    fn mid() {
+        const N: usize = 1234;
+        const M: usize = 2345;
+
+        let mut rng = rand::thread_rng();
+        let mut gen_values = |n| gen_values::<Mod998244353>(&mut rng, n);
+        let (a, b) = (gen_values(N), gen_values(M));
+        assert_eq!(conv_naive(&a, &b), super::convolution(&a, &b));
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L87-L118
+    #[test]
+    fn simple_s_mod() {
+        const M1: u32 = 998_244_353;
+        const M2: u32 = 924_844_033;
+
+        modulus!(M1, M2);
+
+        fn test<M: Modulus>(rng: &mut ThreadRng) {
+            let mut gen_values = |n| gen_values::<Mod998244353>(rng, n);
+            for (n, m) in (1..20).flat_map(|i| (1..20).map(move |j| (i, j))) {
+                let (a, b) = (gen_values(n), gen_values(m));
+                assert_eq!(conv_naive(&a, &b), super::convolution(&a, &b));
+            }
+        }
+
+        let mut rng = rand::thread_rng();
+        test::<M1>(&mut rng);
+        test::<M2>(&mut rng);
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L358-L371
+    #[test]
+    fn conv641() {
+        const M: u32 = 641;
+        modulus!(M);
+
+        let mut rng = rand::thread_rng();
+        let mut gen_values = |n| gen_values::<M>(&mut rng, n);
+        let (a, b) = (gen_values(64), gen_values(65));
+        assert_eq!(conv_naive(&a, &b), super::convolution(&a, &b));
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L373-L386
+    #[test]
+    fn conv18433() {
+        const M: u32 = 18433;
+        modulus!(M);
+
+        let mut rng = rand::thread_rng();
+        let mut gen_values = |n| gen_values::<M>(&mut rng, n);
+        let (a, b) = (gen_values(1024), gen_values(1025));
+        assert_eq!(conv_naive(&a, &b), super::convolution(&a, &b));
+    }
+
+    #[allow(clippy::many_single_char_names)]
+    fn conv_naive<M: Modulus>(
+        a: &[StaticModInt<M>],
+        b: &[StaticModInt<M>],
+    ) -> Vec<StaticModInt<M>> {
+        let (n, m) = (a.len(), b.len());
+        let mut c = vec![StaticModInt::raw(0); n + m - 1];
+        for (i, j) in (0..n).flat_map(|i| (0..m).map(move |j| (i, j))) {
+            c[i + j] += a[i] * b[j];
+        }
+        c
+    }
+
+    fn gen_values<M: Modulus>(rng: &mut ThreadRng, n: usize) -> Vec<StaticModInt<M>> {
+        (0..n)
+            .map(|_| StaticModInt::raw(rng.gen_range(0, M::VALUE)))
+            .collect()
+    }
 }
