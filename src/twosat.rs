@@ -73,7 +73,14 @@ mod tests {
                 res.push(y[i]);
             }
         }
-        assert_eq!(res, [4, 2, 0]);
+
+        //Check the min distance between flags
+        res.sort();
+        let mut min_distance = i32::max_value();
+        for i in 1..res.len() {
+            min_distance = std::cmp::min(min_distance, res[i] - res[i - 1]);
+        }
+        assert!(min_distance >= d);
     }
 
     #[test]
