@@ -1,5 +1,6 @@
 use crate::internal_scc;
 
+#[derive(Default)]
 pub struct TwoSat {
     n: usize,
     scc: internal_scc::SccGraph,
