@@ -19,9 +19,13 @@ def output_file(filename, output_comment, output_test):
         res.append('mod {}{{'.format(filename))
 
         for line in f:
-            if not output_test and line.strip()=='#[cfg(test)]':
+            if not output_test and line.strip() == '#[cfg(test)]':
+                # TODO
+                # Find more better way.
                 break
             if not output_comment and line.strip().startswith("//"):
+                # TODO
+                # Find more better way.
                 continue
             res.append(line.rstrip())
 
@@ -65,6 +69,7 @@ for i in output_list:
     output_data.extend(buf)
 
 for i in output_list:
+    # Modules that begin with 'internal' are for internal use, so they are not declared.
     if not i.startswith('internal'):
         output_data.append('use {}::*;'.format(i))
 
