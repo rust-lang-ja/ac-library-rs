@@ -3,7 +3,30 @@
 import sys
 import getopt
 
-opt_list = ['output-comment', 'output-test', ]
+usage = '''Usage:expand.py [options] <output modules>
+Output Modules:
+    convolution
+    dsu
+    fenwicktree
+    lazysegtree
+    math
+    maxflow
+    mincostflow
+    modint
+    scc
+    segtree
+    string
+    twosat
+
+You can select multiple modules for <output modules>
+    e.g.)expand.py math segtree
+
+Options:
+    -c  --output_comment    output comment
+    -t  --output_test       output test code
+    -h  --help              print help
+'''
+opt_list = ['output-comment', 'output-test', 'help']
 output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
                    'fenwicktree', 'math', 'modint', 'maxflow', 'dsu', 'mincostflow', 'string', 'internal_bit', 'internal_math', 'internal_type_traits', 'internal_scc', 'internal_queue')
 dependency_list = {'lazysegtree': ('internal_bit',), 'segtree': ('internal_bit',), 'convolution': ('internal_bit,modint',), 'math': ('internal_math',), 'modint': (
@@ -34,9 +57,10 @@ def output_file(filename, output_comment, output_test):
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'tc', opt_list)
+    opts, args = getopt.getopt(sys.argv[1:], 'tch', opt_list)
 except getopt.GetoptError as e:
     print(e)
+    print(usage)
     sys.exit(2)
 
 output_comment = False
@@ -47,6 +71,9 @@ for o, v in opts:
         output_comment = True
     if o == '--output-test' or o == '-t':
         output_test = True
+    if o == '--help' or o == '-h':
+        print(usage)
+        sys.exit(0)
 
 output_list = set()
 
@@ -54,6 +81,7 @@ while len(args) != 0:
     pop = args.pop()
     if not pop in output_list_all:
         print('invalid args:{}'.format(pop))
+        print(usage)
         sys.exit(2)
     output_list.add(pop)
     if pop in dependency_list:
