@@ -27,7 +27,7 @@ fn main() {
             3 => {
                 let x = input.next().unwrap().parse().unwrap();
                 let v = input.next().unwrap().parse().unwrap();
-                println!("{}", segtree.max_right(x, |a| a < v))
+                println!("{}", segtree.max_right(x, |a| a < &v))
             }
             _ => {}
         }

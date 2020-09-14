@@ -136,10 +136,10 @@ impl<M: Monoid> Segtree<M> {
 
     pub fn max_right<F>(&self, mut l: usize, f: F) -> usize
     where
-        F: Fn(M::S) -> bool,
+        F: Fn(&M::S) -> bool,
     {
         assert!(l <= self.n);
-        assert!(f(M::identity()));
+        assert!(f(&M::identity()));
         if l == self.n {
             return self.n;
         }
@@ -150,11 +150,11 @@ impl<M: Monoid> Segtree<M> {
             while l % 2 == 0 {
                 l >>= 1;
             }
-            if !f(M::binary_operation(&sm, &self.d[l])) {
+            if !f(&M::binary_operation(&sm, &self.d[l])) {
                 while l < self.size {
                     l *= 2;
                     let res = M::binary_operation(&sm, &self.d[l]);
-                    if f(res.clone()) {
+                    if f(&res) {
                         sm = res;
                         l += 1;
                     }
@@ -174,10 +174,10 @@ impl<M: Monoid> Segtree<M> {
 
     pub fn min_left<F>(&self, mut r: usize, f: F) -> usize
     where
-        F: Fn(M::S) -> bool,
+        F: Fn(&M::S) -> bool,
     {
         assert!(r <= self.n);
-        assert!(f(M::identity()));
+        assert!(f(&M::identity()));
         if r == 0 {
             return 0;
         }
@@ -189,11 +189,11 @@ impl<M: Monoid> Segtree<M> {
             while r > 1 && r % 2 == 1 {
                 r >>= 1;
             }
-            if !f(M::binary_operation(&self.d[r], &sm)) {
+            if !f(&M::binary_operation(&self.d[r], &sm)) {
                 while r < self.size {
                     r = 2 * r + 1;
                     let res = M::binary_operation(&self.d[r], &sm);
-                    if f(res.clone()) {
+                    if f(&res) {
                         sm = res;
                         r -= 1;
                     }
@@ -284,12 +284,12 @@ mod tests {
             base.iter().max().copied().unwrap_or(i32::min_value())
         );
         for k in 0..=10 {
-            let f = |x| x < k;
+            let f = |&x: &i32| x < k;
             for i in 0..=n {
                 assert_eq!(
                     Some(segtree.max_right(i, f)),
                     (i..=n)
-                        .filter(|&j| f(base[i..j]
+                        .filter(|&j| f(&base[i..j]
                             .iter()
                             .max()
                             .copied()
@@ -301,7 +301,7 @@ mod tests {
                 assert_eq!(
                     Some(segtree.min_left(j, f)),
                     (0..=j)
-                        .filter(|&i| f(base[i..j]
+                        .filter(|&i| f(&base[i..j]
                             .iter()
                             .max()
                             .copied()
