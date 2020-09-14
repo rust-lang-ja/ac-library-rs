@@ -22,8 +22,8 @@ You can select multiple modules for <output modules>
     e.g.)expand.py math segtree
 
 Options:
-    -c  --output_comment    output comment
-    -t  --output_test       output test code
+    -c  --output-comment    output comment
+    -t  --output-test       output test code
     -h  --help              print help
 '''
 output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
