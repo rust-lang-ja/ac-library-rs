@@ -19,6 +19,10 @@ def output_file(filename, output_comment, output_test):
         res.append('mod {}{{'.format(filename))
 
         for line in f:
+            if not output_test and line.strip()=='#[cfg(test)]':
+                break
+            if not output_comment and line.strip().startswith("//"):
+                continue
             res.append(line.rstrip())
 
         res.append('}')
@@ -31,7 +35,6 @@ except getopt.GetoptError as e:
     print(e)
     sys.exit(2)
 
-# unimplemented
 output_comment = False
 output_test = False
 
