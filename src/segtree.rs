@@ -43,7 +43,7 @@ where
 pub struct Sum<S>(Infallible, PhantomData<fn() -> S>);
 impl<S> Monoid for Sum<S>
 where
-    S: Copy + Add<Output=S> + Zero,
+    S: Copy + Add<Output = S> + Zero,
 {
     type S = S;
     fn identity() -> Self::S {
@@ -57,7 +57,7 @@ where
 pub struct Product<S>(Infallible, PhantomData<fn() -> S>);
 impl<S> Monoid for Product<S>
 where
-    S: Copy + Mul<Output=S> + One,
+    S: Copy + Mul<Output = S> + One,
 {
     type S = S;
     fn identity() -> Self::S {
