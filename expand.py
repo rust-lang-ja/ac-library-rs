@@ -26,6 +26,7 @@ Options:
     -t  --output_test       output test code
     -h  --help              print help
 '''
+output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
 opt_list = ['output-comment', 'output-test', 'help']
 output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
                    'fenwicktree', 'math', 'modint', 'maxflow', 'dsu', 'mincostflow', 'string', 'internal_bit', 'internal_math', 'internal_type_traits', 'internal_scc', 'internal_queue')
@@ -101,5 +102,6 @@ for i in output_list:
     if not i.startswith('internal'):
         output_data.append('use {}::*;'.format(i))
 
+print(output_header)
 for i in output_data:
     print(i)
