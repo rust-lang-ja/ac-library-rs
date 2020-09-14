@@ -3,6 +3,13 @@
 import sys
 import getopt
 
+opt_list = ['output-comment', 'output-test', ]
+output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
+                   'fenwicktree', 'math', 'modint', 'maxflow', 'dsu', 'mincostflow', 'string', 'internal_bit', 'internal_math', 'internal_type_traits', 'internal_scc', 'internal_queue')
+dependency_list = {'lazysegtree': ('internal_bit',), 'segtree': ('internal_bit',), 'convolution': ('internal_bit,modint',), 'math': ('internal_math',), 'modint': (
+    'internal_math', 'internal_type_traits'), 'fenwicktree': ('internal_type_traits',), 'twosat': ('internal_scc',), 'scc': ('internal_scc',), 'maxflow': ('internal_queue',)}
+src_path = 'src/'
+
 
 def output_file(filename, output_comment, output_test):
     global src_path
@@ -17,13 +24,6 @@ def output_file(filename, output_comment, output_test):
         res.append('}')
     return res
 
-
-opt_list = ['output-comment', 'output-test', ]
-output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
-                   'fenwicktree', 'math', 'modint', 'maxflow', 'dsu', 'mincostflow', 'string', 'internal_bit', 'internal_math', 'internal_type_traits', 'internal_scc', 'internal_queue')
-dependency_list = {'lazysegtree': ('internal_bit',), 'segtree': ('internal_bit',), 'convolution': ('internal_bit,modint',), 'math': ('internal_math',), 'modint': (
-    'internal_math', 'internal_type_traits'), 'fenwicktree': ('internal_type_traits',), 'twosat': ('internal_scc',), 'scc': ('internal_scc',), 'maxflow': ('internal_queue',)}
-src_path = 'src/'
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], 'tc', opt_list)
