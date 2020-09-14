@@ -102,9 +102,9 @@ pub fn convolution_i64(a: &[i64], b: &[i64]) -> Vec<i64> {
         return vec![];
     }
 
-    let i1 = internal_math::inv_gcd(M2M3 as _, M1 as _).1;
-    let i2 = internal_math::inv_gcd(M1M3 as _, M2 as _).1;
-    let i3 = internal_math::inv_gcd(M1M2 as _, M3 as _).1;
+    let (_, i1) = internal_math::inv_gcd(M2M3 as _, M1 as _);
+    let (_, i2) = internal_math::inv_gcd(M1M3 as _, M2 as _);
+    let (_, i3) = internal_math::inv_gcd(M1M2 as _, M3 as _);
 
     let c1 = convolution_raw::<i64, M1>(a, b);
     let c2 = convolution_raw::<i64, M2>(a, b);
@@ -116,10 +116,11 @@ pub fn convolution_i64(a: &[i64], b: &[i64]) -> Vec<i64> {
         .map(|((c1, c2), c3)| {
             const OFFSET: &[u64] = &[0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3];
 
-            let mut x = 0;
-            x += (c1 * i1).rem_euclid(M1 as _) * (M2M3 as i64);
-            x += (c2 * i2).rem_euclid(M2 as _) * (M1M3 as i64);
-            x += (c3 * i3).rem_euclid(M3 as _) * (M1M2 as i64);
+            let mut x = [(c1, i1, M1, M2M3), (c2, i2, M2, M1M3), (c3, i3, M3, M1M2)]
+                .iter()
+                .map(|&(c, i, m1, m2)| c.wrapping_mul(i).rem_euclid(m1 as _).wrapping_mul(m2 as _))
+                .fold(0, i64::wrapping_add);
+
             // B = 2^63, -B <= x, r(real value) < B
             // (x, x - M, x - 2M, or x - 3M) = r (mod 2B)
             // r = c1[i] (mod MOD1)
@@ -141,7 +142,7 @@ pub fn convolution_i64(a: &[i64], b: &[i64]) -> Vec<i64> {
             if diff < 0 {
                 diff += M1 as i64;
             }
-            x -= OFFSET[diff.rem_euclid(5) as usize] as i64;
+            x = x.wrapping_sub(OFFSET[diff.rem_euclid(5) as usize] as _);
             x
         })
         .collect()
