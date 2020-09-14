@@ -9,14 +9,14 @@ pub trait MapMonoid {
         Self::M::identity()
     }
     fn binary_operation(
-        a: <Self::M as Monoid>::S,
-        b: <Self::M as Monoid>::S,
+        a: &<Self::M as Monoid>::S,
+        b: &<Self::M as Monoid>::S,
     ) -> <Self::M as Monoid>::S {
         Self::M::binary_operation(a, b)
     }
     fn identity_map() -> Self::F;
-    fn mapping(f: Self::F, x: <Self::M as Monoid>::S) -> <Self::M as Monoid>::S;
-    fn composition(f: Self::F, g: Self::F) -> Self::F;
+    fn mapping(f: &Self::F, x: &<Self::M as Monoid>::S) -> <Self::M as Monoid>::S;
+    fn composition(f: &Self::F, g: &Self::F) -> Self::F;
 }
 
 impl<F: MapMonoid> Default for LazySegtree<F> {
@@ -95,18 +95,18 @@ impl<F: MapMonoid> LazySegtree<F> {
         let mut smr = F::identity_element();
         while l < r {
             if l & 1 != 0 {
-                sml = F::binary_operation(sml, self.d[l].clone());
+                sml = F::binary_operation(&sml, &self.d[l]);
                 l += 1;
             }
             if r & 1 != 0 {
                 r -= 1;
-                smr = F::binary_operation(self.d[r].clone(), smr);
+                smr = F::binary_operation(&self.d[r], &smr);
             }
             l >>= 1;
             r >>= 1;
         }
 
-        F::binary_operation(sml, smr)
+        F::binary_operation(&sml, &smr)
     }
 
     pub fn all_prod(&self) -> <F::M as Monoid>::S {
@@ -119,7 +119,7 @@ impl<F: MapMonoid> LazySegtree<F> {
         for i in (1..=self.log).rev() {
             self.push(p >> i);
         }
-        self.d[p] = F::mapping(f, self.d[p].clone());
+        self.d[p] = F::mapping(&f, &self.d[p]);
         for i in 1..=self.log {
             self.update(p >> i);
         }
@@ -190,11 +190,11 @@ impl<F: MapMonoid> LazySegtree<F> {
             while l % 2 == 0 {
                 l >>= 1;
             }
-            if !g(F::binary_operation(sm.clone(), self.d[l].clone())) {
+            if !g(F::binary_operation(&sm, &self.d[l])) {
                 while l < self.size {
                     self.push(l);
                     l *= 2;
-                    let res = F::binary_operation(sm.clone(), self.d[l].clone());
+                    let res = F::binary_operation(&sm, &self.d[l]);
                     if g(res.clone()) {
                         sm = res;
                         l += 1;
@@ -202,7 +202,7 @@ impl<F: MapMonoid> LazySegtree<F> {
                 }
                 return l - self.size;
             }
-            sm = F::binary_operation(sm, self.d[l].clone());
+            sm = F::binary_operation(&sm, &self.d[l]);
             l += 1;
             //while
             {
@@ -233,11 +233,11 @@ impl<F: MapMonoid> LazySegtree<F> {
             while r > 1 && r % 2 != 0 {
                 r >>= 1;
             }
-            if !g(F::binary_operation(self.d[r].clone(), sm.clone())) {
+            if !g(F::binary_operation(&self.d[r], &sm)) {
                 while r < self.size {
                     self.push(r);
                     r = 2 * r + 1;
-                    let res = F::binary_operation(self.d[r].clone(), sm.clone());
+                    let res = F::binary_operation(&self.d[r], &sm);
                     if g(res.clone()) {
                         sm = res;
                         r -= 1;
@@ -245,7 +245,7 @@ impl<F: MapMonoid> LazySegtree<F> {
                 }
                 return r + 1 - self.size;
             }
-            sm = F::binary_operation(self.d[r].clone(), sm);
+            sm = F::binary_operation(&self.d[r], &sm);
             // while
             {
                 let r = r as isize;
@@ -271,12 +271,12 @@ where
     F: MapMonoid,
 {
     fn update(&mut self, k: usize) {
-        self.d[k] = F::binary_operation(self.d[2 * k].clone(), self.d[2 * k + 1].clone());
+        self.d[k] = F::binary_operation(&self.d[2 * k], &self.d[2 * k + 1]);
     }
     fn all_apply(&mut self, k: usize, f: F::F) {
-        self.d[k] = F::mapping(f.clone(), self.d[k].clone());
+        self.d[k] = F::mapping(&f, &self.d[k]);
         if k < self.size {
-            self.lz[k] = F::composition(f, self.lz[k].clone());
+            self.lz[k] = F::composition(&f, &self.lz[k]);
         }
     }
     fn push(&mut self, k: usize) {
@@ -325,11 +325,11 @@ mod tests {
             0
         }
 
-        fn mapping(f: i32, x: i32) -> i32 {
+        fn mapping(&f: &i32, &x: &i32) -> i32 {
             f + x
         }
 
-        fn composition(f: i32, g: i32) -> i32 {
+        fn composition(&f: &i32, &g: &i32) -> i32 {
             f + g
         }
     }

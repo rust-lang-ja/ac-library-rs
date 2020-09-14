@@ -10,7 +10,7 @@ impl Monoid for Sum {
         (0.into(), 0)
     }
 
-    fn binary_operation((a, n): Self::S, (b, m): Self::S) -> Self::S {
+    fn binary_operation(&(a, n): &Self::S, &(b, m): &Self::S) -> Self::S {
         (a + b, n + m)
     }
 }
@@ -23,12 +23,12 @@ impl MapMonoid for Affine {
         (1.into(), 0.into())
     }
 
-    fn mapping((a, b): Self::F, (x, n): <Self::M as Monoid>::S) -> <Self::M as Monoid>::S {
+    fn mapping(&(a, b): &Self::F, &(x, n): &<Self::M as Monoid>::S) -> <Self::M as Monoid>::S {
         (a * x + b * Mint::new(n), n)
     }
 
     // a(cx + d) + b = (ac)x + (ad+b)
-    fn composition((a, b): Self::F, (c, d): Self::F) -> Self::F {
+    fn composition(&(a, b): &Self::F, &(c, d): &Self::F) -> Self::F {
         (a * c, a * d + b)
     }
 }
