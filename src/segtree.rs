@@ -1,29 +1,70 @@
 use crate::internal_bit::ceil_pow2;
-use crate::internal_type_traits::Integral;
-use std::cmp::max;
+use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
+use std::cmp::{max, min};
+use std::convert::Infallible;
 use std::marker::PhantomData;
+use std::ops::{Add, Mul};
 
 // TODO Should I split monoid-related traits to another module?
 pub trait Monoid {
     type S: Clone;
     fn identity() -> Self::S;
-    fn binary_operation(a: Self::S, b: Self::S) -> Self::S;
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S;
 }
 
-pub struct Max<S>(PhantomData<fn() -> S>);
-// TODO We should not restrict to integral
+pub struct Max<S>(Infallible, PhantomData<fn() -> S>);
 impl<S> Monoid for Max<S>
 where
-    S: Integral,
+    S: Copy + Ord + BoundedBelow,
 {
     type S = S;
-
     fn identity() -> Self::S {
         S::min_value()
     }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        max(*a, *b)
+    }
+}
 
-    fn binary_operation(a: Self::S, b: Self::S) -> Self::S {
-        max(a, b)
+pub struct Min<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for Min<S>
+where
+    S: Copy + Ord + BoundedAbove,
+{
+    type S = S;
+    fn identity() -> Self::S {
+        S::max_value()
+    }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        min(*a, *b)
+    }
+}
+
+pub struct Sum<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for Sum<S>
+where
+    S: Copy + Add<Output = S> + Zero,
+{
+    type S = S;
+    fn identity() -> Self::S {
+        S::zero()
+    }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        *a + *b
+    }
+}
+
+pub struct Product<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for Product<S>
+where
+    S: Copy + Mul<Output = S> + One,
+{
+    type S = S;
+    fn identity() -> Self::S {
+        S::one()
+    }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        *a * *b
     }
 }
 
@@ -75,18 +116,18 @@ impl<M: Monoid> Segtree<M> {
 
         while l < r {
             if l & 1 != 0 {
-                sml = M::binary_operation(sml, self.d[l].clone());
+                sml = M::binary_operation(&sml, &self.d[l]);
                 l += 1;
             }
             if r & 1 != 0 {
                 r -= 1;
-                smr = M::binary_operation(self.d[r].clone(), smr);
+                smr = M::binary_operation(&self.d[r], &smr);
             }
             l >>= 1;
             r >>= 1;
         }
 
-        M::binary_operation(sml, smr)
+        M::binary_operation(&sml, &smr)
     }
 
     pub fn all_prod(&self) -> M::S {
@@ -109,10 +150,10 @@ impl<M: Monoid> Segtree<M> {
             while l % 2 == 0 {
                 l >>= 1;
             }
-            if !f(M::binary_operation(sm.clone(), self.d[l].clone())) {
+            if !f(M::binary_operation(&sm, &self.d[l])) {
                 while l < self.size {
                     l *= 2;
-                    let res = M::binary_operation(sm.clone(), self.d[l].clone());
+                    let res = M::binary_operation(&sm, &self.d[l]);
                     if f(res.clone()) {
                         sm = res;
                         l += 1;
@@ -120,7 +161,7 @@ impl<M: Monoid> Segtree<M> {
                 }
                 return l - self.size;
             }
-            sm = M::binary_operation(sm.clone(), self.d[l].clone());
+            sm = M::binary_operation(&sm, &self.d[l]);
             l += 1;
             // while
             {
@@ -148,10 +189,10 @@ impl<M: Monoid> Segtree<M> {
             while r > 1 && r % 2 == 1 {
                 r >>= 1;
             }
-            if !f(M::binary_operation(self.d[r].clone(), sm.clone())) {
+            if !f(M::binary_operation(&self.d[r], &sm)) {
                 while r < self.size {
                     r = 2 * r + 1;
-                    let res = M::binary_operation(self.d[r].clone(), sm.clone());
+                    let res = M::binary_operation(&self.d[r], &sm);
                     if f(res.clone()) {
                         sm = res;
                         r -= 1;
@@ -159,7 +200,7 @@ impl<M: Monoid> Segtree<M> {
                 }
                 return r + 1 - self.size;
             }
-            sm = M::binary_operation(self.d[r].clone(), sm.clone());
+            sm = M::binary_operation(&self.d[r], &sm);
             // while
             {
                 let r = r as isize;
@@ -170,7 +211,7 @@ impl<M: Monoid> Segtree<M> {
     }
 
     fn update(&mut self, k: usize) {
-        self.d[k] = M::binary_operation(self.d[2 * k].clone(), self.d[2 * k + 1].clone());
+        self.d[k] = M::binary_operation(&self.d[2 * k], &self.d[2 * k + 1]);
     }
 }
 
