@@ -231,8 +231,28 @@ fn prepare<M: Modulus>() -> ButterflyCache<M> {
 
 #[cfg(test)]
 mod tests {
-    use crate::modint::{Mod998244353, Modulus, StaticModInt};
+    use crate::{
+        modint::{Mod998244353, Modulus, StaticModInt},
+        RemEuclidU32,
+    };
     use rand::{rngs::ThreadRng, Rng as _};
+    use std::{
+        convert::{TryFrom, TryInto as _},
+        fmt,
+    };
+
+    //https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L51-L71
+    #[test]
+    fn empty() {
+        assert!(super::convolution_raw::<i32, Mod998244353>(&[], &[]).is_empty());
+        assert!(super::convolution_raw::<i32, Mod998244353>(&[], &[1, 2]).is_empty());
+        assert!(super::convolution_raw::<i32, Mod998244353>(&[1, 2], &[]).is_empty());
+        assert!(super::convolution_raw::<i32, Mod998244353>(&[1], &[]).is_empty());
+        assert!(super::convolution_raw::<i64, Mod998244353>(&[], &[]).is_empty());
+        assert!(super::convolution_raw::<i64, Mod998244353>(&[], &[1, 2]).is_empty());
+        assert!(super::convolution::<Mod998244353>(&[], &[]).is_empty());
+        assert!(super::convolution::<Mod998244353>(&[], &[1.into(), 2.into()]).is_empty());
+    }
 
     // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L73-L85
     #[test]
@@ -267,9 +287,119 @@ mod tests {
         test::<M2>(&mut rng);
     }
 
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L120-L150
+    #[test]
+    fn simple_int() {
+        simple_raw::<i32>();
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L152-L182
+    #[test]
+    fn simple_uint() {
+        simple_raw::<u32>();
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L184-L214
+    #[test]
+    fn simple_ll() {
+        simple_raw::<i64>();
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L216-L246
+    #[test]
+    fn simple_ull() {
+        simple_raw::<u64>();
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L249-L279
+    #[test]
+    fn simple_int128() {
+        simple_raw::<i128>();
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L281-L311
+    #[test]
+    fn simple_uint128() {
+        simple_raw::<u128>();
+    }
+
+    fn simple_raw<T>()
+    where
+        T: TryFrom<u32> + Copy + RemEuclidU32,
+        T::Error: fmt::Debug,
+    {
+        const M1: u32 = 998_244_353;
+        const M2: u32 = 924_844_033;
+
+        modulus!(M1, M2);
+
+        fn test<T, M>(rng: &mut ThreadRng)
+        where
+            T: TryFrom<u32> + Copy + RemEuclidU32,
+            T::Error: fmt::Debug,
+            M: Modulus,
+        {
+            let mut gen_raw_values = |n| gen_raw_values::<u32, Mod998244353>(rng, n);
+            for (n, m) in (1..20).flat_map(|i| (1..20).map(move |j| (i, j))) {
+                let (a, b) = (gen_raw_values(n), gen_raw_values(m));
+                assert_eq!(
+                    conv_raw_naive::<_, M>(&a, &b),
+                    super::convolution_raw::<_, M>(&a, &b),
+                );
+            }
+        }
+
+        let mut rng = rand::thread_rng();
+        test::<T, M1>(&mut rng);
+        test::<T, M2>(&mut rng);
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L315-L329
+    #[test]
+    fn conv_ll() {
+        let mut rng = rand::thread_rng();
+        for (n, m) in (1..20).flat_map(|i| (1..20).map(move |j| (i, j))) {
+            let mut gen =
+                |n: usize| -> Vec<_> { (0..n).map(|_| rng.gen_range(-500_000, 500_000)).collect() };
+            let (a, b) = (gen(n), gen(m));
+            assert_eq!(conv_i64_naive(&a, &b), super::convolution_i64(&a, &b));
+        }
+    }
+
+    // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L331-L356
+    #[test]
+    fn conv_ll_bound() {
+        const M1: u64 = 754_974_721; // 2^24
+        const M2: u64 = 167_772_161; // 2^25
+        const M3: u64 = 469_762_049; // 2^26
+        const M2M3: u64 = M2 * M3;
+        const M1M3: u64 = M1 * M3;
+        const M1M2: u64 = M1 * M2;
+
+        modulus!(M1, M2, M3);
+
+        for i in -1000..=1000 {
+            let a = vec![0u64.wrapping_sub(M1M2 + M1M3 + M2M3) as i64 + i];
+            let b = vec![1];
+            assert_eq!(a, super::convolution_i64(&a, &b));
+        }
+
+        for i in 0..1000 {
+            let a = vec![i64::min_value() + i];
+            let b = vec![1];
+            assert_eq!(a, super::convolution_i64(&a, &b));
+        }
+
+        for i in 0..1000 {
+            let a = vec![i64::max_value() - i];
+            let b = vec![1];
+            assert_eq!(a, super::convolution_i64(&a, &b));
+        }
+    }
+
     // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L358-L371
     #[test]
-    fn conv641() {
+    fn conv_641() {
         const M: u32 = 641;
         modulus!(M);
 
@@ -281,7 +411,7 @@ mod tests {
 
     // https://github.com/atcoder/ac-library/blob/8250de484ae0ab597391db58040a602e0dc1a419/test/unittest/convolution_test.cpp#L373-L386
     #[test]
-    fn conv18433() {
+    fn conv_18433() {
         const M: u32 = 18433;
         modulus!(M);
 
@@ -304,9 +434,43 @@ mod tests {
         c
     }
 
+    fn conv_raw_naive<T, M>(a: &[T], b: &[T]) -> Vec<T>
+    where
+        T: TryFrom<u32> + Copy + RemEuclidU32,
+        T::Error: fmt::Debug,
+        M: Modulus,
+    {
+        conv_naive::<M>(
+            &a.iter().copied().map(Into::into).collect::<Vec<_>>(),
+            &b.iter().copied().map(Into::into).collect::<Vec<_>>(),
+        )
+        .into_iter()
+        .map(|x| x.val().try_into().unwrap())
+        .collect()
+    }
+
+    #[allow(clippy::many_single_char_names)]
+    fn conv_i64_naive(a: &[i64], b: &[i64]) -> Vec<i64> {
+        let (n, m) = (a.len(), b.len());
+        let mut c = vec![0; n + m - 1];
+        for (i, j) in (0..n).flat_map(|i| (0..m).map(move |j| (i, j))) {
+            c[i + j] += a[i] * b[j];
+        }
+        c
+    }
+
     fn gen_values<M: Modulus>(rng: &mut ThreadRng, n: usize) -> Vec<StaticModInt<M>> {
+        (0..n).map(|_| rng.gen_range(0, M::VALUE).into()).collect()
+    }
+
+    fn gen_raw_values<T, M>(rng: &mut ThreadRng, n: usize) -> Vec<T>
+    where
+        T: TryFrom<u32>,
+        T::Error: fmt::Debug,
+        M: Modulus,
+    {
         (0..n)
-            .map(|_| StaticModInt::raw(rng.gen_range(0, M::VALUE)))
+            .map(|_| rng.gen_range(0, M::VALUE).try_into().unwrap())
             .collect()
     }
 }
