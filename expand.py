@@ -22,10 +22,11 @@ You can select multiple modules for <output modules>
     e.g.)expand.py math segtree
 
 Options:
-    -h  --help              print help
+    -a  --all       import all modules   
+    -h  --help      print help
 '''
 output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
-opt_list = ['help']
+opt_list = ['help', 'all']
 output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
                    'fenwicktree', 'math', 'modint', 'maxflow', 'dsu', 'mincostflow', 'string', 'internal_bit', 'internal_math', 'internal_type_traits', 'internal_scc', 'internal_queue')
 dependency_list = {'lazysegtree': ('internal_bit',), 'segtree': ('internal_bit',), 'convolution': ('internal_bit', 'modint',), 'math': ('internal_math',), 'modint': (
@@ -48,7 +49,7 @@ def output_file(filename):
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'h', opt_list)
+    opts, args = getopt.getopt(sys.argv[1:], 'ah', opt_list)
 except getopt.GetoptError as e:
     print(e)
     print(usage)
@@ -58,6 +59,8 @@ for o, v in opts:
     if o == '--help' or o == '-h':
         print(usage)
         sys.exit(0)
+    elif o == '--all' or o == '-a':
+        args = list(output_list_all)
 
 output_list = set()
 

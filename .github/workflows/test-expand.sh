@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TEST_MODULES=(convolution dsu fenwicktree lazysegtree math maxflow mincostflow modint scc segtree string twosat)
+TEST_MODULES=(convolution dsu fenwicktree lazysegtree math maxflow mincostflow modint scc segtree string twosat --all)
 TMP_PATH=$(mktemp -d)
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 TEST_FILE="test.rs"
