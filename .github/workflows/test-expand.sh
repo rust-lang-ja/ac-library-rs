@@ -6,6 +6,10 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 TEST_FILE="test.rs"
 FILE_HEAD="fn main() {}"
 
+if [ -v CI ];then
+    rustup component add rustfmt 
+fi
+
 for MODULE in ${TEST_MODULES[@]};do
      echo Test module $MODULE 
      python3 $SCRIPT_DIR/../../expand.py $MODULE > $TMP_PATH/$TEST_FILE
