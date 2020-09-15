@@ -15,7 +15,7 @@ for MODULE in ${TEST_MODULES[@]};do
      python3 $SCRIPT_DIR/../../expand.py $MODULE > $TMP_PATH/$TEST_FILE
      echo "Output" $(wc -c < $TMP_PATH/$TEST_FILE) "Bytes"
      echo $FILE_HEAD >> $TMP_PATH/$TEST_FILE
-     rustc $TMP_PATH/$TEST_FILE 2>/dev/null
+     rustc -A warnings $TMP_PATH/$TEST_FILE 
      if [ $? -ne 0 ];then
         echo "Error compiling for $MODULE"
         exit 1
