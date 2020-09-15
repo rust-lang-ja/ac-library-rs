@@ -22,12 +22,10 @@ You can select multiple modules for <output modules>
     e.g.)expand.py math segtree
 
 Options:
-    -c  --output-comment    output comment
-    -t  --output-test       output test code
     -h  --help              print help
 '''
 output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
-opt_list = ['output-comment', 'output-test', 'help']
+opt_list = ['help']
 output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
                    'fenwicktree', 'math', 'modint', 'maxflow', 'dsu', 'mincostflow', 'string', 'internal_bit', 'internal_math', 'internal_type_traits', 'internal_scc', 'internal_queue')
 dependency_list = {'lazysegtree': ('internal_bit',), 'segtree': ('internal_bit',), 'convolution': ('internal_bit', 'modint',), 'math': ('internal_math',), 'modint': (
@@ -35,7 +33,7 @@ dependency_list = {'lazysegtree': ('internal_bit',), 'segtree': ('internal_bit',
 src_path = 'src/'
 
 
-def output_file(filename, output_comment, output_test):
+def output_file(filename):
     global src_path
 
     res = []
@@ -43,14 +41,6 @@ def output_file(filename, output_comment, output_test):
         res.append('mod {}{{'.format(filename))
 
         for line in f:
-            if not output_test and line.strip() == '#[cfg(test)]':
-                # TODO
-                # Find more better way.
-                break
-            if not output_comment and line.strip().startswith("//"):
-                # TODO
-                # Find more better way.
-                continue
             res.append(line.rstrip())
 
         res.append('}')
@@ -58,20 +48,13 @@ def output_file(filename, output_comment, output_test):
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'tch', opt_list)
+    opts, args = getopt.getopt(sys.argv[1:], 'h', opt_list)
 except getopt.GetoptError as e:
     print(e)
     print(usage)
     sys.exit(2)
 
-output_comment = False
-output_test = False
-
 for o, v in opts:
-    if o == '--output-comment' or o == '-c':
-        output_comment = True
-    if o == '--output-test' or o == '-t':
-        output_test = True
     if o == '--help' or o == '-h':
         print(usage)
         sys.exit(0)
@@ -94,7 +77,7 @@ output_list.sort()
 
 output_data = []
 for i in output_list:
-    buf = output_file(i, output_comment, output_test)
+    buf = output_file(i)
     output_data.extend(buf)
 
 for i in output_list:
