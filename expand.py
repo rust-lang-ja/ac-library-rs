@@ -2,6 +2,8 @@
 
 import sys
 import getopt
+import tempfile
+import subprocess
 
 usage = '''Usage:expand.py [options] <output modules>
 Output Modules:
@@ -92,6 +94,14 @@ for i in output_list:
     if not i.startswith('internal'):
         output_data.append('use {}::*;'.format(i))
 
-print(output_header)
-for i in output_data:
-    print(i)
+# rustfmt
+with tempfile.TemporaryDirectory() as temp_dir:
+    temp_file = temp_dir + '/output.rs'
+    with open(temp_file, 'w') as f:
+        print(output_header, file=f)
+        for i in output_data:
+            print(i, file=f)
+    output_data = subprocess.run(["rustfmt", temp_file])
+    with open(temp_file, 'r') as f:
+        for line in f:
+            print(line, end="")
