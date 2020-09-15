@@ -40,8 +40,8 @@ where
     }
 }
 
-pub struct Sum<S>(Infallible, PhantomData<fn() -> S>);
-impl<S> Monoid for Sum<S>
+pub struct Additive<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for Additive<S>
 where
     S: Copy + Add<Output = S> + Zero,
 {
@@ -54,8 +54,8 @@ where
     }
 }
 
-pub struct Product<S>(Infallible, PhantomData<fn() -> S>);
-impl<S> Monoid for Product<S>
+pub struct Multiplicative<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for Multiplicative<S>
 where
     S: Copy + Mul<Output = S> + One,
 {
