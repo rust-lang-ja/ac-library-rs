@@ -55,6 +55,10 @@ except getopt.GetoptError as e:
     print(usage)
     sys.exit(2)
 
+if len(opts) == 0 and len(args) == 0:
+    print(usage)
+    sys.exit(0)
+
 for o, v in opts:
     if o == '--help' or o == '-h':
         print(usage)
