@@ -29,19 +29,21 @@ Options:
 '''
 output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
 opt_list = ['help', 'all']
-output_list_all = ('lazysegtree', 'segtree', 'convolution', 'twosat', 'scc',
-                   'fenwicktree', 'math', 'modint', 'maxflow', 'dsu',
-                   'mincostflow', 'string', 'internal_bit', 'internal_math',
-                   'internal_type_traits', 'internal_scc', 'internal_queue')
-dependency_list = {'lazysegtree': ('internal_bit',),
-                   'segtree': ('internal_bit',),
-                   'convolution': ('internal_bit', 'modint',),
-                   'math': ('internal_math',),
-                   'modint': ('internal_math', 'internal_type_traits'),
+output_list_all = ('convolution', 'dsu', 'fenwicktree', 'lazysegtree', 'math',
+                   'maxflow',  'mincostflow', 'modint', 'scc',  'segtree',
+                   'string', 'twosat',
+                   'internal_bit', 'internal_math', 'internal_queue',
+                   'internal_scc', 'internal_type_traits',)
+dependency_list = {'convolution': ('internal_bit', 'modint',),
                    'fenwicktree': ('internal_type_traits',),
-                   'twosat': ('internal_scc',), 'scc': ('internal_scc',),
-                   'maxflow': ('internal_queue', 'internal_type_traits',),
-                   'mincostflow': ('internal_type_traits',)}
+                   'lazysegtree': ('internal_bit',),
+                   'math': ('internal_math',),
+                   'maxflow': ('internal_type_traits', 'internal_queue',),
+                   'mincostflow': ('internal_type_traits',),
+                   'modint': ('internal_math', 'internal_type_traits',),
+                   'scc': ('internal_scc',),
+                   'segtree': ('internal_bit',),
+                   'twosat': ('internal_scc',), }
 src_path = 'src/'
 
 
