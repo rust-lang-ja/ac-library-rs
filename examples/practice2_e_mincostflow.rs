@@ -3,6 +3,7 @@ use std::io::Read;
 
 const MAX: i64 = 1_000_000_000;
 
+#[allow(clippy::needless_range_loop)]
 fn main() {
     let mut buf = String::new();
     std::io::stdin().read_to_string(&mut buf).unwrap();

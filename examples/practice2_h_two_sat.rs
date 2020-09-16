@@ -12,7 +12,7 @@ fn main() {
         .map(|_| input.next().unwrap().parse().unwrap())
         .collect::<Vec<i32>>();
 
-    let mut sat = TwoSat::new(2*n);
+    let mut sat = TwoSat::new(2 * n);
     for i in 0..2 * n {
         sat.add_clause(i, i % 2 == 0, i ^ 1, i % 2 == 0);
     }
