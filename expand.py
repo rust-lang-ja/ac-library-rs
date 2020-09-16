@@ -51,7 +51,7 @@ def output_file(filename):
 
     res = []
     with open(src_path+filename+'.rs', 'r') as f:
-        res.append('mod {}{{'.format(filename))
+        res.append('pub mod {} {{'.format(filename))
 
         for line in f:
             res.append(line.rstrip())
