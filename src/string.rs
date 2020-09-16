@@ -1,3 +1,5 @@
+#![allow(clippy::many_single_char_names)]
+
 fn sa_naive<T: Ord>(s: &[T]) -> Vec<usize> {
     let n = s.len();
     let mut sa: Vec<usize> = (0..n).collect();
