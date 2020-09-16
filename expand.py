@@ -111,7 +111,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
         print(output_header, file=f)
         for i in output_data:
             print(i, file=f)
-    output_data = subprocess.run(["rustfmt", temp_file])
+    output_data = subprocess.run(["rustfmt", temp_file], check=True)
     with open(temp_file, 'r') as f:
         for line in f:
             print(line, end="")
