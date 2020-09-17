@@ -95,3 +95,37 @@ jobs:
           args: --workspace --no-fail-fast
         env:
           RUST_BACKTRACE: full
+
+  expander_test:
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - 1.42.0-x86_64-unknown-linux-gnu
+          - stable-x86_64-unknown-linux-gnu
+        python-version:
+          - '3.6' # https://packages.ubuntu.com/bionic/python3
+          - '3.8' # https://packages.ubuntu.com/focal/python3
+
+    name: Expand_test (${{ matrix.toolchain }}, ${{ matrix.python-version }})
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: 'Setup `${{ matrix.toolchain }}`'
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+          profile: minimal
+          components: rustfmt
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: expand.py tests
+        run: bash ./.github/workflows/test-expand.sh
