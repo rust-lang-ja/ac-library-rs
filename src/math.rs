@@ -33,7 +33,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
     // Contracts: 0 <= r0 < m0
     let (mut r0, mut m0) = (0, 1);
     for (&(mut ri), &(mut mi)) in r.iter().zip(m.iter()) {
-        assert!(1 < mi);
+        assert!(1 <= mi);
         ri = internal_math::safe_mod(ri, mi);
         if m0 < mi {
             swap(&mut r0, &mut ri);
@@ -185,6 +185,9 @@ mod tests {
         let a = [12345, 67890, 99999];
         let b = [13, 444321, 95318];
         assert_eq!(crt(&a, &b), (103333581255, 550573258014));
+        let a = [0, 3, 4];
+        let b = [1, 9, 5];
+        assert_eq!(crt(&a, &b), (39, 45));
     }
 
     #[test]
