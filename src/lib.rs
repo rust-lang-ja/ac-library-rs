@@ -8,7 +8,6 @@ pub mod mincostflow;
 pub mod modint;
 pub mod scc;
 pub mod segtree;
-#[allow(clippy::many_single_char_names)]
 pub mod string;
 pub mod twosat;
 
