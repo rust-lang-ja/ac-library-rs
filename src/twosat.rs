@@ -1,4 +1,4 @@
-use crate::internal_scc;
+use super::internal_scc;
 
 pub struct TwoSat {
     n: usize,

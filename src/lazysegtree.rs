@@ -1,5 +1,5 @@
-use crate::internal_bit::ceil_pow2;
-use crate::Monoid;
+use super::internal_bit::ceil_pow2;
+use super::Monoid;
 
 pub trait MapMonoid {
     type M: Monoid;
@@ -314,7 +314,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{LazySegtree, MapMonoid, Max};
+    use super::super::segtree::Max;
+    use super::{LazySegtree, MapMonoid};
 
     struct MaxAdd;
     impl MapMonoid for MaxAdd {
