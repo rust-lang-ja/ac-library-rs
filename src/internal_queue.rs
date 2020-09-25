@@ -51,7 +51,7 @@ impl<T> SimpleQueue<T> {
 
 #[cfg(test)]
 mod test {
-    use crate::internal_queue::SimpleQueue;
+    use super::SimpleQueue;
 
     #[allow(clippy::cognitive_complexity)]
     #[test]

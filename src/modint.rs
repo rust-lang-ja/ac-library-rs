@@ -10,7 +10,7 @@
 //! - The type of the argument of `pow` is `u64`, not `i64`.
 //! - Modints implement `FromStr` and `Display`. Modints in the original ACL don't have `operator<<` or `operator>>`.
 
-use crate::internal_math;
+use super::internal_math;
 use std::{
     cell::RefCell,
     convert::{Infallible, TryInto as _},
@@ -681,7 +681,7 @@ impl_folding! {
 
 #[cfg(test)]
 mod tests {
-    use crate::modint::ModInt1000000007;
+    use super::ModInt1000000007;
 
     #[test]
     fn static_modint_new() {
