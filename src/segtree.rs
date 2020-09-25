@@ -1,5 +1,5 @@
-use crate::internal_bit::ceil_pow2;
-use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
+use super::internal_bit::ceil_pow2;
+use super::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
 use std::cmp::{max, min};
 use std::convert::Infallible;
 use std::marker::PhantomData;
@@ -238,8 +238,8 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::segtree::Max;
-    use crate::Segtree;
+    use super::super::Segtree;
+    use super::Max;
 
     #[test]
     fn test_max_segtree() {

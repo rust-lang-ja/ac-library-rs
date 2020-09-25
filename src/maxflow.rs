@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-use crate::internal_queue::SimpleQueue;
-use crate::internal_type_traits::Integral;
+use super::internal_queue::SimpleQueue;
+use super::internal_type_traits::Integral;
 use std::cmp::min;
 use std::iter;
 
@@ -224,7 +224,7 @@ struct _Edge<Cap> {
 
 #[cfg(test)]
 mod test {
-    use crate::{Edge, MfGraph};
+    use super::{Edge, MfGraph};
 
     #[test]
     fn test_max_flow_wikipedia() {
