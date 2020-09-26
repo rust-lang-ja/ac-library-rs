@@ -1,5 +1,5 @@
 use super::internal_bit::ceil_pow2;
-use super::Monoid;
+use super::segtree::Monoid;
 
 pub trait MapMonoid {
     type M: Monoid;

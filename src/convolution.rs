@@ -8,9 +8,9 @@ macro_rules! modulus {
                 const VALUE: u32 = $name as _;
                 const HINT_VALUE_IS_PRIME: bool = true;
 
-                fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<$crate::modint::ButterflyCache<Self>>>> {
+                fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<self::modint::ButterflyCache<Self>>>> {
                     thread_local! {
-                        static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<$crate::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
+                        static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<self::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
                     }
                     &BUTTERFLY_CACHE
                 }
@@ -21,7 +21,7 @@ macro_rules! modulus {
 
 use super::{
     internal_bit, internal_math,
-    modint::{ButterflyCache, Modulus, RemEuclidU32, StaticModInt},
+    modint::{self, ButterflyCache, Modulus, RemEuclidU32, StaticModInt},
 };
 use std::{
     cmp,
@@ -232,7 +232,7 @@ fn prepare<M: Modulus>() -> ButterflyCache<M> {
 
 #[cfg(test)]
 mod tests {
-    use super::super::modint::{Mod998244353, Modulus, RemEuclidU32, StaticModInt};
+    use super::super::modint::{self, Mod998244353, Modulus, RemEuclidU32, StaticModInt};
     use rand::{rngs::ThreadRng, Rng as _};
     use std::{
         convert::{TryFrom, TryInto as _},
