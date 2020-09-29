@@ -238,7 +238,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::super::Segtree;
+    use super::super::segtree::Segtree;
     use super::Max;
 
     #[test]
