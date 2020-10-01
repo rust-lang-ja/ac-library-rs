@@ -1,14 +1,52 @@
 //! Structs that treat the modular arithmetic.
 //!
+//! For most of the problems, It is sufficient to use [`ModInt1000000007`] or [`ModInt998244353`], which can be used as follows.
+//!
+//! ```
+//! use ac_library_rs::ModInt1000000007 as Mint; // rename to whatever you want
+//! use proconio::{input, source::once::OnceSource};
+//!
+//! input! {
+//!     from OnceSource::from("1000000006 2\n"),
+//!     a: Mint,
+//!     b: Mint,
+//! }
+//!
+//! println!("{}", a + b); // `1`
+//! ```
+//!
+//! If the modulus is not fixed, you can use [`ModInt`] as follows.
+//!
+//! ```
+//! use ac_library_rs::ModInt as Mint; // rename to whatever you want
+//! use proconio::{input, source::once::OnceSource};
+//!
+//! input! {
+//!     from OnceSource::from("3 3 7\n"),
+//!     a: u32,
+//!     b: u32,
+//!     m: u32,
+//! }
+//!
+//! Mint::set_modulus(m);
+//! let a = Mint::new(a);
+//! let b = Mint::new(b);
+//!
+//! println!("{}", a * b); // `2`
+//! ```
+//!
 //! # Major changes from the original ACL
 //!
 //! - Converted the struct names to PascalCase.
 //! - Renamed `mod` → `modulus`.
 //! - Moduli are `u32`, not `i32`.
-//! - `Id`s are `usize`, not `i32`.
-//! - The default `Id` is `0`, not `-1`.
+//! - Each `Id` does not have a identifier number. Instead, they explicitly own `&'static LocalKey<RefCell<Barrett>>`.
 //! - The type of the argument of `pow` is `u64`, not `i64`.
 //! - Modints implement `FromStr` and `Display`. Modints in the original ACL don't have `operator<<` or `operator>>`.
+//!
+//! [`ModInt1000000007`]: ./type.ModInt1000000007.html
+//! [`ModInt998244353`]: ./type.ModInt998244353.html
+//! [`ModInt`]: ./type.ModInt.html
 
 use crate::internal_math;
 use std::{
@@ -27,7 +65,24 @@ pub type ModInt1000000007 = StaticModInt<Mod1000000007>;
 pub type ModInt998244353 = StaticModInt<Mod998244353>;
 pub type ModInt = DynamicModInt<DefaultId>;
 
+/// Represents _ℤ/mℤ_ where _m_ is a constant value.
+///
 /// Corresponds to `atcoder::static_modint` in the original ACL.
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::ModInt1000000007 as Mint;
+/// use proconio::{input, source::once::OnceSource};
+///
+/// input! {
+///     from OnceSource::from("1000000006 2\n"),
+///     a: Mint,
+///     b: Mint,
+/// }
+///
+/// println!("{}", a + b); // `1`
+/// ```
 #[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(transparent)]
 pub struct StaticModInt<M> {
@@ -36,19 +91,47 @@ pub struct StaticModInt<M> {
 }
 
 impl<M: Modulus> StaticModInt<M> {
+    /// Returns the modulus, which is [`<M as Modulus>::VALUE`].
+    ///
     /// Corresponds to `atcoder::static_modint::mod` in the original ACL.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::ModInt1000000007 as Mint;
+    ///
+    /// assert_eq!(1_000_000_007, Mint::modulus());
+    /// ```
+    ///
+    /// [`<M as Modulus>::VALUE`]: ../trait.Modulus.html#associatedconstant.VALUE
     #[inline(always)]
     pub fn modulus() -> u32 {
         M::VALUE
     }
 
     /// Creates a new `StaticModInt`.
+    ///
+    /// Takes [any primitive integer].
+    ///
+    /// Corresponds to the constructor of `atcoder::static_modint` in the original ACL.
+    ///
+    /// [any primitive integer]:  ../trait.RemEuclidU32.html
     #[inline]
     pub fn new<T: RemEuclidU32>(val: T) -> Self {
         Self::raw(val.rem_euclid_u32(M::VALUE))
     }
 
+    /// Constructs a `StaticModInt` from a `val < Self::modulus()` without checking it.
+    ///
     /// Corresponds to `atcoder::static_modint::raw` in the original ACL.
+    ///
+    /// # Constraints
+    ///
+    /// - `val` is less than `Self::modulus()`
+    ///
+    /// See [`ModIntBase::raw`] for more more details.
+    ///
+    /// [`ModIntBase::raw`]: ./trait.ModIntBase.html#tymethod.raw
     #[inline]
     pub fn raw(val: u32) -> Self {
         Self {
@@ -57,18 +140,24 @@ impl<M: Modulus> StaticModInt<M> {
         }
     }
 
+    /// Retruns the representative.
+    ///
     /// Corresponds to `atcoder::static_modint::val` in the original ACL.
     #[inline]
     pub fn val(self) -> u32 {
         self.val
     }
 
+    /// Returns `self` to the power of `n`.
+    ///
     /// Corresponds to `atcoder::static_modint::pow` in the original ACL.
     #[inline]
     pub fn pow(self, n: u64) -> Self {
         <Self as ModIntBase>::pow(self, n)
     }
 
+    /// Retruns the multiplicative inverse of `self`.
+    ///
     /// Corresponds to `atcoder::static_modint::inv` in the original ACL.
     ///
     /// # Panics
@@ -92,6 +181,8 @@ impl<M: Modulus> StaticModInt<M> {
     }
 }
 
+/// These methods are implemented for the struct.
+/// You don't need to `use` `ModIntBase` to call methods of `StaticModInt`.
 impl<M: Modulus> ModIntBase for StaticModInt<M> {
     #[inline(always)]
     fn modulus() -> u32 {
@@ -114,6 +205,42 @@ impl<M: Modulus> ModIntBase for StaticModInt<M> {
     }
 }
 
+/// Represents a modulus.
+///
+/// # Example
+///
+/// ```
+/// macro_rules! modulus {
+///     ($($name:ident($value:expr, $is_prime:expr)),*) => {
+///         $(
+///             #[derive(Copy, Clone, Eq, PartialEq)]
+///             enum $name {}
+///
+///             impl ac_library_rs::modint::Modulus for $name {
+///                 const VALUE: u32 = $value;
+///                 const HINT_VALUE_IS_PRIME: bool = $is_prime;
+///
+///                 fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<ac_library_rs::modint::ButterflyCache<Self>>>> {
+///                     thread_local! {
+///                         static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<ac_library_rs::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
+///                     }
+///                     &BUTTERFLY_CACHE
+///                 }
+///             }
+///         )*
+///     };
+/// }
+///
+/// use ac_library_rs::StaticModInt;
+///
+/// modulus!(Mod101(101, true), Mod103(103, true));
+///
+/// type Z101 = StaticModInt<Mod101>;
+/// type Z103 = StaticModInt<Mod103>;
+///
+/// assert_eq!(Z101::new(101), Z101::new(0));
+/// assert_eq!(Z103::new(103), Z103::new(0));
+/// ```
 pub trait Modulus: 'static + Copy + Eq {
     const VALUE: u32;
     const HINT_VALUE_IS_PRIME: bool;
@@ -121,6 +248,7 @@ pub trait Modulus: 'static + Copy + Eq {
     fn butterfly_cache() -> &'static LocalKey<RefCell<Option<ButterflyCache<Self>>>>;
 }
 
+/// Represents _1000000007_.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum Mod1000000007 {}
 
@@ -136,6 +264,7 @@ impl Modulus for Mod1000000007 {
     }
 }
 
+/// Represents _998244353_.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum Mod998244353 {}
 
@@ -151,11 +280,35 @@ impl Modulus for Mod998244353 {
     }
 }
 
+/// Cache for butterfly operations.
 pub struct ButterflyCache<M> {
     pub(crate) sum_e: Vec<StaticModInt<M>>,
     pub(crate) sum_ie: Vec<StaticModInt<M>>,
 }
 
+/// Represents _ℤ/mℤ_ where _m_ is a dynamic value.
+///
+/// Corresponds to `atcoder::dynamic_modint` in the original ACL.
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::ModInt as Mint;
+/// use proconio::{input, source::once::OnceSource};
+///
+/// input! {
+///     from OnceSource::from("3 3 7\n"),
+///     a: u32,
+///     b: u32,
+///     m: u32,
+/// }
+///
+/// Mint::set_modulus(m);
+/// let a = Mint::new(a);
+/// let b = Mint::new(b);
+///
+/// println!("{}", a * b); // `2`
+/// ```
 #[derive(Copy, Clone, Eq, PartialEq)]
 #[repr(transparent)]
 pub struct DynamicModInt<I> {
@@ -164,11 +317,38 @@ pub struct DynamicModInt<I> {
 }
 
 impl<I: Id> DynamicModInt<I> {
+    /// Returns the modulus.
+    ///
+    /// Corresponds to `atcoder::dynamic_modint::mod` in the original ACL.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::ModInt as Mint;
+    ///
+    /// assert_eq!(998_244_353, Mint::modulus()); // default modulus
+    /// ```
     #[inline]
     pub fn modulus() -> u32 {
         I::companion_barrett().with(|bt| bt.borrow().umod())
     }
 
+    /// Sets a modulus.
+    ///
+    /// Corresponds to `atcoder::dynamic_modint::set_mod` in the original ACL.
+    ///
+    /// # Constraints
+    ///
+    /// - This function must be called earlier than any other operation of `Self`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::ModInt as Mint;
+    ///
+    /// Mint::set_modulus(7);
+    /// assert_eq!(7, Mint::modulus());
+    /// ```
     #[inline]
     pub fn set_modulus(modulus: u32) {
         if modulus == 0 {
@@ -177,11 +357,29 @@ impl<I: Id> DynamicModInt<I> {
         I::companion_barrett().with(|bt| *bt.borrow_mut() = Barrett::new(modulus))
     }
 
+    /// Creates a new `DynamicModInt`.
+    ///
+    /// Takes [any primitive integer].
+    ///
+    /// Corresponds to the constructor of `atcoder::dynamic_modint` in the original ACL.
+    ///
+    /// [any primitive integer]:  ../trait.RemEuclidU32.html
     #[inline]
     pub fn new<T: RemEuclidU32>(val: T) -> Self {
         <Self as ModIntBase>::new(val)
     }
 
+    /// Constructs a `DynamicModInt` from a `val < Self::modulus()` without checking it.
+    ///
+    /// Corresponds to `atcoder::dynamic_modint::raw` in the original ACL.
+    ///
+    /// # Constraints
+    ///
+    /// - `val` is less than `Self::modulus()`
+    ///
+    /// See [`ModIntBase::raw`] for more more details.
+    ///
+    /// [`ModIntBase::raw`]: ./trait.ModIntBase.html#tymethod.raw
     #[inline]
     pub fn raw(val: u32) -> Self {
         Self {
@@ -190,22 +388,37 @@ impl<I: Id> DynamicModInt<I> {
         }
     }
 
+    /// Retruns the representative.
+    ///
+    /// Corresponds to `atcoder::static_modint::val` in the original ACL.
     #[inline]
     pub fn val(self) -> u32 {
         self.val
     }
 
+    /// Returns `self` to the power of `n`.
+    ///
+    /// Corresponds to `atcoder::dynamic_modint::pow` in the original ACL.
     #[inline]
     pub fn pow(self, n: u64) -> Self {
         <Self as ModIntBase>::pow(self, n)
     }
 
+    /// Retruns the multiplicative inverse of `self`.
+    ///
+    /// Corresponds to `atcoder::dynamic_modint::inv` in the original ACL.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the multiplicative inverse does not exist.
     #[inline]
     pub fn inv(self) -> Self {
         Self::inv_for_non_prime_modulus(self)
     }
 }
 
+/// These methods are implemented for the struct.
+/// You don't need to `use` `ModIntBase` to call methods of `DynamicModInt`.
 impl<I: Id> ModIntBase for DynamicModInt<I> {
     #[inline]
     fn modulus() -> u32 {
@@ -245,9 +458,11 @@ impl Id for DefaultId {
     }
 }
 
+/// Pair of _m_ and _ceil(2⁶⁴/m)_.
 pub struct Barrett(internal_math::Barrett);
 
 impl Barrett {
+    /// Creates a new `Barrett`.
     #[inline]
     pub fn new(m: u32) -> Self {
         Self(internal_math::Barrett::new(m))
@@ -271,6 +486,12 @@ impl Default for Barrett {
     }
 }
 
+/// A trait for [`StaticModInt`] and [`DynamicModInt`].
+///
+/// Corresponds to `atcoder::internal::modint_base` in the original ACL.
+///
+/// [`StaticModInt`]: ../struct.StaticModInt.html
+/// [`DynamicModInt`]: ../struct.DynamicModInt.html
 pub trait ModIntBase:
     Default
     + FromStr
@@ -299,16 +520,136 @@ pub trait ModIntBase:
     + MulAssign
     + DivAssign
 {
+    /// Returns the modulus.
+    ///
+    /// Corresponds to `atcoder::static_modint::mod` and `atcoder::dynamic_modint::mod` in the original ACL.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::modint::ModIntBase;
+    ///
+    /// fn f<Z: ModIntBase>() {
+    ///     let _: u32 = Z::modulus();
+    /// }
+    /// ```
     fn modulus() -> u32;
+
+    /// Constructs a `Self` from a `val < Self::modulus()` without checking it.
+    ///
+    /// Corresponds to `atcoder::static_modint::raw` and `atcoder::dynamic_modint::raw` in the original ACL.
+    ///
+    /// # Constraints
+    ///
+    /// - `val` is less than `Self::modulus()`
+    ///
+    /// **Note that all operations assume that inner values are smaller than the modulus.**
+    /// If `val` is greater than or equal to `Self::modulus()`, the behaviors are not defined.
+    ///
+    /// ```should_panic
+    /// use ac_library_rs::ModInt1000000007 as Mint;
+    ///
+    /// let x = Mint::raw(1_000_000_007);
+    /// let y = x + x;
+    /// assert_eq!(0, y.val());
+    /// ```
+    ///
+    /// ```text
+    /// thread 'main' panicked at 'assertion failed: `(left == right)`
+    ///   left: `0`,
+    ///  right: `1000000007`', src/modint.rs:8:1
+    /// note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    /// ```
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::modint::ModIntBase;
+    ///
+    /// fn f<Z: ModIntBase>() -> Z {
+    ///     debug_assert!(Z::modulus() >= 100);
+    ///
+    ///     let mut acc = Z::new(0);
+    ///     for i in 0..100 {
+    ///         if i % 3 == 0 {
+    ///             // I know `i` is smaller than the modulus!
+    ///             acc += Z::raw(i);
+    ///         }
+    ///     }
+    ///     acc
+    /// }
+    /// ```
     fn raw(val: u32) -> Self;
+
+    /// Retruns the representative.
+    ///
+    /// Corresponds to `atcoder::static_modint::val` and `atcoder::dynamic_modint::val` in the original ACL.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::modint::ModIntBase;
+    ///
+    /// fn f<Z: ModIntBase>(x: Z) {
+    ///     let _: u32 = x.val();
+    /// }
+    /// ```
     fn val(self) -> u32;
+
+    /// Retruns the multiplicative inverse of `self`.
+    ///
+    /// Corresponds to `atcoder::static_modint::inv` and `atcoder::dynamic_modint::inv` in the original ACL.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the multiplicative inverse does not exist.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::modint::ModIntBase;
+    ///
+    /// fn f<Z: ModIntBase>(x: Z) {
+    ///     let _: Z = x.inv();
+    /// }
+    /// ```
     fn inv(self) -> Self;
 
+    /// Creates a new `Self`.
+    ///
+    /// Takes [any primitive integer].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::modint::ModIntBase;
+    ///
+    /// fn f<Z: ModIntBase>() {
+    ///     let _ = Z::new(1u32);
+    ///     let _ = Z::new(1usize);
+    ///     let _ = Z::new(-1i64);
+    /// }
+    /// ```
+    ///
+    /// [any primitive integer]:  ../trait.RemEuclidU32.html
     #[inline]
     fn new<T: RemEuclidU32>(val: T) -> Self {
         Self::raw(val.rem_euclid_u32(Self::modulus()))
     }
 
+    /// Returns `self` to the power of `n`.
+    ///
+    /// Corresponds to `atcoder::static_modint::pow` and `atcoder::dynamic_modint::pow` in the original ACL.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use ac_library_rs::modint::ModIntBase;
+    ///
+    /// fn f<Z: ModIntBase>() {
+    ///     let _: Z = Z::new(2).pow(3);
+    /// }
+    /// ```
     #[inline]
     fn pow(self, mut n: u64) -> Self {
         let mut x = self;
@@ -324,7 +665,9 @@ pub trait ModIntBase:
     }
 }
 
+/// A trait for `{StaticModInt, DynamicModInt, ModIntBase}::new`.
 pub trait RemEuclidU32 {
+    /// Calculates `self` _mod_ `modulus` losslessly.
     fn rem_euclid_u32(self, modulus: u32) -> u32;
 }
 
