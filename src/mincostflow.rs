@@ -88,7 +88,7 @@ where
         let mut prev_e = vec![0; n];
         let mut flow = T::zero();
         let mut cost = T::zero();
-        let mut prev_cost: Option<T> = None;
+        let mut prev_cost_per_flow: Option<T> = None;
         let mut result = vec![(flow, cost)];
         while flow < flow_limit {
             if !self.refine_dual(source, sink, &mut dual, &mut prev_v, &mut prev_e) {
@@ -113,11 +113,11 @@ where
             let d = -dual[source];
             flow += c;
             cost += d * c;
-            if prev_cost == Some(d) {
+            if prev_cost_per_flow == Some(d) {
                 assert!(result.pop().is_some());
             }
             result.push((flow, cost));
-            prev_cost = Some(cost);
+            prev_cost_per_flow = Some(d);
         }
         result
     }
@@ -197,5 +197,16 @@ mod tests {
         let (flow, cost) = graph.flow(0, 3, 2);
         assert_eq!(flow, 2);
         assert_eq!(cost, 6);
+    }
+
+    #[test]
+    fn same_cost_paths() {
+        // https://github.com/atcoder/ac-library/blob/300e66a7d73efe27d02f38133239711148092030/test/unittest/mincostflow_test.cpp#L83-L90
+        let mut graph = MinCostFlowGraph::new(3);
+        assert_eq!(0, graph.add_edge(0, 1, 1, 1));
+        assert_eq!(1, graph.add_edge(1, 2, 1, 0));
+        assert_eq!(2, graph.add_edge(0, 2, 2, 1));
+        let expected = [(0, 0), (3, 3)];
+        assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
     }
 }
