@@ -500,11 +500,13 @@ pub trait ModIntBase:
     + From<i32>
     + From<i64>
     + From<i128>
+    + From<isize>
     + From<u8>
     + From<u16>
     + From<u32>
     + From<u64>
     + From<u128>
+    + From<usize>
     + Copy
     + Eq
     + Hash
