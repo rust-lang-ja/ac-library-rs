@@ -1,7 +1,7 @@
 [package]
 name = "ac-library-rs"
 version = "0.1.0"
-authors = ["matsu7874 <mtsmtkmt@gmail.com>"]
+authors = ["rust-lang-ja Developers"]
 edition = "2018"
 description = "A Rust port of AtCoder Library (ACL)."
 license = "CC0-1.0"
