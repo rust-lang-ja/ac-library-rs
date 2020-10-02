@@ -1,3 +1,4 @@
+// Check Problem Statement via https://atcoder.jp/contests/practice2/tasks/practice2_a
 use ac_library_rs::Dsu;
 use std::io::Read;
 

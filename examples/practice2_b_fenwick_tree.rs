@@ -1,3 +1,4 @@
+// Check Problem Statement via https://atcoder.jp/contests/practice2/tasks/practice2_b
 use ac_library_rs::FenwickTree;
 use std::io::Read;
 
