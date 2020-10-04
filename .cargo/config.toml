@@ -1,2 +1,2 @@
 [build]
-rustdocflags = ["--html-in-header", "./doc/katex-header.html"]
+rustdocflags = ["--html-in-header", "./doc/katex-header.html"] # We don't have any `normal` dependency in this package. In most cases, `package.metadata.docs.rs` is recommended.
