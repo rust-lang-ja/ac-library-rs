@@ -51,25 +51,36 @@ impl Barrett {
     /// a * b % m
     #[allow(clippy::many_single_char_names)]
     pub(crate) fn mul(&self, a: u32, b: u32) -> u32 {
-        // [1] m = 1
-        // a = b = im = 0, so okay
-
-        // [2] m >= 2
-        // im = ceil(2^64 / m)
-        // -> im * m = 2^64 + r (0 <= r < m)
-        // let z = a*b = c*m + d (0 <= c, d < m)
-        // a*b * im = (c*m + d) * im = c*(im*m) + d*im = c*2^64 + c*r + d*im
-        // c*r + d*im < m * m + m * im < m * m + 2^64 + m <= 2^64 + m * (m + 1) < 2^64 * 2
-        // ((ab * im) >> 64) == c or c + 1
-        let mut z = a as u64;
-        z *= b as u64;
-        let x = (((z as u128) * (self.im as u128)) >> 64) as u64;
-        let mut v = z.wrapping_sub(x.wrapping_mul(self._m as u64)) as u32;
-        if self._m <= v {
-            v = v.wrapping_add(self._m);
-        }
-        v
+        mul_mod(a, b, self._m, self.im)
     }
+}
+
+/// Calculates `a * b % m`.
+///
+/// * `a` `0 <= a < m`
+/// * `b` `0 <= b < m`
+/// * `m` `1 <= m <= 2^31`
+/// * `im` = ceil(2^64 / `m`)
+#[allow(clippy::many_single_char_names)]
+pub(crate) fn mul_mod(a: u32, b: u32, m: u32, im: u64) -> u32 {
+    // [1] m = 1
+    // a = b = im = 0, so okay
+
+    // [2] m >= 2
+    // im = ceil(2^64 / m)
+    // -> im * m = 2^64 + r (0 <= r < m)
+    // let z = a*b = c*m + d (0 <= c, d < m)
+    // a*b * im = (c*m + d) * im = c*(im*m) + d*im = c*2^64 + c*r + d*im
+    // c*r + d*im < m * m + m * im < m * m + 2^64 + m <= 2^64 + m * (m + 1) < 2^64 * 2
+    // ((ab * im) >> 64) == c or c + 1
+    let mut z = a as u64;
+    z *= b as u64;
+    let x = (((z as u128) * (im as u128)) >> 64) as u64;
+    let mut v = z.wrapping_sub(x.wrapping_mul(m as u64)) as u32;
+    if m <= v {
+        v = v.wrapping_add(m);
+    }
+    v
 }
 
 /// # Parameters

@@ -58,6 +58,7 @@ use std::{
     marker::PhantomData,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
     str::FromStr,
+    sync::atomic::{self, AtomicU32, AtomicU64},
     thread::LocalKey,
 };
 
@@ -330,7 +331,7 @@ impl<I: Id> DynamicModInt<I> {
     /// ```
     #[inline]
     pub fn modulus() -> u32 {
-        I::companion_barrett().with(|bt| bt.borrow().umod())
+        I::companion_barrett().umod()
     }
 
     /// Sets a modulus.
@@ -354,7 +355,7 @@ impl<I: Id> DynamicModInt<I> {
         if modulus == 0 {
             panic!("the modulus must not be 0");
         }
-        I::companion_barrett().with(|bt| *bt.borrow_mut() = Barrett::new(modulus))
+        I::companion_barrett().store(modulus);
     }
 
     /// Creates a new `DynamicModInt`.
@@ -442,47 +443,64 @@ impl<I: Id> ModIntBase for DynamicModInt<I> {
 }
 
 pub trait Id: 'static + Copy + Eq {
-    // TODO: Make `internal_math::Barret` `Copy`.
-    fn companion_barrett() -> &'static LocalKey<RefCell<Barrett>>;
+    fn companion_barrett() -> &'static Barrett;
 }
 
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum DefaultId {}
 
 impl Id for DefaultId {
-    fn companion_barrett() -> &'static LocalKey<RefCell<Barrett>> {
-        thread_local! {
-            static BARRETT: RefCell<Barrett> = RefCell::default();
-        }
+    fn companion_barrett() -> &'static Barrett {
+        static BARRETT: Barrett = Barrett::default();
         &BARRETT
     }
 }
 
-/// Pair of _m_ and _ceil(2⁶⁴/m)_.
-pub struct Barrett(internal_math::Barrett);
+/// $(m, \lceil 2^{64}/m \rceil)$ for barrett reduction.
+pub struct Barrett {
+    m: AtomicU32,
+    im: AtomicU64,
+}
 
 impl Barrett {
     /// Creates a new `Barrett`.
     #[inline]
-    pub fn new(m: u32) -> Self {
-        Self(internal_math::Barrett::new(m))
+    pub const fn new(m: u32) -> Self {
+        Self {
+            m: AtomicU32::new(m),
+            im: AtomicU64::new((-1i64 as u64 / m as u64).wrapping_add(1)),
+        }
+    }
+
+    #[inline]
+    const fn default() -> Self {
+        Self::new(998_244_353)
+    }
+
+    #[inline]
+    fn store(&self, m: u32) {
+        let im = (-1i64 as u64 / m as u64).wrapping_add(1);
+        self.m.store(m, atomic::Ordering::SeqCst);
+        self.im.store(im, atomic::Ordering::SeqCst);
     }
 
     #[inline]
     fn umod(&self) -> u32 {
-        self.0.umod()
+        self.m.load(atomic::Ordering::SeqCst)
     }
 
     #[inline]
     fn mul(&self, a: u32, b: u32) -> u32 {
-        self.0.mul(a, b)
+        let m = self.m.load(atomic::Ordering::SeqCst);
+        let im = self.im.load(atomic::Ordering::SeqCst);
+        internal_math::mul_mod(a, b, m, im)
     }
 }
 
 impl Default for Barrett {
     #[inline]
     fn default() -> Self {
-        Self(internal_math::Barrett::new(998_244_353))
+        Self::default()
     }
 }
 
@@ -810,7 +828,7 @@ impl<M: Modulus> InternalImplementations for StaticModInt<M> {
 impl<I: Id> InternalImplementations for DynamicModInt<I> {
     #[inline]
     fn mul_impl(lhs: Self, rhs: Self) -> Self {
-        I::companion_barrett().with(|bt| Self::raw(bt.borrow().mul(lhs.val, rhs.val)))
+        Self::raw(I::companion_barrett().mul(lhs.val, rhs.val))
     }
 }
 
