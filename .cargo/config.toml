@@ -1,4 +1,4 @@
 [build]
-# This works on local `cargo doc` and on docs.rs because we don't have any `normal` dependency.
+# This works both on local `cargo doc` and on docs.rs because we don't have any `normal` dependency.
 # In most cases, `package.metadata.docs.rs` is recommended.
 rustdocflags = ["--html-in-header", "./doc/katex-header.html"]
