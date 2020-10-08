@@ -456,7 +456,7 @@ impl Id for DefaultId {
     }
 }
 
-/// $(m, \lceil 2^{64}/m \rceil)$ for barrett reduction.
+/// Pair of _m_ and _ceil(2⁶⁴/m)_.
 pub struct Barrett {
     m: AtomicU32,
     im: AtomicU64,
