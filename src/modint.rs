@@ -355,7 +355,7 @@ impl<I: Id> DynamicModInt<I> {
         if modulus == 0 {
             panic!("the modulus must not be 0");
         }
-        I::companion_barrett().store(modulus);
+        I::companion_barrett().update(modulus);
     }
 
     /// Creates a new `DynamicModInt`.
@@ -478,7 +478,7 @@ impl Barrett {
     }
 
     #[inline]
-    fn store(&self, m: u32) {
+    fn update(&self, m: u32) {
         let im = (-1i64 as u64 / m as u64).wrapping_add(1);
         self.m.store(m, atomic::Ordering::SeqCst);
         self.im.store(im, atomic::Ordering::SeqCst);
