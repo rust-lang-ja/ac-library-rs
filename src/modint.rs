@@ -1129,8 +1129,8 @@ mod tests {
     #[test]
     fn static_modint_assign_coercion() {
         let f = ModInt1000000007::new;
-        let a = f(10293812usize);
-        let b = 9083240982usize;
+        let a = f(10_293_812_usize);
+        let b = 9_083_240_982_usize;
         let expected = (((a + b) * b) - b) / b;
         let mut c = a;
         c += b;
