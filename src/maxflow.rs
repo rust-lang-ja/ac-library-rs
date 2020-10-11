@@ -130,9 +130,7 @@ where
         let mut visited = vec![false; self._n];
         let mut que = SimpleQueue::default();
         que.push(s);
-        while !que.empty() {
-            let &p = que.front().unwrap();
-            que.pop();
+        while let Some(&p) = que.pop() {
             visited[p] = true;
             for e in &self.g[p] {
                 if e.cap != Cap::zero() && !visited[e.to] {
