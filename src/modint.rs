@@ -1118,8 +1118,8 @@ mod tests {
     #[test]
     fn static_modint_binop_coercion() {
         let f = ModInt1000000007::new;
-        let a = 10293812usize;
-        let b = 9083240982usize;
+        let a = 10_293_812_usize;
+        let b = 9_083_240_982_usize;
         assert_eq!(f(a) + f(b), f(a) + b);
         assert_eq!(f(a) - f(b), f(a) - b);
         assert_eq!(f(a) * f(b), f(a) * b);
