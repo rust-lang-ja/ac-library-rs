@@ -1,7 +1,31 @@
+//! Number-theoretic algorithms.
+
 use crate::internal_math;
 
 use std::mem::swap;
 
+/// Returns $x^n \bmod m$.
+///
+/// # Constraints
+///
+/// - $0 \leq n$
+/// - $1 \leq m$
+///
+/// # Panics
+///
+/// Panics if the above constraints are not satisfied.
+///
+/// # Complexity
+///
+/// - $O(\log n)$
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::math;
+///
+/// assert_eq!(math::pow_mod(2, 10000, 7), 2);
+/// ```
 #[allow(clippy::many_single_char_names)]
 pub fn pow_mod(x: i64, mut n: i64, m: u32) -> u32 {
     assert!(0 <= n && 1 <= m && m <= 2u32.pow(31));
@@ -21,6 +45,28 @@ pub fn pow_mod(x: i64, mut n: i64, m: u32) -> u32 {
     r
 }
 
+/// Returns an integer $y \in [0, m)$ such that $xy \equiv 1 \pmod m$.
+///
+/// # Constraints
+///
+/// - $\gcd(x, m) = 1$
+/// - $1 \leq m$
+///
+/// # Panics
+///
+/// Panics if the above constraints are not satisfied.
+///
+/// # Complexity
+///
+/// - $O(\log m)$
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::math;
+///
+/// assert_eq!(math::inv_mod(3, 7), 5);
+/// ```
 pub fn inv_mod(x: i64, m: i64) -> i64 {
     assert!(1 <= m);
     let z = internal_math::inv_gcd(x, m);
@@ -28,6 +74,44 @@ pub fn inv_mod(x: i64, m: i64) -> i64 {
     z.1
 }
 
+/// Performs CRT (Chinese Remainder Theorem).
+///
+/// Given two sequences $r, m$ of length $n$, this function solves the modular equation system
+///
+/// \\[
+///   x \equiv r_i \pmod{m_i}, \forall i \in \\{0, 1, \cdots, n - 1\\}
+/// \\]
+///
+/// If there is no solution, it returns $(0, 0)$.
+///
+/// Otherwise, all of the solutions can be written as the form $x \equiv y \pmod z$, using integer $y, z\\ (0 \leq y < z = \text{lcm}(m))$.
+/// It returns this $(y, z)$.
+///
+/// If $n = 0$, it returns $(0, 1)$.
+///
+/// # Constraints
+///
+/// - $|r| = |m|$
+/// - $1 \leq m_{\forall i}$
+/// - $\text{lcm}(m)$ is in `i64`
+///
+/// # Panics
+///
+/// Panics if the above constraints are not satisfied.
+///
+/// # Complexity
+///
+/// - $O(n \log \text{lcm}(m))$
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::math;
+///
+/// let r = [2, 3, 2];
+/// let m = [3, 5, 7];
+/// assert_eq!(math::crt(&r, &m), (23, 105));
+/// ```
 pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
     assert_eq!(r.len(), m.len());
     // Contracts: 0 <= r0 < m0
@@ -78,6 +162,29 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
     (r0, m0)
 }
 
+/// Returns $\sum_{i = 0}^{n - 1} \lfloor \frac{a \times i + b}{m} \rfloor$.
+///
+/// # Constraints
+///
+/// - $0 \leq n \leq 10^9$
+/// - $1 \leq m \leq 10^9$
+/// - $0 \leq a, b \leq m$
+///
+/// # Panics
+///
+/// Panics if the above constraints are not satisfied and overflow or division by zero occurred.
+///
+/// # Complexity
+///
+/// - $O(\log(n + m + a + b))$
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::math;
+///
+/// assert_eq!(math::floor_sum(6, 5, 4, 3), 13);
+/// ```
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     let mut ans = 0;
     if a >= m {
