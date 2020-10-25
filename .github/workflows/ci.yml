@@ -76,6 +76,78 @@ jobs:
           profile: minimal
           components: clippy
 
+      - name: cargo-clippy (convolution)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features convolution -- -D warnings
+
+      - name: cargo-clippy (dsu)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features dsu -- -D warnings
+
+      - name: cargo-clippy (fenwicktree)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features fenwicktree -- -D warnings
+
+      - name: cargo-clippy (lazysegtree)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features lazysegtree -- -D warnings
+
+      - name: cargo-clippy (math)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features math -- -D warnings
+
+      - name: cargo-clippy (maxflow)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features maxflow -- -D warnings
+
+      - name: cargo-clippy (mincostflow)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features mincostflow -- -D warnings
+
+      - name: cargo-clippy (modint)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features modint -- -D warnings
+
+      - name: cargo-clippy (scc)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features scc -- -D warnings
+
+      - name: cargo-clippy (segtree)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features segtree -- -D warnings
+
+      - name: cargo-clippy (string)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features string -- -D warnings
+
+      - name: cargo-clippy (twosat)
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --workspace --all-targets --no-default-features --features twosat -- -D warnings
+
       - name: cargo-clippy
         uses: actions-rs/cargo@v1
         with:

@@ -283,7 +283,9 @@ impl Modulus for Mod998244353 {
 
 /// Cache for butterfly operations.
 pub struct ButterflyCache<M> {
+    #[allow(dead_code)]
     pub(crate) sum_e: Vec<StaticModInt<M>>,
+    #[allow(dead_code)]
     pub(crate) sum_ie: Vec<StaticModInt<M>>,
 }
 

@@ -45,6 +45,7 @@ impl SccGraph {
         SccGraph { n, edges: vec![] }
     }
 
+    #[allow(dead_code)]
     pub fn num_vertices(&self) -> usize {
         self.n
     }
@@ -115,6 +116,7 @@ impl SccGraph {
         (env.group_num, env.ids)
     }
 
+    #[allow(dead_code)]
     pub fn scc(&self) -> Vec<Vec<usize>> {
         let ids = self.scc_ids();
         let group_num = ids.0;
