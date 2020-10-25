@@ -1,6 +1,6 @@
 //! A Disjoint set union (DSU) with union by size and path compression.
 
-/// A Disjoint set union (DSU) with union by size and path compressione.
+/// A Disjoint set union (DSU) with union by size and path compression.
 ///
 /// See: [Zvi Galil and Giuseppe F. Italiano, Data structures and algorithms for disjoint set union problems](https://core.ac.uk/download/pdf/161439519.pdf)
 ///
