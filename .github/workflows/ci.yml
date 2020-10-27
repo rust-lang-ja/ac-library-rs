@@ -96,18 +96,17 @@ jobs:
         env:
           RUST_BACKTRACE: full
 
-  expander_test:
+  expand-py:
     strategy:
       fail-fast: false
       matrix:
         toolchain:
           - 1.42.0-x86_64-unknown-linux-gnu
-          - stable-x86_64-unknown-linux-gnu
         python-version:
           - '3.6' # https://packages.ubuntu.com/bionic/python3
           - '3.8' # https://packages.ubuntu.com/focal/python3
 
-    name: Expand_test (${{ matrix.toolchain }}, ${{ matrix.python-version }})
+    name: expand.py (Python ${{ matrix.python-version }})
     runs-on: ubuntu-18.04
 
     steps:
@@ -129,3 +128,42 @@ jobs:
 
       - name: expand.py tests
         run: bash ./.github/workflows/test-expand.sh
+
+  cargo-simple-bundler:
+    strategy:
+      fail-fast: false
+
+    name: cargo-simple-bundler
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: 'Setup `1.42.0-x86_64-unknown-linux-gnu`'
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.42.0-x86_64-unknown-linux-gnu
+          profile: minimal
+
+      - name: 'Setup `stable-x86_64-unknown-linux-gnu`'
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable-x86_64-unknown-linux-gnu
+          override: true
+          profile: minimal
+
+      - name: Setup Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install cargo-simple-bundler
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --git https://github.com/kuretchi/cargo-simple-bundler --branch main
+          toolchain: stable
+
+      - name: run-cargo-simple-bundler.py
+        run: python ./.github/run-cargo-simple-bundler.py
