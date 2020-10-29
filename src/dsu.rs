@@ -69,7 +69,7 @@ impl Dsu {
     }
 
     // `\textsc` does not work in KaTeX
-    /// Performs the `UNION` operation.
+    /// Performs the Uɴɪᴏɴ operation.
     ///
     /// # Constraints
     ///
@@ -118,7 +118,7 @@ impl Dsu {
         self.leader(a) == self.leader(b)
     }
 
-    /// Performs the `FIND` operation.
+    /// Performs the Fɪɴᴅ operation.
     ///
     /// # Constraints
     ///
