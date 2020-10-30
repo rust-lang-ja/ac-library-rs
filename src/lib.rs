@@ -1,21 +1,34 @@
-pub mod convolution;
-pub mod dsu;
-pub mod fenwicktree;
-pub mod lazysegtree;
-pub mod math;
-pub mod maxflow;
-pub mod mincostflow;
-pub mod modint;
-pub mod scc;
-pub mod segtree;
-pub mod string;
-pub mod twosat;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_convolution as convolution;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_dsu as dsu;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_fenwicktree as fenwicktree;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_lazysegtree as lazysegtree;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_math as math;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_maxflow as maxflow;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_mincostflow as mincostflow;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_modint as modint;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_scc as scc;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_segtree as segtree;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_string as string;
+#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+pub extern crate __acl_twosat as twosat;
 
-pub(crate) mod internal_bit;
-pub(crate) mod internal_math;
-pub(crate) mod internal_queue;
-pub(crate) mod internal_scc;
-pub(crate) mod internal_type_traits;
+// Crates like `num` re-export sub crates like this, but currently `cargo-simple-bundler` does not support inline modules.
+//pub mod twosat {
+//    #[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
+//    extern crate __acl_twosat as twosat;
+//    pub use self::twosat::*;
+//}
 
 pub use convolution::{convolution, convolution_i64};
 pub use dsu::Dsu;

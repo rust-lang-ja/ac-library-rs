@@ -1,0 +1,13 @@
+[package]
+name = "acl_fenwicktree"
+version = "0.1.0"
+authors = ["rust-lang-ja Developers"]
+edition = "2018"
+description = "A Rust port of AtCoder Library (ACL)."
+license = "CC0-1.0"
+repository = "https://github.com/rust-lang-ja/ac-library-rs"
+keywords = ["competitive"]
+categories = ["algorithms", "data-structures"]
+publish = false
+
+[dependencies]

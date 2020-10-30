@@ -1,0 +1,17 @@
+[package]
+name = "acl_math"
+version = "0.1.0"
+authors = ["rust-lang-ja Developers"]
+edition = "2018"
+description = "A Rust port of AtCoder Library (ACL)."
+license = "CC0-1.0"
+repository = "https://github.com/rust-lang-ja/ac-library-rs"
+keywords = ["competitive"]
+categories = ["algorithms", "data-structures"]
+publish = false
+
+[dependencies]
+__acl_internal_math = { package = "acl_internal_math", version = "0.1.0", path = "../acl_internal_math" }
+
+[dev-dependencies]
+ac-library-rs = { version = "*", path = ".." }

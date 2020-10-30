@@ -4,6 +4,7 @@ import sys
 import getopt
 import tempfile
 import subprocess
+import re
 
 usage = '''Usage:expand.py [options] <output modules>
 Output Modules:
@@ -43,18 +44,28 @@ dependency_list = {'convolution': ('internal_bit', 'modint',),
                    'scc': ('internal_scc',),
                    'segtree': ('internal_bit', 'internal_type_traits',),
                    'twosat': ('internal_scc',), }
-src_path = 'src/'
+CARGO_EQUIP_ATTR = '#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]'
+EXTERN_CRATE_PATTERN = re.compile(
+    'extern crate [a-z0-9_].* as (?P<name>[a-z0-9_]+);'
+)
 
 
-def output_file(filename):
-    global src_path
-
+def output_file(name):
     res = []
-    with open(src_path+filename+'.rs', 'r') as f:
-        res.append('pub mod {} {{'.format(filename))
+    with open('./acl_{}/src/lib.rs'.format(name), 'r') as f:
+        res.append('pub mod acl_{} {{'.format(name))
 
         for line in f:
-            res.append(line.rstrip())
+            line = line.rstrip()
+            match = EXTERN_CRATE_PATTERN.match(line)
+            if line == CARGO_EQUIP_ATTR:
+                res.append('/*' + CARGO_EQUIP_ATTR + '*/')
+            elif match:
+                res.append('/*{line}*/use crate::acl_{name} as {name};'.format(
+                    line=line, name=match['name'],
+                ))
+            else:
+                res.append(line)
 
         res.append('}')
     return res
@@ -103,7 +114,7 @@ for i in output_list:
     # Modules that begin with 'internal' are for internal use, so they are not
     # declared.
     if not i.startswith('internal'):
-        output_data.append('use {}::*;'.format(i))
+        output_data.append('use acl_{}::*;'.format(i))
 
 # rustfmt
 with tempfile.TemporaryDirectory() as temp_dir:

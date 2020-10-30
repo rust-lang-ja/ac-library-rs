@@ -1,0 +1,15 @@
+[package]
+name = "acl_lazysegtree"
+version = "0.1.0"
+authors = ["rust-lang-ja Developers"]
+edition = "2018"
+description = "A Rust port of AtCoder Library (ACL)."
+license = "CC0-1.0"
+repository = "https://github.com/rust-lang-ja/ac-library-rs"
+keywords = ["competitive"]
+categories = ["algorithms", "data-structures"]
+publish = false
+
+[dependencies]
+__acl_internal_bit = { package = "acl_internal_bit", version = "0.1.0", path = "../acl_internal_bit" }
+__acl_segtree = { package = "acl_segtree", version = "0.1.0", path = "../acl_segtree" }

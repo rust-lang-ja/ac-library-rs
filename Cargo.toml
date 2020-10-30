@@ -1,3 +1,5 @@
+[workspace]
+
 [package]
 name = "ac-library-rs"
 version = "0.1.0"
@@ -13,7 +15,15 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
-[dev-dependencies]
-proconio = "=0.3.6"
-rand = "0.7.3"
+__acl_convolution = { package = "acl_convolution", version = "0.1.0", path = "./acl_convolution" }
+__acl_dsu         = { package = "acl_dsu"        , version = "0.1.0", path = "./acl_dsu"         }
+__acl_fenwicktree = { package = "acl_fenwicktree", version = "0.1.0", path = "./acl_fenwicktree" }
+__acl_lazysegtree = { package = "acl_lazysegtree", version = "0.1.0", path = "./acl_lazysegtree" }
+__acl_math        = { package = "acl_math"       , version = "0.1.0", path = "./acl_math"        }
+__acl_maxflow     = { package = "acl_maxflow"    , version = "0.1.0", path = "./acl_maxflow"     }
+__acl_mincostflow = { package = "acl_mincostflow", version = "0.1.0", path = "./acl_mincostflow" }
+__acl_modint      = { package = "acl_modint"     , version = "0.1.0", path = "./acl_modint"      }
+__acl_scc         = { package = "acl_scc"        , version = "0.1.0", path = "./acl_scc"         }
+__acl_segtree     = { package = "acl_segtree"    , version = "0.1.0", path = "./acl_segtree"     }
+__acl_string      = { package = "acl_string"     , version = "0.1.0", path = "./acl_string"      }
+__acl_twosat      = { package = "acl_twosat"     , version = "0.1.0", path = "./acl_twosat"      }
