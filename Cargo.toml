@@ -12,6 +12,9 @@ keywords = ["competitive"]
 categories = ["algorithms", "data-structures"]
 publish = false
 
+[package.metadata.docs.rs]
+rustdoc-args = ["--html-in-header", "./katex-header.html"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
