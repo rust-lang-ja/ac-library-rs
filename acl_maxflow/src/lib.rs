@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 
-#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
 extern crate __acl_internal_queue as internal_queue;
-#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
 extern crate __acl_internal_type_traits as internal_type_traits;
 
 use self::{internal_queue::SimpleQueue, internal_type_traits::Integral};

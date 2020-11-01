@@ -44,7 +44,6 @@ dependency_list = {'convolution': ('internal_bit', 'modint',),
                    'scc': ('internal_scc',),
                    'segtree': ('internal_bit', 'internal_type_traits',),
                    'twosat': ('internal_scc',), }
-CARGO_EQUIP_ATTR = '#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]'
 EXTERN_CRATE_PATTERN = re.compile(
     'extern crate [a-z0-9_].* as (?P<name>[a-z0-9_]+);'
 )
@@ -58,9 +57,7 @@ def output_file(name):
         for line in f:
             line = line.rstrip()
             match = EXTERN_CRATE_PATTERN.match(line)
-            if line == CARGO_EQUIP_ATTR:
-                res.append('/*' + CARGO_EQUIP_ATTR + '*/')
-            elif match:
+            if match:
                 res.append('/*{line}*/use crate::acl_{name} as {name};'.format(
                     line=line, name=match['name'],
                 ))

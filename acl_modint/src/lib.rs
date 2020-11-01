@@ -48,7 +48,6 @@
 //! [`ModInt998244353`]: ./type.ModInt998244353.html
 //! [`ModInt`]: ./type.ModInt.html
 
-#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
 extern crate __acl_internal_math as internal_math;
 
 use std::{

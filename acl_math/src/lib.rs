@@ -1,6 +1,5 @@
 //! Number-theoretic algorithms.
 
-#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
 extern crate __acl_internal_math as internal_math;
 
 use std::mem::swap;

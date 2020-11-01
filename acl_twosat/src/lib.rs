@@ -1,4 +1,3 @@
-#[cfg_attr(cargo_equip, cargo_equip::use_another_lib)]
 extern crate __acl_internal_scc as internal_scc;
 
 pub struct TwoSat {
