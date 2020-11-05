@@ -16,4 +16,4 @@ publish = false
 
 [dev-dependencies]
 proconio = "=0.3.6"
-rand = "0.7.3"
+rand = "=0.7.3"
