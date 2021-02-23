@@ -11,7 +11,6 @@ pub struct MinCostFlowEdge<T> {
 pub struct MinCostFlowGraph<T> {
     pos: Vec<(usize, usize)>,
     g: Vec<Vec<_Edge<T>>>,
-    cost_sum: T,
 }
 
 impl<T> MinCostFlowGraph<T>
@@ -22,7 +21,6 @@ where
         Self {
             pos: vec![],
             g: (0..n).map(|_| vec![]).collect(),
-            cost_sum: T::zero(),
         }
     }
 
@@ -56,7 +54,6 @@ where
         assert!(cost >= T::zero());
 
         self.pos.push((from, self.g[from].len()));
-        self.cost_sum += cost;
 
         let rev = self.g[to].len();
         self.g[from].push(_Edge { to, rev, cap, cost });
@@ -131,7 +128,7 @@ where
         pe: &mut [usize],
     ) -> bool {
         let n = self.g.len();
-        let mut dist = vec![self.cost_sum; n];
+        let mut dist = vec![T::max_value(); n];
         let mut vis = vec![false; n];
 
         let mut que = std::collections::BinaryHeap::new();
