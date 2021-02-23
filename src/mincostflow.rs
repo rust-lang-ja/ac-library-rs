@@ -11,7 +11,6 @@ pub struct MinCostFlowEdge<T> {
 pub struct MinCostFlowGraph<T> {
     pos: Vec<(usize, usize)>,
     g: Vec<Vec<_Edge<T>>>,
-    cost_sum: T,
 }
 
 impl<T> MinCostFlowGraph<T>
@@ -22,7 +21,6 @@ where
         Self {
             pos: vec![],
             g: (0..n).map(|_| vec![]).collect(),
-            cost_sum: T::zero(),
         }
     }
 
@@ -56,7 +54,6 @@ where
         assert!(cost >= T::zero());
 
         self.pos.push((from, self.g[from].len()));
-        self.cost_sum += cost;
 
         let rev = self.g[to].len();
         self.g[from].push(_Edge { to, rev, cap, cost });
@@ -131,7 +128,7 @@ where
         pe: &mut [usize],
     ) -> bool {
         let n = self.g.len();
-        let mut dist = vec![self.cost_sum; n];
+        let mut dist = vec![T::max_value(); n];
         let mut vis = vec![false; n];
 
         let mut que = std::collections::BinaryHeap::new();
@@ -207,6 +204,15 @@ mod tests {
         assert_eq!(1, graph.add_edge(1, 2, 1, 0));
         assert_eq!(2, graph.add_edge(0, 2, 2, 1));
         let expected = [(0, 0), (3, 3)];
+        assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
+    }
+
+    #[test]
+    fn only_one_nonzero_cost_edge() {
+        let mut graph = MinCostFlowGraph::new(3);
+        assert_eq!(0, graph.add_edge(0, 1, 1, 1));
+        assert_eq!(1, graph.add_edge(1, 2, 1, 0));
+        let expected = [(0, 0), (1, 1)];
         assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
     }
 }
