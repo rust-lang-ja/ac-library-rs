@@ -201,7 +201,7 @@ where
             self.graph.g[e_to][e_rev].cap -= d;
             res += d;
             if res == up {
-                break;
+                return res;
             }
         }
         self.iter[v] = self.graph.g[v].len();
