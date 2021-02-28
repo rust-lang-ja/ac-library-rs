@@ -1,5 +1,10 @@
 # ac-library-rs
 
+[![CI](https://github.com/rust-lang-ja/ac-library-rs/workflows/CI/badge.svg)](https://github.com/rust-lang-ja/ac-library-rs/actions?workflow=CI)
+[![Rust 2018 1.42.0+](https://img.shields.io/badge/rust%202018-1.42.0+-lightgray.svg)](https://www.rust-lang.org)
+![Crates.io](https://img.shields.io/badge/crates.io-not%20yet-inactive)
+![License](https://img.shields.io/badge/license-CC0--1.0-informational)
+
 ac-library-rs is a rust port of AtCoder Library (ACL).
 
 See below for ACL.
