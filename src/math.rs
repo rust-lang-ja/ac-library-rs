@@ -1,6 +1,6 @@
 //! Number-theoretic algorithms.
 
-use crate::internal_math;
+use super::internal_math;
 
 use std::mem::swap;
 

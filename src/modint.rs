@@ -48,7 +48,7 @@
 //! [`ModInt998244353`]: ./type.ModInt998244353.html
 //! [`ModInt`]: ./type.ModInt.html
 
-use crate::internal_math;
+use super::internal_math;
 use std::{
     cell::RefCell,
     convert::{Infallible, TryInto as _},
@@ -1050,7 +1050,7 @@ impl_folding! {
 
 #[cfg(test)]
 mod tests {
-    use crate::modint::ModInt1000000007;
+    use super::ModInt1000000007;
 
     #[test]
     fn static_modint_new() {
