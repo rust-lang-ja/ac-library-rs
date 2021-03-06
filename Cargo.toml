@@ -17,4 +17,5 @@ publish = false
 [dev-dependencies]
 input = { path = "./crates/input" }
 proconio = "=0.3.6"
+proconio-derive = "0.2.1"
 rand = "0.7.3"
