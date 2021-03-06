@@ -129,3 +129,47 @@ jobs:
 
       - name: expand.py tests
         run: bash ./.github/workflows/test-expand.sh
+
+  verify:
+    name: Verify
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup `1.47.0-x86_64-unknown-linux-gnu`
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.47.0-x86_64-unknown-linux-gnu
+          override: true
+          profile: minimal
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install `oj`
+        run: pip install online-judge-tools
+
+      - name: cargo-build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --examples
+
+      - name: Verify
+        run: |
+          NAMES=(
+            convolution_mod
+            static_range_sum
+            sum_of_floor_of_linear
+            unionfind
+          )
+          for name in "${NAMES[@]}"; do
+            oj d "https://judge.yosupo.jp/problem/$name" -ad "/tmp/$name"
+          done
+          for name in "${NAMES[@]}"; do
+            oj t -d "/tmp/$name" -t 10 -c "./target/release/examples/library-checker-${name//_/-}" --judge-command ~/.cache/online-judge-tools/library-checker-problems/*/"$name"/checker
+          done
