@@ -54,7 +54,7 @@ pub struct TwoSat {
     answer: Vec<bool>,
 }
 impl TwoSat {
-    /// Creates a new `TwoSat` of `n` variables and 0 clause.
+    /// Creates a new `TwoSat` of `n` variables and 0 clauses.
     ///
     /// # Constraints
     ///
