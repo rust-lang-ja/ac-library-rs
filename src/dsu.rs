@@ -195,11 +195,11 @@ mod tests {
     fn dsu_works() {
         let mut d = Dsu::new(4);
         d.merge(0, 1);
-        assert_eq!(d.same(0, 1), true);
+        assert!(d.same(0, 1));
         d.merge(1, 2);
-        assert_eq!(d.same(0, 2), true);
+        assert!(d.same(0, 2));
         assert_eq!(d.size(0), 3);
-        assert_eq!(d.same(0, 3), false);
+        assert!(!d.same(0, 3));
         assert_eq!(d.groups(), vec![vec![0, 1, 2], vec![3]]);
     }
 }
