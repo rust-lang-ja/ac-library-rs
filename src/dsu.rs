@@ -165,7 +165,7 @@ impl Dsu {
     ///
     /// # Complexity
     ///
-    /// - $O(\alpha(n))$ amortized
+    /// - $O(n)$
     pub fn groups(&mut self) -> Vec<Vec<usize>> {
         let mut leader_buf = vec![0; self.n];
         let mut group_size = vec![0; self.n];
