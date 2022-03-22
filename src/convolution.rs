@@ -8,9 +8,9 @@ macro_rules! modulus {
                 const VALUE: u32 = $name as _;
                 const HINT_VALUE_IS_PRIME: bool = true;
 
-                fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<crate::modint::ButterflyCache<Self>>>> {
+                fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<$crate::modint::ButterflyCache<Self>>>> {
                     thread_local! {
-                        static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<crate::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
+                        static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<$crate::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
                     }
                     &BUTTERFLY_CACHE
                 }
