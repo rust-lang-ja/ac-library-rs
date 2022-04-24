@@ -4,6 +4,7 @@ import sys
 import getopt
 import tempfile
 import subprocess
+import pathlib
 
 usage = '''Usage:expand.py [options] <output modules>
 Output Modules:
@@ -43,14 +44,14 @@ dependency_list = {'convolution': ('internal_bit', 'modint',),
                    'scc': ('internal_scc',),
                    'segtree': ('internal_bit', 'internal_type_traits',),
                    'twosat': ('internal_scc',), }
-src_path = 'src/'
+src_path = pathlib.Path(sys.argv[0]).parent.joinpath('src')
 
 
 def output_file(filename):
     global src_path
 
     res = []
-    with open(src_path+filename+'.rs', 'r') as f:
+    with open(src_path.joinpath(filename+'.rs'), 'r') as f:
         res.append('pub mod {} {{'.format(filename))
 
         for line in f:
