@@ -186,24 +186,20 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 /// assert_eq!(math::floor_sum(6, 5, 4, 3), 13);
 /// ```
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
+    assert!(0 <= n && n < 1i64 << 32);
+    assert!(1 <= m && m < 1i64 << 32);
     let mut ans = 0;
-    if a >= m {
-        ans += (n - 1) * n * (a / m) / 2;
-        a %= m;
+    if a < 0 {
+        let a2 = internal_math::safe_mod(a, m);
+        ans -= n * (n - 1) / 2 * ((a2 - a) / m);
+        a = a2;
     }
-    if b >= m {
-        ans += n * (b / m);
-        b %= m;
+    if b < 0 {
+        let b2 = internal_math::safe_mod(b, m);
+        ans -= n * ((b2 - b) / m);
+        b = b2;
     }
-
-    let y_max = (a * n + b) / m;
-    let x_max = y_max * m - b;
-    if y_max == 0 {
-        return ans;
-    }
-    ans += (n - (x_max + a - 1) / a) * y_max;
-    ans += floor_sum(y_max, a, m, (a - x_max % a) % a);
-    ans
+    ans + internal_math::floor_sum_unsigned(n as u64, m as u64, a as u64, b as u64) as i64
 }
 
 #[cfg(test)]
@@ -306,5 +302,23 @@ mod tests {
             499_999_999_500_000_000
         );
         assert_eq!(floor_sum(332955, 5590132, 2231, 999423), 22014575);
+        for n in 0..20 {
+            for m in 1..20 {
+                for a in -20..20 {
+                    for b in -20..20 {
+                        assert_eq!(floor_sum(n, m, a, b), floor_sum_naive(n, m, a, b));
+                    }
+                }
+            }
+        }
+    }
+
+    fn floor_sum_naive(n: i64, m: i64, a: i64, b: i64) -> i64 {
+        let mut ans = 0;
+        for i in 0..n {
+            let z = a * i + b;
+            ans += (z - internal_math::safe_mod(z, m)) / m;
+        }
+        ans
     }
 }
