@@ -267,7 +267,7 @@ pub(crate) fn floor_sum_unsigned(mut n: u64, mut m: u64, mut a: u64, mut b: u64)
         b = y_max % m;
         std::mem::swap(&mut m, &mut a);
     }
-    return ans;
+    ans
 }
 
 #[cfg(test)]

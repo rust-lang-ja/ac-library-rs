@@ -185,6 +185,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 ///
 /// assert_eq!(math::floor_sum(6, 5, 4, 3), 13);
 /// ```
+#[allow(clippy::many_single_char_names)]
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
     assert!(0 <= n && n < 1i64 << 32);
     assert!(1 <= m && m < 1i64 << 32);
@@ -313,6 +314,7 @@ mod tests {
         }
     }
 
+    #[allow(clippy::many_single_char_names)]
     fn floor_sum_naive(n: i64, m: i64, a: i64, b: i64) -> i64 {
         let mut ans = 0;
         for i in 0..n {
