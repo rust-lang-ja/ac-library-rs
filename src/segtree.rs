@@ -213,6 +213,15 @@ impl<M: Monoid> Segtree<M> {
     fn update(&mut self, k: usize) {
         self.d[k] = M::binary_operation(&self.d[2 * k], &self.d[2 * k + 1]);
     }
+
+    /// Returns the number of elements.
+    pub fn len(&self) -> usize {
+        self.n
+    }
+    /// Returns if the container is empty.
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 // Maybe we can use this someday
@@ -247,6 +256,9 @@ mod tests {
         let n = base.len();
         let segtree: Segtree<Max<_>> = base.clone().into();
         check_segtree(&base, &segtree);
+
+        assert_eq!(segtree.len(), n);
+        assert!(!segtree.is_empty());
 
         let mut segtree = Segtree::<Max<_>>::new(n);
         let mut internal = vec![i32::min_value(); n];

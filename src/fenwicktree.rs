@@ -40,6 +40,14 @@ impl<T: Clone + std::ops::AddAssign<T>> FenwickTree<T> {
     {
         self.accum(r) - self.accum(l)
     }
+    /// Returns the number of elements.
+    pub fn len(&self) -> usize {
+        self.n
+    }
+    /// Returns if the container is empty.
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 #[cfg(test)]
@@ -53,6 +61,8 @@ mod tests {
         for i in 0..5 {
             bit.add(i, i as i64 + 1);
         }
+        assert_eq!(bit.len(), 5);
+        assert!(!bit.is_empty());
         assert_eq!(bit.sum(0, 5), 15);
         assert_eq!(bit.sum(0, 4), 10);
         assert_eq!(bit.sum(1, 3), 5);
