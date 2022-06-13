@@ -187,8 +187,8 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 /// ```
 #[allow(clippy::many_single_char_names)]
 pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
-    assert!(0 <= n && n < 1i64 << 32);
-    assert!(1 <= m && m < 1i64 << 32);
+    assert!((0..1i64 << 32).contains(&n));
+    assert!((1..1i64 << 32).contains(&m));
     let mut ans = 0;
     if a < 0 {
         let a2 = internal_math::safe_mod(a, m);
