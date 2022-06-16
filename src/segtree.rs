@@ -1,5 +1,6 @@
 use crate::internal_bit::ceil_pow2;
-use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
+use crate::internal_type_traits::{BoundedAbove, BoundedBelow};
+use crate::num_traits::{One, Zero};
 use std::cmp::{max, min};
 use std::convert::Infallible;
 use std::marker::PhantomData;
