@@ -2,7 +2,7 @@ use crate::internal_bit::ceil_pow2;
 use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
 use std::cmp::{max, min, Ordering};
 use std::convert::Infallible;
-use std::iter::{empty, repeat_with};
+use std::iter::{empty, repeat_with, FromIterator};
 use std::marker::PhantomData;
 use std::ops::{Add, Mul};
 
@@ -82,6 +82,17 @@ impl<M: Monoid> Segtree<M> {
 impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
     fn from(v: Vec<M::S>) -> Self {
         Self::from_vec(v, 0)
+    }
+}
+impl<M: Monoid> FromIterator<M::S> for Segtree<M> {
+    fn from_iter<T: IntoIterator<Item = M::S>>(iter: T) -> Self {
+        let iter = iter.into_iter();
+        let n = iter.size_hint().0;
+        let log = ceil_pow2(n as u32) as usize;
+        let size = 1 << log;
+        let mut d = Vec::with_capacity(size * 2);
+        d.extend(repeat_with(M::identity).take(size).chain(iter));
+        Self::from_vec(d, size)
     }
 }
 impl<M: Monoid> Segtree<M> {
@@ -280,6 +291,14 @@ mod tests {
         segtree.set(6, 0);
         internal[6] = 0;
         check_segtree(&internal, &segtree);
+    }
+
+    #[test]
+    fn test_from_iter() {
+        let it = || (1..7).map(|x| x * 4 % 11);
+        let base = it().collect::<Vec<_>>();
+        let segtree: Segtree<Max<_>> = it().collect();
+        check_segtree(&base, &segtree);
     }
 
     //noinspection DuplicatedCode

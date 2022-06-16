@@ -34,6 +34,17 @@ impl<F: MapMonoid> From<Vec<<F::M as Monoid>::S>> for LazySegtree<F> {
         Self::from_vec(v, 0)
     }
 }
+impl<F: MapMonoid> FromIterator<<F::M as Monoid>::S> for LazySegtree<F> {
+    fn from_iter<T: IntoIterator<Item = <F::M as Monoid>::S>>(iter: T) -> Self {
+        let iter = iter.into_iter();
+        let n = iter.size_hint().0;
+        let log = ceil_pow2(n as u32) as usize;
+        let size = 1 << log;
+        let mut d = Vec::with_capacity(size * 2);
+        d.extend(repeat_with(F::identity_element).take(size).chain(iter));
+        Self::from_vec(d, size)
+    }
+}
 
 impl<F: MapMonoid> LazySegtree<F> {
     /// Creates a segtree from elements `d[offset..]`.
@@ -306,7 +317,7 @@ where
 use std::{
     cmp::Ordering,
     fmt::{Debug, Error, Formatter, Write},
-    iter::{empty, repeat_with},
+    iter::{empty, repeat_with, FromIterator},
 };
 impl<F> Debug for LazySegtree<F>
 where
@@ -384,6 +395,14 @@ mod tests {
         segtree.apply_range(3, 8, 2);
         internal[3..8].iter_mut().for_each(|e| *e += 2);
         check_segtree(&internal, &mut segtree);
+    }
+
+    #[test]
+    fn test_from_iter() {
+        let it = || (1..7).map(|x| x * 4 % 11);
+        let base = it().collect::<Vec<_>>();
+        let mut segtree: LazySegtree<MaxAdd> = it().collect();
+        check_segtree(&base, &mut segtree);
     }
 
     //noinspection DuplicatedCode
