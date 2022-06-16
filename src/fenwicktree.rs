@@ -1,3 +1,5 @@
+use std::iter::repeat_with;
+
 use crate::num_traits::Zero;
 
 // Reference: https://en.wikipedia.org/wiki/Fenwick_tree
@@ -6,30 +8,30 @@ pub struct FenwickTree<T> {
     ary: Vec<T>,
 }
 
-impl<T: Clone + std::ops::AddAssign<T> + Zero> FenwickTree<T> {
+impl<T: for<'a> std::ops::AddAssign<&'a T> + Zero> FenwickTree<T> {
     pub fn new(n: usize) -> Self {
         FenwickTree {
             n,
-            ary: vec![T::zero(); n],
+            ary: repeat_with(T::zero).take(n).collect(),
         }
     }
     pub fn accum(&self, mut idx: usize) -> T {
         let mut sum = T::zero();
         while idx > 0 {
-            sum += self.ary[idx - 1].clone();
+            sum += &self.ary[idx - 1];
             idx &= idx - 1;
         }
         sum
     }
     /// performs data[idx] += val;
-    pub fn add<U: Clone>(&mut self, mut idx: usize, val: U)
+    pub fn add<U>(&mut self, mut idx: usize, val: U)
     where
-        T: std::ops::AddAssign<U>,
+        T: for<'a> std::ops::AddAssign<&'a U>,
     {
         let n = self.n;
         idx += 1;
         while idx <= n {
-            self.ary[idx - 1] += val.clone();
+            self.ary[idx - 1] += &val;
             idx += idx & idx.wrapping_neg();
         }
     }
