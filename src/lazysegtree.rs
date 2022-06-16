@@ -31,12 +31,28 @@ impl<F: MapMonoid> LazySegtree<F> {
 }
 impl<F: MapMonoid> From<Vec<<F::M as Monoid>::S>> for LazySegtree<F> {
     fn from(v: Vec<<F::M as Monoid>::S>) -> Self {
-        let n = v.len();
+        Self::from_vec(v, 0)
+    }
+}
+
+impl<F: MapMonoid> LazySegtree<F> {
+    /// Creates a segtree from elements `d[offset..]`.
+    fn from_vec(mut d: Vec<<F::M as Monoid>::S>, offset: usize) -> Self {
+        assert!(offset <= d.len());
+        let n = d.len() - offset;
         let log = ceil_pow2(n as u32) as usize;
         let size = 1 << log;
-        let mut d = vec![F::identity_element(); 2 * size];
+        match offset.cmp(&size) {
+            Ordering::Less => {
+                d.splice(0..0, repeat_with(F::identity_element).take(size - offset));
+            }
+            Ordering::Equal => {}
+            Ordering::Greater => {
+                d.splice(size..offset, empty());
+            }
+        };
+        d.resize_with(size * 2, F::identity_element);
         let lz = vec![F::identity_map(); size];
-        d[size..(size + n)].clone_from_slice(&v);
         let mut ret = LazySegtree {
             n,
             size,
@@ -47,11 +63,11 @@ impl<F: MapMonoid> From<Vec<<F::M as Monoid>::S>> for LazySegtree<F> {
         for i in (1..size).rev() {
             ret.update(i);
         }
+        // `ret.d[0]` is uninitialized and has an unknown value.
+        // This is ok as it is unused (as of writing).
         ret
     }
-}
 
-impl<F: MapMonoid> LazySegtree<F> {
     pub fn set(&mut self, mut p: usize, x: <F::M as Monoid>::S) {
         assert!(p < self.n);
         p += self.size;
@@ -287,7 +303,11 @@ where
 }
 
 // TODO is it useful?
-use std::fmt::{Debug, Error, Formatter, Write};
+use std::{
+    cmp::Ordering,
+    fmt::{Debug, Error, Formatter, Write},
+    iter::{empty, repeat_with},
+};
 impl<F> Debug for LazySegtree<F>
 where
     F: MapMonoid,
@@ -314,7 +334,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{LazySegtree, MapMonoid, Max};
+    use crate::{Additive, LazySegtree, MapMonoid, Max};
 
     struct MaxAdd;
     impl MapMonoid for MaxAdd {
@@ -412,5 +432,47 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn test_from_vec() {
+        struct IdAdditive;
+        impl MapMonoid for IdAdditive {
+            type M = Additive<u32>;
+            type F = ();
+            fn identity_map() {}
+            fn mapping(_: &(), &x: &u32) -> u32 {
+                x
+            }
+            fn composition(_: &(), _: &()) {}
+        }
+
+        let v = vec![1, 2, 4];
+        let ans_124 = vec![7, 3, 4, 1, 2, 4, 0];
+        let tree = LazySegtree::<IdAdditive>::from_vec(v, 0);
+        assert_eq!(&tree.d[1..], &ans_124[..]);
+
+        let v = vec![1, 2, 4, 8];
+        let tree = LazySegtree::<IdAdditive>::from_vec(v, 0);
+        assert_eq!(&tree.d[1..], &vec![15, 3, 12, 1, 2, 4, 8][..]);
+
+        let v = vec![1, 2, 4, 8, 16];
+        let tree = LazySegtree::<IdAdditive>::from_vec(v, 0);
+        assert_eq!(
+            &tree.d[1..],
+            &vec![31, 15, 16, 3, 12, 16, 0, 1, 2, 4, 8, 16, 0, 0, 0][..]
+        );
+
+        let v = vec![314, 159, 265, 1, 2, 4];
+        let tree = LazySegtree::<IdAdditive>::from_vec(v, 3);
+        assert_eq!(&tree.d[1..], &ans_124[..]);
+
+        let v = vec![314, 159, 265, 897, 1, 2, 4];
+        let tree = LazySegtree::<IdAdditive>::from_vec(v, 4);
+        assert_eq!(&tree.d[1..], &ans_124[..]);
+
+        let v = vec![314, 159, 265, 897, 932, 1, 2, 4];
+        let tree = LazySegtree::<IdAdditive>::from_vec(v, 5);
+        assert_eq!(&tree.d[1..], &ans_124[..]);
     }
 }
