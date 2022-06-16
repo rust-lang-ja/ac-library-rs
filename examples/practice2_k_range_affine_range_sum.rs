@@ -57,9 +57,9 @@ fn main() {
                 segtree.apply_range(l, r, (b, c));
             }
             1 => {
-                let l = input.next().unwrap().parse().unwrap();
-                let r = input.next().unwrap().parse().unwrap();
-                println!("{}", segtree.prod(l, r).0);
+                let l: usize = input.next().unwrap().parse().unwrap();
+                let r: usize = input.next().unwrap().parse().unwrap();
+                println!("{}", segtree.prod(l..r).0);
             }
             _ => {}
         }
