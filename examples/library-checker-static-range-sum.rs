@@ -15,7 +15,7 @@ fn main() {
         lrs: [(usize, usize); q],
     }
 
-    let mut fenwick = FenwickTree::new(n, 0);
+    let mut fenwick = FenwickTree::<u64>::new(n);
     for (i, a) in r#as.into_iter().enumerate() {
         fenwick.add(i, a);
     }
