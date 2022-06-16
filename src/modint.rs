@@ -910,6 +910,14 @@ macro_rules! impl_basic_traits {
             }
         }
 
+        #[cfg(not(feature = "num-traits"))]
+        impl<$generic_param: $generic_param_bound> $crate::num_traits::Zero for $self {
+            #[inline]
+            fn zero() -> Self {
+                Self::new(0)
+            }
+        }
+
         #[cfg(feature = "num-traits")]
         impl<$generic_param: $generic_param_bound> num_traits::One for $self {
             #[inline]
@@ -919,6 +927,14 @@ macro_rules! impl_basic_traits {
             #[inline]
             fn is_one(&self) -> bool {
                 self == &Self::one()
+            }
+        }
+
+        #[cfg(not(feature = "num-traits"))]
+        impl<$generic_param: $generic_param_bound> $crate::num_traits::One for $self {
+            #[inline]
+            fn one() -> Self {
+                Self::new(1)
             }
         }
 
