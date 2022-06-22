@@ -144,7 +144,22 @@ impl<F: MapMonoid> LazySegtree<F> {
             self.update(p >> i);
         }
     }
-    pub fn apply_range(&mut self, mut l: usize, mut r: usize, f: F::F) {
+    pub fn apply_range<R>(&mut self, range: R, f: F::F)
+    where
+        R: RangeBounds<usize>,
+    {
+        let mut r = match range.end_bound() {
+            Bound::Included(r) => r + 1,
+            Bound::Excluded(r) => *r,
+            Bound::Unbounded => self.n,
+        };
+        let mut l = match range.start_bound() {
+            Bound::Included(l) => *l,
+            Bound::Excluded(l) => l + 1,
+            // TODO: There are another way of optimizing [0..r)
+            Bound::Unbounded => 0,
+        };
+
         assert!(l <= r && r <= self.n);
         if l == r {
             return;
@@ -386,8 +401,12 @@ mod tests {
         internal[6] = 0;
         check_segtree(&internal, &mut segtree);
 
-        segtree.apply_range(3, 8, 2);
+        segtree.apply_range(3..8, 2);
         internal[3..8].iter_mut().for_each(|e| *e += 2);
+        check_segtree(&internal, &mut segtree);
+
+        segtree.apply_range(2..=5, 7);
+        internal[2..=5].iter_mut().for_each(|e| *e += 7);
         check_segtree(&internal, &mut segtree);
     }
 
