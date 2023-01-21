@@ -135,7 +135,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
         // r2 % m0 = r0
         // r2 % mi = ri
         // -> (r0 + x*m0) % mi = ri
-        // -> x*u0*g % (u1*g) = (ri - r0) (u0*g = m0, u1*g = mi)
+        // -> x*u0*g = ri-r0 (mod u1*g) (u0*g = m0, u1*g = mi)
         // -> x = (ri - r0) / g * inv(u0) (mod u1)
 
         // im = inv(u0) (mod u1) (0 <= im < u1)
