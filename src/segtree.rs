@@ -127,7 +127,7 @@ impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
         let log = ceil_pow2(n as u32) as usize;
         let size = 1 << log;
         let mut d = vec![M::identity(); 2 * size];
-        d[size..(size + n)].clone_from_slice(&v);
+        d[size..][..n].clone_from_slice(&v);
         let mut ret = Segtree { n, size, log, d };
         for i in (1..size).rev() {
             ret.update(i);
@@ -168,6 +168,10 @@ impl<M: Monoid> Segtree<M> {
     pub fn get(&self, p: usize) -> M::S {
         assert!(p < self.n);
         self.d[p + self.size].clone()
+    }
+
+    pub fn get_slice(&self) -> &[M::S] {
+        &self.d[self.size..][..self.n]
     }
 
     pub fn prod<R>(&self, range: R) -> M::S
