@@ -3,7 +3,7 @@ use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
 use std::cmp::{max, min};
 use std::convert::Infallible;
 use std::marker::PhantomData;
-use std::ops::{Add, Bound, Mul, RangeBounds};
+use std::ops::{Add, BitAnd, BitOr, BitXor, Bound, Mul, Not, RangeBounds};
 
 // TODO Should I split monoid-related traits to another module?
 pub trait Monoid {
@@ -65,6 +65,48 @@ where
     }
     fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
         *a * *b
+    }
+}
+
+pub struct BitwiseOr<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for BitwiseOr<S>
+where
+    S: Copy + BitOr<Output = S> + Zero,
+{
+    type S = S;
+    fn identity() -> Self::S {
+        S::zero()
+    }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        *a | *b
+    }
+}
+
+pub struct BitwiseAnd<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for BitwiseAnd<S>
+where
+    S: Copy + BitAnd<Output = S> + Not<Output = S> + Zero,
+{
+    type S = S;
+    fn identity() -> Self::S {
+        !S::zero()
+    }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        *a & *b
+    }
+}
+
+pub struct BitwiseXor<S>(Infallible, PhantomData<fn() -> S>);
+impl<S> Monoid for BitwiseXor<S>
+where
+    S: Copy + BitXor<Output = S> + Zero,
+{
+    type S = S;
+    fn identity() -> Self::S {
+        S::zero()
+    }
+    fn binary_operation(a: &Self::S, b: &Self::S) -> Self::S {
+        *a ^ *b
     }
 }
 
