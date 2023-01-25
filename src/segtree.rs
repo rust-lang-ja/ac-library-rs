@@ -2,6 +2,7 @@ use crate::internal_bit::ceil_pow2;
 use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
 use std::cmp::{max, min};
 use std::convert::Infallible;
+use std::iter::FromIterator;
 use std::marker::PhantomData;
 use std::ops::{Add, BitAnd, BitOr, BitXor, Bound, Mul, Not, RangeBounds};
 
@@ -127,6 +128,26 @@ impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
         let size = 1 << log;
         let mut d = vec![M::identity(); 2 * size];
         d[size..(size + n)].clone_from_slice(&v);
+        let mut ret = Segtree { n, size, log, d };
+        for i in (1..size).rev() {
+            ret.update(i);
+        }
+        ret
+    }
+}
+impl<M: Monoid> FromIterator<M::S> for Segtree<M> {
+    fn from_iter<T: IntoIterator<Item = M::S>>(iter: T) -> Self {
+        let iter = iter.into_iter();
+        let n = iter.size_hint().0;
+        let log = ceil_pow2(n as u32) as usize;
+        let size = 1 << log;
+        let mut d = Vec::with_capacity(size * 2);
+        d.extend(
+            std::iter::repeat_with(M::identity)
+                .take(size)
+                .chain(iter)
+                .chain(std::iter::repeat_with(M::identity).take(size - n)),
+        );
         let mut ret = Segtree { n, size, log, d };
         for i in (1..size).rev() {
             ret.update(i);
