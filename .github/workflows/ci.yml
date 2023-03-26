@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 'Setup `${{ matrix.toolchain }}`'
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
           components: rustfmt
@@ -69,7 +69,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 'Setup `${{ matrix.toolchain }}`'
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
@@ -111,7 +111,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 'Setup `${{ matrix.toolchain }}`'
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
           components: rustfmt
@@ -137,7 +137,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup `1.60.0-x86_64-unknown-linux-gnu`
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: 1.60.0-x86_64-unknown-linux-gnu
 
