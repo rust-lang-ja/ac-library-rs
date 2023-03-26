@@ -2,7 +2,7 @@
 
 use crate::internal_scc;
 
-/// A `SccGraph` is a directed graph that calculates strongly connected components (SCC) in $O(|V| + |E|)$.
+/// An `SccGraph` is a directed graph that calculates strongly connected components (SCC) in $O(|V| + |E|)$.
 ///
 /// # Example
 ///
@@ -78,7 +78,7 @@ impl SccGraph {
     ///
     /// - Each vertex is in exactly one "list of the vertices".
     /// - Each "list of the vertices" corresponds to the vertex set of a strongly connected component. The order of the vertices in the list is undefined.
-    /// - The list of "list of the vertices" are sorted in topological order, i.e., for two vertices $u$, $v$ in different strongly connected components, if there is a directed path from $u$ to $v$, the list contains $u$ appears earlier than the list contains $v$.
+    /// - The list of "list of the vertices" are sorted in topological order, i.e., for two vertices $u$, $v$ in different strongly connected components, if there is a directed path from $u$ to $v$, the list containing $u$ appears earlier than the list containing $v$.
     ///
     /// # Complexity
     ///
