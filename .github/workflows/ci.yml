@@ -22,21 +22,18 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 'Setup `${{ matrix.toolchain }}`'
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          override: true
-          profile: minimal
-          components: rustfmt
+        run: |
+          ~/.cargo/bin/rustup show
+          ~/.cargo/bin/rustup -V
+          ~/.cargo/bin/rustup toolchain install ${{ matrix.toolchain }} --profile minimal --force --component rustfmt
+          ~/.cargo/bin/rustup override set ${{ matrix.toolchain }}
 
       - name: cargo-fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: |
+          ~/.cargo/bin/cargo fmt --all -- --check
 
   build:
     strategy:
@@ -66,33 +63,26 @@ jobs:
         if: matrix.os == 'windows-2019'
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 'Setup `${{ matrix.toolchain }}`'
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          override: true
-          profile: minimal
-          components: clippy
+        run: |
+          ~/.cargo/bin/rustup show
+          ~/.cargo/bin/rustup -V
+          ~/.cargo/bin/rustup toolchain install ${{ matrix.toolchain }} --profile minimal --force --component clippy
+          ~/.cargo/bin/rustup override set ${{ matrix.toolchain }}
 
       - name: cargo-clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --workspace --all-targets -- -D warnings
+        run: |
+          ~/.cargo/bin/cargo clippy --workspace --all-targets -- -D warnings -D renamed-and-removed-lints
 
       - name: cargo-build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --workspace --all-targets
+        run: |
+          ~/.cargo/bin/cargo build --workspace --all-targets
 
       - name: cargo-test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --workspace --no-fail-fast
+        run: |
+          ~/.cargo/bin/cargo test --workspace --no-fail-fast
         env:
           RUST_BACKTRACE: full
 
@@ -112,18 +102,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: 'Setup `${{ matrix.toolchain }}`'
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          override: true
-          profile: minimal
-          components: rustfmt
+        run: |
+          ~/.cargo/bin/rustup show
+          ~/.cargo/bin/rustup -V
+          ~/.cargo/bin/rustup toolchain install ${{ matrix.toolchain }} --profile minimal --force --component rustfmt
+          ~/.cargo/bin/rustup override set ${{ matrix.toolchain }}
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -136,17 +125,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup `1.47.0-x86_64-unknown-linux-gnu`
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: 1.47.0-x86_64-unknown-linux-gnu
-          override: true
-          profile: minimal
+      - name: Setup `1.60.0-x86_64-unknown-linux-gnu`
+        run: |
+          ~/.cargo/bin/rustup show
+          ~/.cargo/bin/rustup -V
+          ~/.cargo/bin/rustup toolchain install 1.60.0-x86_64-unknown-linux-gnu --profile minimal --force
+          ~/.cargo/bin/rustup override set 1.60.0-x86_64-unknown-linux-gnu
 
       - name: Setup Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
@@ -154,10 +143,8 @@ jobs:
         run: pip install online-judge-tools
 
       - name: cargo-build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --examples
+        run: |
+          ~/.cargo/bin/cargo build --release --examples
 
       - name: Verify
         run: |
