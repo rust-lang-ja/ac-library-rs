@@ -11,11 +11,11 @@ pub mod segtree;
 pub mod string;
 pub mod twosat;
 
-pub(crate) mod internal_bit;
-pub(crate) mod internal_math;
-pub(crate) mod internal_queue;
-pub(crate) mod internal_scc;
-pub(crate) mod internal_type_traits;
+mod internal_bit;
+mod internal_math;
+mod internal_queue;
+mod internal_scc;
+mod internal_type_traits;
 
 pub use convolution::{convolution, convolution_i64};
 pub use dsu::Dsu;
