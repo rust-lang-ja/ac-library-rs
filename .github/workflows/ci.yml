@@ -32,11 +32,11 @@ jobs:
 
       - name: 'Override `${{ matrix.toolchain }}'
         run: |
-          ~/.cargo/bin/rustup override set ${{ matrix.toolchain }}
+          rustup override set ${{ matrix.toolchain }}
 
       - name: cargo-fmt
         run: |
-          ~/.cargo/bin/cargo fmt --all -- --check
+          cargo fmt --all -- --check
 
   build:
     strategy:
@@ -76,19 +76,19 @@ jobs:
 
       - name: 'Override `${{ matrix.toolchain }}`'
         run: |
-          ~/.cargo/bin/rustup override set ${{ matrix.toolchain }}
+          rustup override set ${{ matrix.toolchain }}
 
       - name: cargo-clippy
         run: |
-          ~/.cargo/bin/cargo clippy --workspace --all-targets -- -A renamed-and-removed-lints -D warnings
+          cargo clippy --workspace --all-targets -- -A renamed-and-removed-lints -D warnings
 
       - name: cargo-build
         run: |
-          ~/.cargo/bin/cargo build --workspace --all-targets
+          cargo build --workspace --all-targets
 
       - name: cargo-test
         run: |
-          ~/.cargo/bin/cargo test --workspace --no-fail-fast
+          cargo test --workspace --no-fail-fast
         env:
           RUST_BACKTRACE: full
 
@@ -118,7 +118,7 @@ jobs:
 
       - name: 'Override `${{ matrix.toolchain }}`'
         run: |
-          ~/.cargo/bin/rustup override set ${{ matrix.toolchain }}
+          rustup override set ${{ matrix.toolchain }}
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -143,7 +143,7 @@ jobs:
 
       - name: 'Override `1.60.0-x86_64-unknown-linux-gnu'
         run: |
-          ~/.cargo/bin/rustup override set 1.60.0-x86_64-unknown-linux-gnu
+          rustup override set 1.60.0-x86_64-unknown-linux-gnu
 
       - name: Setup Python 3.9
         uses: actions/setup-python@v4
@@ -155,7 +155,7 @@ jobs:
 
       - name: cargo-build
         run: |
-          ~/.cargo/bin/cargo build --release --examples
+          cargo build --release --examples
 
       - name: Verify
         run: |
