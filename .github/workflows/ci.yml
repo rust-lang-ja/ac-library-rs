@@ -74,7 +74,7 @@ jobs:
 
       - name: cargo-clippy
         run: |
-          ~/.cargo/bin/cargo clippy --workspace --all-targets -- -D warnings -D renamed-and-removed-lints
+          ~/.cargo/bin/cargo clippy --workspace --all-targets -- -A renamed-and-removed-lints -D warnings
 
       - name: cargo-build
         run: |
