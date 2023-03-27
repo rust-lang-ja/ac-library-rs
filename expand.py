@@ -37,6 +37,7 @@ output_list_all = ('convolution', 'dsu', 'fenwicktree', 'lazysegtree', 'math',
                    'internal_bit', 'internal_math', 'internal_queue',
                    'internal_scc', 'internal_type_traits',)
 dependency_list = {'convolution': ('internal_bit', 'modint',),
+                   'fenwicktree': ('internal_type_traits',),
                    'lazysegtree': ('internal_bit', 'segtree'),
                    'math': ('internal_math',),
                    'maxflow': ('internal_type_traits', 'internal_queue',),
