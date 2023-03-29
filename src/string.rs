@@ -41,12 +41,8 @@ fn sa_doubling(s: &[i32]) -> Vec<usize> {
         sa.sort_by(cmp);
         tmp[sa[0]] = 0;
         for i in 1..n {
-            tmp[sa[i]] = tmp[sa[i - 1]]
-                + if cmp(&sa[i - 1], &sa[i]) == std::cmp::Ordering::Less {
-                    1
-                } else {
-                    0
-                };
+            tmp[sa[i]] =
+                tmp[sa[i - 1]] + i32::from(cmp(&sa[i - 1], &sa[i]) == std::cmp::Ordering::Less);
         }
         std::mem::swap(&mut tmp, &mut rnk);
         k *= 2;
@@ -253,11 +249,9 @@ pub fn lcp_array_arbitrary<T: Ord>(s: &[T], sa: &[usize]) -> Vec<usize> {
         rnk[sa[i]] = i;
     }
     let mut lcp = vec![0; n - 1];
-    let mut h = 0;
+    let mut h: usize = 0;
     for i in 0..n - 1 {
-        if h > 0 {
-            h -= 1;
-        }
+        h = h.saturating_sub(1);
         if rnk[i] == 0 {
             continue;
         }

@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate input as _;
+extern crate proconio as _;
 
 use ac_library_rs::{convolution, modint::ModInt998244353 as Mint};
 use std::fmt;
