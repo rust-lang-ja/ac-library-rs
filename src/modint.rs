@@ -776,12 +776,12 @@ trait InternalImplementations: ModIntBase {
     }
 
     #[inline]
-    fn display_impl(this: &Self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn display_impl(this: &Self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&this.val(), f)
     }
 
     #[inline]
-    fn debug_impl(this: &Self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn debug_impl(this: &Self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&this.val(), f)
     }
 
