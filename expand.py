@@ -26,9 +26,11 @@ You can select multiple modules for <output modules>
 Options:
     -a  --all       import all modules
     -h  --help      print help
+    -o file
+    --output file   output file
 '''
 output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
-opt_list = ['help', 'all']
+opt_list = ['help', 'all', 'output=']
 output_list_all = ('convolution', 'dsu', 'fenwicktree', 'lazysegtree', 'math',
                    'maxflow',  'mincostflow', 'modint', 'scc',  'segtree',
                    'string', 'twosat',
@@ -44,13 +46,14 @@ dependency_list = {'convolution': ('internal_bit', 'modint',),
                    'segtree': ('internal_bit', 'internal_type_traits',),
                    'twosat': ('internal_scc',), }
 src_path = 'src/'
+output_path = None
 
 
 def output_file(filename):
     global src_path
 
     res = []
-    with open(src_path+filename+'.rs', 'r') as f:
+    with open(src_path+filename+'.rs', 'r', encoding='utf-8', newline='') as f:
         res.append('pub mod {} {{'.format(filename))
 
         for line in f:
@@ -61,7 +64,7 @@ def output_file(filename):
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'ah', opt_list)
+    opts, args = getopt.getopt(sys.argv[1:], 'aho:', opt_list)
 except getopt.GetoptError as e:
     print(e)
     print(usage)
@@ -77,6 +80,8 @@ for o, v in opts:
         sys.exit(0)
     elif o == '--all' or o == '-a':
         args = list(output_list_all)
+    elif o == '--output' or o == '-o':
+        output_path = v
 
 output_list = set()
 
@@ -108,11 +113,14 @@ for i in output_list:
 # rustfmt
 with tempfile.TemporaryDirectory() as temp_dir:
     temp_file = temp_dir + '/output.rs'
-    with open(temp_file, 'w') as f:
+    with open(temp_file, 'w', encoding='utf-8', newline='') as f:
         print(output_header, file=f)
         for i in output_data:
             print(i, file=f)
     output_data = subprocess.run(["rustfmt", temp_file], check=True)
-    with open(temp_file, 'r') as f:
+    with open(temp_file, 'r', encoding='utf-8', newline='') as f:
+        wf = open(output_path, 'w', encoding='utf-8', newline='') if output_path is not None else sys.stdout
         for line in f:
-            print(line, end="")
+            print(line, end='', file=wf)
+        if output_path is not None:
+            wf.close()

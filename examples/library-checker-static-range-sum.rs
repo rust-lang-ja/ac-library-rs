@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate input as _;
+extern crate proconio as _;
 #[macro_use]
 extern crate proconio_derive as _;
 
