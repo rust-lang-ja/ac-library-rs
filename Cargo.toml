@@ -13,7 +13,7 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num-traits = { version = "0.2.11", optional = true }
+num-traits = { version = "0.2.15", optional = true }
 
 [dev-dependencies]
 proconio = "=0.3.6"
