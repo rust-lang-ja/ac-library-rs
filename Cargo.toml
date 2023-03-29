@@ -1,10 +1,20 @@
 [package]
 name = "ac-library-rs"
 version = "0.1.0"
-authors = ["matsu7874 <mtsmtkmt@gmail.com>"]
+authors = ["rust-lang-ja Developers"]
 edition = "2018"
+description = "A Rust port of AtCoder Library (ACL)."
+license = "CC0-1.0"
+repository = "https://github.com/rust-lang-ja/ac-library-rs"
+keywords = ["competitive"]
+categories = ["algorithms", "data-structures"]
 publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[dev-dependencies]
+proconio = "=0.3.6"
+proconio-derive = "0.2.1"
+rand = "0.7.3"

@@ -22,7 +22,7 @@ where
         assert!(Cap::zero() <= cap);
         let m = self.pos.len();
         self.pos.push((from, self.g[from].len()));
-        let rev = self.g[to].len() + if from == to { 1 } else { 0 };
+        let rev = self.g[to].len() + usize::from(from == to);
         self.g[from].push(_Edge { to, rev, cap });
         let rev = self.g[from].len() - 1;
         self.g[to].push(_Edge {
@@ -130,9 +130,7 @@ where
         let mut visited = vec![false; self._n];
         let mut que = SimpleQueue::default();
         que.push(s);
-        while !que.empty() {
-            let &p = que.front().unwrap();
-            que.pop();
+        while let Some(&p) = que.pop() {
             visited[p] = true;
             for e in &self.g[p] {
                 if e.cap != Cap::zero() && !visited[e.to] {
@@ -203,7 +201,7 @@ where
             self.graph.g[e_to][e_rev].cap -= d;
             res += d;
             if res == up {
-                break;
+                return res;
             }
         }
         self.iter[v] = self.graph.g[v].len();
@@ -321,5 +319,16 @@ mod test {
         }
 
         assert_eq!(graph.flow(s, t), 2);
+    }
+
+    #[test]
+    fn test_dont_repeat_same_phase() {
+        let n = 100_000;
+        let mut graph = MfGraph::new(3);
+        graph.add_edge(0, 1, n);
+        for _ in 0..n {
+            graph.add_edge(1, 2, 1);
+        }
+        assert_eq!(graph.flow(0, 2), n);
     }
 }

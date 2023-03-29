@@ -11,7 +11,6 @@ pub struct MinCostFlowEdge<T> {
 pub struct MinCostFlowGraph<T> {
     pos: Vec<(usize, usize)>,
     g: Vec<Vec<_Edge<T>>>,
-    cost_sum: T,
 }
 
 impl<T> MinCostFlowGraph<T>
@@ -22,7 +21,6 @@ where
         Self {
             pos: vec![],
             g: (0..n).map(|_| vec![]).collect(),
-            cost_sum: T::zero(),
         }
     }
 
@@ -56,7 +54,6 @@ where
         assert!(cost >= T::zero());
 
         self.pos.push((from, self.g[from].len()));
-        self.cost_sum += cost;
 
         let rev = self.g[to].len();
         self.g[from].push(_Edge { to, rev, cap, cost });
@@ -88,7 +85,7 @@ where
         let mut prev_e = vec![0; n];
         let mut flow = T::zero();
         let mut cost = T::zero();
-        let mut prev_cost: Option<T> = None;
+        let mut prev_cost_per_flow: Option<T> = None;
         let mut result = vec![(flow, cost)];
         while flow < flow_limit {
             if !self.refine_dual(source, sink, &mut dual, &mut prev_v, &mut prev_e) {
@@ -113,11 +110,11 @@ where
             let d = -dual[source];
             flow += c;
             cost += d * c;
-            if prev_cost == Some(d) {
+            if prev_cost_per_flow == Some(d) {
                 assert!(result.pop().is_some());
             }
             result.push((flow, cost));
-            prev_cost = Some(cost);
+            prev_cost_per_flow = Some(d);
         }
         result
     }
@@ -131,7 +128,7 @@ where
         pe: &mut [usize],
     ) -> bool {
         let n = self.g.len();
-        let mut dist = vec![self.cost_sum; n];
+        let mut dist = vec![T::max_value(); n];
         let mut vis = vec![false; n];
 
         let mut que = std::collections::BinaryHeap::new();
@@ -197,5 +194,25 @@ mod tests {
         let (flow, cost) = graph.flow(0, 3, 2);
         assert_eq!(flow, 2);
         assert_eq!(cost, 6);
+    }
+
+    #[test]
+    fn same_cost_paths() {
+        // https://github.com/atcoder/ac-library/blob/300e66a7d73efe27d02f38133239711148092030/test/unittest/mincostflow_test.cpp#L83-L90
+        let mut graph = MinCostFlowGraph::new(3);
+        assert_eq!(0, graph.add_edge(0, 1, 1, 1));
+        assert_eq!(1, graph.add_edge(1, 2, 1, 0));
+        assert_eq!(2, graph.add_edge(0, 2, 2, 1));
+        let expected = [(0, 0), (3, 3)];
+        assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
+    }
+
+    #[test]
+    fn only_one_nonzero_cost_edge() {
+        let mut graph = MinCostFlowGraph::new(3);
+        assert_eq!(0, graph.add_edge(0, 1, 1, 1));
+        assert_eq!(1, graph.add_edge(1, 2, 1, 0));
+        let expected = [(0, 0), (1, 1)];
+        assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
     }
 }
