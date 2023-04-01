@@ -673,7 +673,7 @@ pub trait ModIntBase:
     #[inline]
     fn pow(self, mut n: u64) -> Self {
         let mut x = self;
-        let mut r = Self::raw(1);
+        let mut r = Self::new(1);
         while n > 0 {
             if n & 1 == 1 {
                 r *= x;
@@ -1043,14 +1043,41 @@ macro_rules! impl_folding {
 
 impl_folding! {
     impl<M: Modulus> Sum<_>     for StaticModInt<M>  { fn sum(_)     -> _ { _(Self::raw(0), Add::add) } }
-    impl<M: Modulus> Product<_> for StaticModInt<M>  { fn product(_) -> _ { _(Self::raw(1), Mul::mul) } }
+    impl<M: Modulus> Product<_> for StaticModInt<M>  { fn product(_) -> _ { _(Self::new(1), Mul::mul) } }
     impl<I: Id     > Sum<_>     for DynamicModInt<I> { fn sum(_)     -> _ { _(Self::raw(0), Add::add) } }
-    impl<I: Id     > Product<_> for DynamicModInt<I> { fn product(_) -> _ { _(Self::raw(1), Mul::mul) } }
+    impl<I: Id     > Product<_> for DynamicModInt<I> { fn product(_) -> _ { _(Self::new(1), Mul::mul) } }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::modint::ModInt1000000007;
+    use crate::modint::{ModInt, ModInt1000000007};
+
+    #[test]
+    fn dynamic_modint_new() {
+        ModInt::set_modulus(1_000_000_007);
+
+        assert_eq!(0, ModInt::new(0u32).val);
+        assert_eq!(1, ModInt::new(1u32).val);
+        assert_eq!(1, ModInt::new(1_000_000_008u32).val);
+
+        assert_eq!(0, ModInt::new(0u64).val);
+        assert_eq!(1, ModInt::new(1u64).val);
+        assert_eq!(1, ModInt::new(1_000_000_008u64).val);
+
+        assert_eq!(0, ModInt::new(0usize).val);
+        assert_eq!(1, ModInt::new(1usize).val);
+        assert_eq!(1, ModInt::new(1_000_000_008usize).val);
+
+        assert_eq!(0, ModInt::new(0i64).val);
+        assert_eq!(1, ModInt::new(1i64).val);
+        assert_eq!(1, ModInt::new(1_000_000_008i64).val);
+        assert_eq!(1_000_000_006, ModInt::new(-1i64).val);
+
+        ModInt::set_modulus(1);
+
+        assert_eq!(0, ModInt::new(0i64).val);
+        assert_eq!(0, ModInt::new(1i64).val);
+    }
 
     #[test]
     fn static_modint_new() {
