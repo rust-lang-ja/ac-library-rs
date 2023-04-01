@@ -1,6 +1,6 @@
 use std::{
     fmt,
-    iter::{Product, Sum},
+    iter::{self, Product, Sum},
     ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
         DivAssign, Mul, MulAssign, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
@@ -36,8 +36,6 @@ pub trait Integral:
     + MulAssign
     + DivAssign
     + RemAssign
-    + Sum
-    + Product
     + BitOr<Output = Self>
     + BitAnd<Output = Self>
     + BitXor<Output = Self>
@@ -60,16 +58,26 @@ pub trait Integral:
 }
 
 /// Class that has additive identity element
-pub trait Zero {
+pub trait Zero: Sum {
     /// The additive identity element
-    fn zero() -> Self;
+    #[inline]
+    fn zero() -> Self {
+        iter::empty().sum()
+    }
 }
 
+impl<T: Sum> Zero for T {}
+
 /// Class that has multiplicative identity element
-pub trait One {
+pub trait One: Product {
     /// The multiplicative identity element
-    fn one() -> Self;
+    #[inline]
+    fn one() -> Self {
+        iter::empty().product()
+    }
 }
+
+impl<T: Product> One for T {}
 
 pub trait BoundedBelow {
     fn min_value() -> Self;
@@ -82,20 +90,6 @@ pub trait BoundedAbove {
 macro_rules! impl_integral {
     ($($ty:ty),*) => {
         $(
-            impl Zero for $ty {
-                #[inline]
-                fn zero() -> Self {
-                    0
-                }
-            }
-
-            impl One for $ty {
-                #[inline]
-                fn one() -> Self {
-                    1
-                }
-            }
-
             impl BoundedBelow for $ty {
                 #[inline]
                 fn min_value() -> Self {
