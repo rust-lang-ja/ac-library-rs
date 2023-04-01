@@ -110,3 +110,40 @@ macro_rules! impl_integral {
 }
 
 impl_integral!(i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
+
+#[cfg(test)]
+mod tests {
+    use super::{One, Zero};
+
+    #[test]
+    fn zero() {
+        assert_eq!(0, i8::zero());
+        assert_eq!(0, i16::zero());
+        assert_eq!(0, i32::zero());
+        assert_eq!(0, i64::zero());
+        assert_eq!(0, i128::zero());
+        assert_eq!(0, isize::zero());
+        assert_eq!(0, u8::zero());
+        assert_eq!(0, u16::zero());
+        assert_eq!(0, u32::zero());
+        assert_eq!(0, u64::zero());
+        assert_eq!(0, u128::zero());
+        assert_eq!(0, usize::zero());
+    }
+
+    #[test]
+    fn one() {
+        assert_eq!(1, i8::one());
+        assert_eq!(1, i16::one());
+        assert_eq!(1, i32::one());
+        assert_eq!(1, i64::one());
+        assert_eq!(1, i128::one());
+        assert_eq!(1, isize::one());
+        assert_eq!(1, u8::one());
+        assert_eq!(1, u16::one());
+        assert_eq!(1, u32::one());
+        assert_eq!(1, u64::one());
+        assert_eq!(1, u128::one());
+        assert_eq!(1, usize::one());
+    }
+}
