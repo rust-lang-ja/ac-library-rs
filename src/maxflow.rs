@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use crate::internal_queue::SimpleQueue;
-use crate::internal_type_traits::Integral;
+use crate::internal_type_traits::{Integral, SumExt as _};
 use std::cmp::min;
 use std::iter;
 

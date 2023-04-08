@@ -1,4 +1,4 @@
-use crate::internal_type_traits::Integral;
+use crate::internal_type_traits::{Integral, SumExt as _};
 
 pub struct MinCostFlowEdge<T> {
     pub from: usize,

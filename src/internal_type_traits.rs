@@ -36,6 +36,8 @@ pub trait Integral:
     + MulAssign
     + DivAssign
     + RemAssign
+    + Sum
+    + Product
     + BitOr<Output = Self>
     + BitAnd<Output = Self>
     + BitXor<Output = Self>
@@ -50,15 +52,13 @@ pub trait Integral:
     + fmt::Debug
     + fmt::Binary
     + fmt::Octal
-    + Zero
-    + One
     + BoundedBelow
     + BoundedAbove
 {
 }
 
 /// Class that has additive identity element
-pub trait Zero: Sum {
+pub trait SumExt: Sum {
     /// The additive identity element
     #[inline]
     fn zero() -> Self {
@@ -66,10 +66,10 @@ pub trait Zero: Sum {
     }
 }
 
-impl<T: Sum> Zero for T {}
+impl<T: Sum> SumExt for T {}
 
 /// Class that has multiplicative identity element
-pub trait One: Product {
+pub trait ProductExt: Product {
     /// The multiplicative identity element
     #[inline]
     fn one() -> Self {
@@ -77,7 +77,7 @@ pub trait One: Product {
     }
 }
 
-impl<T: Product> One for T {}
+impl<T: Product> ProductExt for T {}
 
 pub trait BoundedBelow {
     fn min_value() -> Self;
@@ -113,7 +113,7 @@ impl_integral!(i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
 
 #[cfg(test)]
 mod tests {
-    use super::{One, Zero};
+    use super::{ProductExt as _, SumExt as _};
 
     #[test]
     fn zero() {
