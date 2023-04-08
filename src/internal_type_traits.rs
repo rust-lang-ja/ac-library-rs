@@ -58,7 +58,7 @@ pub trait Integral:
 }
 
 /// Class that has additive identity element
-pub trait SumExt: Sum {
+pub(super) trait SumExt: Sum {
     /// The additive identity element
     #[inline]
     fn zero() -> Self {
@@ -69,7 +69,7 @@ pub trait SumExt: Sum {
 impl<T: Sum> SumExt for T {}
 
 /// Class that has multiplicative identity element
-pub trait ProductExt: Product {
+pub(super) trait ProductExt: Product {
     /// The multiplicative identity element
     #[inline]
     fn one() -> Self {
