@@ -50,16 +50,16 @@ fn main() {
     for _ in 0..q {
         match input.next().unwrap().parse().unwrap() {
             0 => {
-                let l = input.next().unwrap().parse().unwrap();
+                let l: usize = input.next().unwrap().parse().unwrap();
                 let r = input.next().unwrap().parse().unwrap();
                 let b = input.next().unwrap().parse().unwrap();
                 let c = input.next().unwrap().parse().unwrap();
-                segtree.apply_range(l, r, (b, c));
+                segtree.apply_range(l..r, (b, c));
             }
             1 => {
-                let l = input.next().unwrap().parse().unwrap();
-                let r = input.next().unwrap().parse().unwrap();
-                println!("{}", segtree.prod(l, r).0);
+                let l: usize = input.next().unwrap().parse().unwrap();
+                let r: usize = input.next().unwrap().parse().unwrap();
+                println!("{}", segtree.prod(l..r).0);
             }
             _ => {}
         }

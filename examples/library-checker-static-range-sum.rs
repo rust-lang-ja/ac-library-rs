@@ -20,6 +20,6 @@ fn main() {
         fenwick.add(i, a);
     }
     for (l, r) in lrs {
-        println!("{}", fenwick.sum(l, r));
+        println!("{}", fenwick.sum(l..r));
     }
 }
