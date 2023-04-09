@@ -1,4 +1,4 @@
-use ac_library_rs::{LazySegtree, MapMonoid, ModInt998244353, Monoid};
+use ac_library::{LazySegtree, MapMonoid, ModInt998244353, Monoid};
 use std::io::Read;
 
 type Mint = ModInt998244353;

@@ -22,7 +22,7 @@ use std::mem::swap;
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// assert_eq!(math::pow_mod(2, 10000, 7), 2);
 /// ```
@@ -63,7 +63,7 @@ pub fn pow_mod(x: i64, mut n: i64, m: u32) -> u32 {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// assert_eq!(math::inv_mod(3, 7), 5);
 /// ```
@@ -106,7 +106,7 @@ pub fn inv_mod(x: i64, m: i64) -> i64 {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// let r = [2, 3, 2];
 /// let m = [3, 5, 7];
@@ -181,7 +181,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// assert_eq!(math::floor_sum(6, 5, 4, 3), 13);
 /// ```

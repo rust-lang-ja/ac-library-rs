@@ -1,4 +1,4 @@
-use ac_library_rs::{Max, Segtree};
+use ac_library::{Max, Segtree};
 use std::io::Read;
 
 fn main() {
