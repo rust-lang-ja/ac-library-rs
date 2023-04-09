@@ -3,7 +3,7 @@ extern crate proconio as _;
 #[macro_use]
 extern crate proconio_derive as _;
 
-use ac_library_rs::fenwicktree::FenwickTree;
+use acl::fenwicktree::FenwickTree;
 
 #[allow(clippy::needless_collect)]
 #[fastout]

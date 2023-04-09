@@ -1,5 +1,5 @@
 #![allow(clippy::many_single_char_names)]
-use ac_library_rs::{LazySegtree, MapMonoid, Monoid};
+use acl::{LazySegtree, MapMonoid, Monoid};
 use std::io::Read;
 use std::iter;
 

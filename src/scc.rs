@@ -7,7 +7,7 @@ use crate::internal_scc;
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::SccGraph;
+/// use acl::SccGraph;
 /// use proconio::{input, source::once::OnceSource};
 ///
 /// input! {

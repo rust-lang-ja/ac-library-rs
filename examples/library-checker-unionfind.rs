@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate proconio as _;
 
-use ac_library_rs::dsu::Dsu;
+use acl::dsu::Dsu;
 
 fn main() {
     input! {

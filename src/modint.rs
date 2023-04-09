@@ -3,7 +3,7 @@
 //! For most of the problems, It is sufficient to use [`ModInt1000000007`] or [`ModInt998244353`], which can be used as follows.
 //!
 //! ```
-//! use ac_library_rs::ModInt1000000007 as Mint; // rename to whatever you want
+//! use acl::ModInt1000000007 as Mint; // rename to whatever you want
 //! use proconio::{input, source::once::OnceSource};
 //!
 //! input! {
@@ -18,7 +18,7 @@
 //! If the modulus is not fixed, you can use [`ModInt`] as follows.
 //!
 //! ```
-//! use ac_library_rs::ModInt as Mint; // rename to whatever you want
+//! use acl::ModInt as Mint; // rename to whatever you want
 //! use proconio::{input, source::once::OnceSource};
 //!
 //! input! {
@@ -73,7 +73,7 @@ pub type ModInt = DynamicModInt<DefaultId>;
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::ModInt1000000007 as Mint;
+/// use acl::ModInt1000000007 as Mint;
 /// use proconio::{input, source::once::OnceSource};
 ///
 /// input! {
@@ -99,7 +99,7 @@ impl<M: Modulus> StaticModInt<M> {
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::ModInt1000000007 as Mint;
+    /// use acl::ModInt1000000007 as Mint;
     ///
     /// assert_eq!(1_000_000_007, Mint::modulus());
     /// ```
@@ -217,13 +217,13 @@ impl<M: Modulus> ModIntBase for StaticModInt<M> {
 ///             #[derive(Copy, Clone, Eq, PartialEq)]
 ///             enum $name {}
 ///
-///             impl ac_library_rs::modint::Modulus for $name {
+///             impl acl::modint::Modulus for $name {
 ///                 const VALUE: u32 = $value;
 ///                 const HINT_VALUE_IS_PRIME: bool = $is_prime;
 ///
-///                 fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<ac_library_rs::modint::ButterflyCache<Self>>>> {
+///                 fn butterfly_cache() -> &'static ::std::thread::LocalKey<::std::cell::RefCell<::std::option::Option<acl::modint::ButterflyCache<Self>>>> {
 ///                     thread_local! {
-///                         static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<ac_library_rs::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
+///                         static BUTTERFLY_CACHE: ::std::cell::RefCell<::std::option::Option<acl::modint::ButterflyCache<$name>>> = ::std::default::Default::default();
 ///                     }
 ///                     &BUTTERFLY_CACHE
 ///                 }
@@ -232,7 +232,7 @@ impl<M: Modulus> ModIntBase for StaticModInt<M> {
 ///     };
 /// }
 ///
-/// use ac_library_rs::StaticModInt;
+/// use acl::StaticModInt;
 ///
 /// modulus!(Mod101(101, true), Mod103(103, true));
 ///
@@ -294,7 +294,7 @@ pub struct ButterflyCache<M> {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::ModInt as Mint;
+/// use acl::ModInt as Mint;
 /// use proconio::{input, source::once::OnceSource};
 ///
 /// input! {
@@ -325,7 +325,7 @@ impl<I: Id> DynamicModInt<I> {
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::ModInt as Mint;
+    /// use acl::ModInt as Mint;
     ///
     /// assert_eq!(998_244_353, Mint::modulus()); // default modulus
     /// ```
@@ -345,7 +345,7 @@ impl<I: Id> DynamicModInt<I> {
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::ModInt as Mint;
+    /// use acl::ModInt as Mint;
     ///
     /// Mint::set_modulus(7);
     /// assert_eq!(7, Mint::modulus());
@@ -547,7 +547,7 @@ pub trait ModIntBase:
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::modint::ModIntBase;
+    /// use acl::modint::ModIntBase;
     ///
     /// fn f<Z: ModIntBase>() {
     ///     let _: u32 = Z::modulus();
@@ -567,7 +567,7 @@ pub trait ModIntBase:
     /// If `val` is greater than or equal to `Self::modulus()`, the behaviors are not defined.
     ///
     /// ```should_panic
-    /// use ac_library_rs::ModInt1000000007 as Mint;
+    /// use acl::ModInt1000000007 as Mint;
     ///
     /// let x = Mint::raw(1_000_000_007);
     /// let y = x + x;
@@ -584,7 +584,7 @@ pub trait ModIntBase:
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::modint::ModIntBase;
+    /// use acl::modint::ModIntBase;
     ///
     /// fn f<Z: ModIntBase>() -> Z {
     ///     debug_assert!(Z::modulus() >= 100);
@@ -608,7 +608,7 @@ pub trait ModIntBase:
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::modint::ModIntBase;
+    /// use acl::modint::ModIntBase;
     ///
     /// fn f<Z: ModIntBase>(x: Z) {
     ///     let _: u32 = x.val();
@@ -627,7 +627,7 @@ pub trait ModIntBase:
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::modint::ModIntBase;
+    /// use acl::modint::ModIntBase;
     ///
     /// fn f<Z: ModIntBase>(x: Z) {
     ///     let _: Z = x.inv();
@@ -642,7 +642,7 @@ pub trait ModIntBase:
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::modint::ModIntBase;
+    /// use acl::modint::ModIntBase;
     ///
     /// fn f<Z: ModIntBase>() {
     ///     let _ = Z::new(1u32);
@@ -664,7 +664,7 @@ pub trait ModIntBase:
     /// # Example
     ///
     /// ```
-    /// use ac_library_rs::modint::ModIntBase;
+    /// use acl::modint::ModIntBase;
     ///
     /// fn f<Z: ModIntBase>() {
     ///     let _: Z = Z::new(2).pow(3);

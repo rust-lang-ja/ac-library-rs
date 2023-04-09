@@ -16,7 +16,7 @@ use crate::internal_scc;
 /// ```
 /// #![allow(clippy::many_single_char_names)]
 ///
-/// use ac_library_rs::TwoSat;
+/// use acl::TwoSat;
 /// use proconio::{input, marker::Bytes, source::once::OnceSource};
 ///
 /// input! {
