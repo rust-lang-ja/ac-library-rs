@@ -66,7 +66,7 @@ pub type ModInt1000000007 = StaticModInt<Mod1000000007>;
 pub type ModInt998244353 = StaticModInt<Mod998244353>;
 pub type ModInt = DynamicModInt<DefaultId>;
 
-/// Represents _ℤ/mℤ_ where _m_ is a constant value.
+/// Represents $\mathbb{Z}/m\mathbb{Z}$ where $m$ is a constant value.
 ///
 /// Corresponds to `atcoder::static_modint` in the original ACL.
 ///
@@ -249,7 +249,7 @@ pub trait Modulus: 'static + Copy + Eq {
     fn butterfly_cache() -> &'static LocalKey<RefCell<Option<ButterflyCache<Self>>>>;
 }
 
-/// Represents _1000000007_.
+/// Represents $1000000007$.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum Mod1000000007 {}
 
@@ -265,7 +265,7 @@ impl Modulus for Mod1000000007 {
     }
 }
 
-/// Represents _998244353_.
+/// Represents $998244353$.
 #[derive(Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash, Debug)]
 pub enum Mod998244353 {}
 
@@ -287,7 +287,7 @@ pub struct ButterflyCache<M> {
     pub(crate) sum_ie: Vec<StaticModInt<M>>,
 }
 
-/// Represents _ℤ/mℤ_ where _m_ is a dynamic value.
+/// Represents $\mathbb{Z}/m\mathbb{Z}$ where $m$ is a dynamic value.
 ///
 /// Corresponds to `atcoder::dynamic_modint` in the original ACL.
 ///
@@ -456,7 +456,7 @@ impl Id for DefaultId {
     }
 }
 
-/// Pair of _m_ and _ceil(2⁶⁴/m)_.
+/// Pair of $m$ and $\lceil 2^{64}/m \rceil$.
 pub struct Barrett {
     m: AtomicU32,
     im: AtomicU64,
@@ -687,7 +687,7 @@ pub trait ModIntBase:
 
 /// A trait for `{StaticModInt, DynamicModInt, ModIntBase}::new`.
 pub trait RemEuclidU32 {
-    /// Calculates `self` _mod_ `modulus` losslessly.
+    /// Calculates `self` $\bmod$ `modulus` losslessly.
     fn rem_euclid_u32(self, modulus: u32) -> u32;
 }
 
