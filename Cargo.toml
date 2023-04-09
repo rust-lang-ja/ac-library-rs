@@ -8,7 +8,6 @@ license = "CC0-1.0"
 repository = "https://github.com/rust-lang-ja/ac-library-rs"
 keywords = ["competitive"]
 categories = ["algorithms", "data-structures"]
-publish = false
 
 [lib]
 name = "ac_library"
