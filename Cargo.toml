@@ -10,6 +10,9 @@ keywords = ["competitive"]
 categories = ["algorithms", "data-structures"]
 publish = false
 
+[lib]
+name = "ac_library"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
