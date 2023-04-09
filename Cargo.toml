@@ -9,6 +9,9 @@ repository = "https://github.com/rust-lang-ja/ac-library-rs"
 keywords = ["competitive"]
 categories = ["algorithms", "data-structures"]
 
+[package.metadata.docs.rs]
+rustdoc-args = ["--html-in-header", "katex-header.html"]
+
 [lib]
 name = "ac_library"
 
