@@ -2,6 +2,7 @@
 name = "ac-library-rs"
 version = "0.1.0"
 edition = "2018"
+rust-version = "1.42"
 description = "A Rust port of AtCoder Library (ACL)."
 license = "CC0-1.0"
 repository = "https://github.com/rust-lang-ja/ac-library-rs"
