@@ -1,7 +1,8 @@
 use crate::internal_bit::ceil_pow2;
-use crate::internal_type_traits::{BoundedAbove, BoundedBelow, One, Zero};
+use crate::internal_type_traits::{BoundedAbove, BoundedBelow, ProductExt as _, SumExt as _};
 use std::cmp::{max, min};
 use std::convert::Infallible;
+use std::iter::{Product, Sum};
 use std::marker::PhantomData;
 use std::ops::{Add, Bound, Mul, RangeBounds};
 
@@ -43,7 +44,7 @@ where
 pub struct Additive<S>(Infallible, PhantomData<fn() -> S>);
 impl<S> Monoid for Additive<S>
 where
-    S: Copy + Add<Output = S> + Zero,
+    S: Copy + Add<Output = S> + Sum,
 {
     type S = S;
     fn identity() -> Self::S {
@@ -57,7 +58,7 @@ where
 pub struct Multiplicative<S>(Infallible, PhantomData<fn() -> S>);
 impl<S> Monoid for Multiplicative<S>
 where
-    S: Copy + Mul<Output = S> + One,
+    S: Copy + Mul<Output = S> + Product,
 {
     type S = S;
     fn identity() -> Self::S {

@@ -1,6 +1,6 @@
 use std::{
     fmt,
-    iter::{Product, Sum},
+    iter::{self, Product, Sum},
     ops::{
         Add, AddAssign, BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Div,
         DivAssign, Mul, MulAssign, Not, Rem, RemAssign, Shl, ShlAssign, Shr, ShrAssign, Sub,
@@ -52,24 +52,32 @@ pub trait Integral:
     + fmt::Debug
     + fmt::Binary
     + fmt::Octal
-    + Zero
-    + One
     + BoundedBelow
     + BoundedAbove
 {
 }
 
 /// Class that has additive identity element
-pub trait Zero {
+pub(super) trait SumExt: Sum {
     /// The additive identity element
-    fn zero() -> Self;
+    #[inline]
+    fn zero() -> Self {
+        iter::empty().sum()
+    }
 }
 
+impl<T: Sum> SumExt for T {}
+
 /// Class that has multiplicative identity element
-pub trait One {
+pub(super) trait ProductExt: Product {
     /// The multiplicative identity element
-    fn one() -> Self;
+    #[inline]
+    fn one() -> Self {
+        iter::empty().product()
+    }
 }
+
+impl<T: Product> ProductExt for T {}
 
 pub trait BoundedBelow {
     fn min_value() -> Self;
@@ -82,20 +90,6 @@ pub trait BoundedAbove {
 macro_rules! impl_integral {
     ($($ty:ty),*) => {
         $(
-            impl Zero for $ty {
-                #[inline]
-                fn zero() -> Self {
-                    0
-                }
-            }
-
-            impl One for $ty {
-                #[inline]
-                fn one() -> Self {
-                    1
-                }
-            }
-
             impl BoundedBelow for $ty {
                 #[inline]
                 fn min_value() -> Self {
@@ -116,3 +110,40 @@ macro_rules! impl_integral {
 }
 
 impl_integral!(i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
+
+#[cfg(test)]
+mod tests {
+    use super::{ProductExt as _, SumExt as _};
+
+    #[test]
+    fn zero() {
+        assert_eq!(0, i8::zero());
+        assert_eq!(0, i16::zero());
+        assert_eq!(0, i32::zero());
+        assert_eq!(0, i64::zero());
+        assert_eq!(0, i128::zero());
+        assert_eq!(0, isize::zero());
+        assert_eq!(0, u8::zero());
+        assert_eq!(0, u16::zero());
+        assert_eq!(0, u32::zero());
+        assert_eq!(0, u64::zero());
+        assert_eq!(0, u128::zero());
+        assert_eq!(0, usize::zero());
+    }
+
+    #[test]
+    fn one() {
+        assert_eq!(1, i8::one());
+        assert_eq!(1, i16::one());
+        assert_eq!(1, i32::one());
+        assert_eq!(1, i64::one());
+        assert_eq!(1, i128::one());
+        assert_eq!(1, isize::one());
+        assert_eq!(1, u8::one());
+        assert_eq!(1, u16::one());
+        assert_eq!(1, u32::one());
+        assert_eq!(1, u64::one());
+        assert_eq!(1, u128::one());
+        assert_eq!(1, usize::one());
+    }
+}
