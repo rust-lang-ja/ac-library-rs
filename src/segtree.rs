@@ -4,7 +4,7 @@ use std::cmp::{max, min, Ordering};
 use std::convert::Infallible;
 use std::iter::{empty, repeat_with, FromIterator};
 use std::marker::PhantomData;
-use std::ops::{Add, Mul};
+use std::ops::{Add, Bound, Mul, RangeBounds};
 
 // TODO Should I split monoid-related traits to another module?
 pub trait Monoid {
@@ -135,7 +135,27 @@ impl<M: Monoid> Segtree<M> {
         self.d[p + self.size].clone()
     }
 
-    pub fn prod(&self, mut l: usize, mut r: usize) -> M::S {
+    pub fn prod<R>(&self, range: R) -> M::S
+    where
+        R: RangeBounds<usize>,
+    {
+        // Trivial optimization
+        if range.start_bound() == Bound::Unbounded && range.end_bound() == Bound::Unbounded {
+            return self.all_prod();
+        }
+
+        let mut r = match range.end_bound() {
+            Bound::Included(r) => r + 1,
+            Bound::Excluded(r) => *r,
+            Bound::Unbounded => self.n,
+        };
+        let mut l = match range.start_bound() {
+            Bound::Included(l) => *l,
+            Bound::Excluded(l) => l + 1,
+            // TODO: There are another way of optimizing [0..r)
+            Bound::Unbounded => 0,
+        };
+
         assert!(l <= r && r <= self.n);
         let mut sml = M::identity();
         let mut smr = M::identity();
@@ -268,6 +288,7 @@ where
 mod tests {
     use crate::segtree::{Additive, Max};
     use crate::Segtree;
+    use std::ops::{Bound::*, RangeBounds};
 
     #[test]
     fn test_max_segtree() {
@@ -308,12 +329,20 @@ mod tests {
         for i in 0..n {
             assert_eq!(segtree.get(i), base[i]);
         }
+
+        check(base, segtree, ..);
         for i in 0..=n {
+            check(base, segtree, ..i);
+            check(base, segtree, i..);
+            if i < n {
+                check(base, segtree, ..=i);
+            }
             for j in i..=n {
-                assert_eq!(
-                    segtree.prod(i, j),
-                    base[i..j].iter().max().copied().unwrap_or(i32::min_value())
-                );
+                check(base, segtree, i..j);
+                if j < n {
+                    check(base, segtree, i..=j);
+                    check(base, segtree, (Excluded(i), Included(j)));
+                }
             }
         }
         assert_eq!(
@@ -378,5 +407,16 @@ mod tests {
         let v = vec![314, 159, 265, 897, 932, 1, 2, 4];
         let tree = Segtree::<Additive<_>>::from_vec(v, 5);
         assert_eq!(&tree.d[1..], &ans_124[..]);
+    }
+
+    fn check(base: &[i32], segtree: &Segtree<Max<i32>>, range: impl RangeBounds<usize>) {
+        let expected = base
+            .iter()
+            .enumerate()
+            .filter_map(|(i, a)| Some(a).filter(|_| range.contains(&i)))
+            .max()
+            .copied()
+            .unwrap_or(i32::min_value());
+        assert_eq!(segtree.prod(range), expected);
     }
 }

@@ -1,4 +1,4 @@
-use ac_library_rs::MfGraph;
+use ac_library::MfGraph;
 use std::io::Read;
 
 #[allow(clippy::many_single_char_names)]

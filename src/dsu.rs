@@ -9,7 +9,7 @@
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::Dsu;
+/// use ac_library::Dsu;
 /// use proconio::{input, source::once::OnceSource};
 ///
 /// input! {
