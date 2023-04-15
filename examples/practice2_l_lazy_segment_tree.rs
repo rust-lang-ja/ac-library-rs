@@ -1,5 +1,5 @@
 #![allow(clippy::many_single_char_names)]
-use ac_library_rs::{LazySegtree, MapMonoid, Monoid};
+use ac_library::{LazySegtree, MapMonoid, Monoid};
 use std::io::Read;
 use std::iter;
 
@@ -55,8 +55,8 @@ fn main() {
         let l = input.next().unwrap().parse().unwrap();
         let r: usize = input.next().unwrap().parse().unwrap();
         match t {
-            1 => segtree.apply_range(l, r + 1, true),
-            2 => println!("{}", segtree.prod(l, r + 1).2),
+            1 => segtree.apply_range(l..=r, true),
+            2 => println!("{}", segtree.prod(l..=r).2),
             _ => {}
         }
     }

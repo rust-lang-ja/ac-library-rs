@@ -1,16 +1,70 @@
+//! A `SccGraph` is a directed graph that calculates strongly connected components (SCC) in $O(|V| + |E|)$.
+
 use crate::internal_scc;
 
+/// An `SccGraph` is a directed graph that calculates strongly connected components (SCC) in $O(|V| + |E|)$.
+///
+/// # Example
+///
+/// ```
+/// use ac_library::SccGraph;
+/// use proconio::{input, source::once::OnceSource};
+///
+/// input! {
+///     from OnceSource::from(
+///         "5\n\
+///          5\n\
+///          0 1\n\
+///          1 2\n\
+///          2 0\n\
+///          0 3\n\
+///          3 4\n",
+///     ),
+///     n: usize,
+///     abs: [(usize, usize)],
+/// }
+///
+/// let mut graph = SccGraph::new(n);
+/// for (a, b) in abs {
+///     graph.add_edge(a, b);
+/// }
+///
+/// assert_eq!(graph.scc(), [&[0, 1, 2][..], &[3], &[4]]);
+/// ```
 pub struct SccGraph {
     internal: internal_scc::SccGraph,
 }
 
 impl SccGraph {
+    /// Creates a new `SccGraph` with `n` edges.
+    ///
+    /// # Constraints
+    ///
+    /// - $0 \leq n \leq 10^8$
+    ///
+    /// # Complexity
+    ///
+    /// - $O(n)$
     pub fn new(n: usize) -> Self {
         SccGraph {
             internal: internal_scc::SccGraph::new(n),
         }
     }
 
+    /// Adds a directed edge from the vertex `from` to the vertex `to`.
+    ///
+    /// # Constraints
+    ///
+    /// - $0 \leq$ `from` $< n$
+    /// - $0 \leq$ `to` $< n$
+    ///
+    /// # Panics
+    ///
+    /// Panics if the above constraints are not satisfied.
+    ///
+    /// # Complexity
+    ///
+    /// - $O(1)$ amortized
     pub fn add_edge(&mut self, from: usize, to: usize) {
         let n = self.internal.num_vertices();
         assert!(from < n);
@@ -18,6 +72,17 @@ impl SccGraph {
         self.internal.add_edge(from, to);
     }
 
+    /// Calculates the strongly connected components (SCC) of directed graphs in $O(|V| + |E|)$.
+    ///
+    /// Returns the list of the "list of the vertices" that satisfies the following.
+    ///
+    /// - Each vertex is in exactly one "list of the vertices".
+    /// - Each "list of the vertices" corresponds to the vertex set of a strongly connected component. The order of the vertices in the list is undefined.
+    /// - The list of "list of the vertices" are sorted in topological order, i.e., for two vertices $u$, $v$ in different strongly connected components, if there is a directed path from $u$ to $v$, the list containing $u$ appears earlier than the list containing $v$.
+    ///
+    /// # Complexity
+    ///
+    /// - $O(n + m)$ where $m$ is the number of added edges
     pub fn scc(&self) -> Vec<Vec<usize>> {
         self.internal.scc()
     }
