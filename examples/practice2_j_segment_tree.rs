@@ -1,4 +1,4 @@
-use ac_library_rs::{Max, Segtree};
+use ac_library::{Max, Segtree};
 use std::io::Read;
 
 fn main() {
@@ -20,9 +20,9 @@ fn main() {
                 segtree.set(x, v);
             }
             2 => {
-                let l = input.next().unwrap().parse().unwrap();
+                let l: usize = input.next().unwrap().parse().unwrap();
                 let r: usize = input.next().unwrap().parse().unwrap();
-                println!("{}", segtree.prod(l, r + 1));
+                println!("{}", segtree.prod(l..=r));
             }
             3 => {
                 let x = input.next().unwrap().parse().unwrap();
