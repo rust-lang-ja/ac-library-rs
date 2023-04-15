@@ -162,13 +162,16 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
     (r0, m0)
 }
 
-/// Returns $\sum_{i = 0}^{n - 1} \lfloor \frac{a \times i + b}{m} \rfloor$.
+/// Returns
+///
+/// $$\sum_{i = 0}^{n - 1} \left\lfloor \frac{a \times i + b}{m} \right\rfloor.$$
+///
+/// It returns the answer in $\bmod 2^{\mathrm{64}}$, if overflowed.
 ///
 /// # Constraints
 ///
-/// - $0 \leq n \leq 10^9$
-/// - $1 \leq m \leq 10^9$
-/// - $0 \leq a, b \leq m$
+/// - $0 \leq n \lt 2^{32}$
+/// - $1 \leq m \lt 2^{32}$
 ///
 /// # Panics
 ///
@@ -176,7 +179,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 ///
 /// # Complexity
 ///
-/// - $O(\log(n + m + a + b))$
+/// - $O(\log{(m+a)})$
 ///
 /// # Example
 ///
