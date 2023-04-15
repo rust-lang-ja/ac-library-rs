@@ -22,7 +22,7 @@ use std::mem::swap;
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// assert_eq!(math::pow_mod(2, 10000, 7), 2);
 /// ```
@@ -63,7 +63,7 @@ pub fn pow_mod(x: i64, mut n: i64, m: u32) -> u32 {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// assert_eq!(math::inv_mod(3, 7), 5);
 /// ```
@@ -106,7 +106,7 @@ pub fn inv_mod(x: i64, m: i64) -> i64 {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// let r = [2, 3, 2];
 /// let m = [3, 5, 7];
@@ -135,7 +135,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
         // r2 % m0 = r0
         // r2 % mi = ri
         // -> (r0 + x*m0) % mi = ri
-        // -> x*u0*g % (u1*g) = (ri - r0) (u0*g = m0, u1*g = mi)
+        // -> x*u0*g = ri-r0 (mod u1*g) (u0*g = m0, u1*g = mi)
         // -> x = (ri - r0) / g * inv(u0) (mod u1)
 
         // im = inv(u0) (mod u1) (0 <= im < u1)
@@ -181,7 +181,7 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::math;
+/// use ac_library::math;
 ///
 /// assert_eq!(math::floor_sum(6, 5, 4, 3), 13);
 /// ```

@@ -73,7 +73,27 @@ impl<F: MapMonoid> LazySegtree<F> {
         self.d[p].clone()
     }
 
-    pub fn prod(&mut self, mut l: usize, mut r: usize) -> <F::M as Monoid>::S {
+    pub fn prod<R>(&mut self, range: R) -> <F::M as Monoid>::S
+    where
+        R: RangeBounds<usize>,
+    {
+        // Trivial optimization
+        if range.start_bound() == Bound::Unbounded && range.end_bound() == Bound::Unbounded {
+            return self.all_prod();
+        }
+
+        let mut r = match range.end_bound() {
+            Bound::Included(r) => r + 1,
+            Bound::Excluded(r) => *r,
+            Bound::Unbounded => self.n,
+        };
+        let mut l = match range.start_bound() {
+            Bound::Included(l) => *l,
+            Bound::Excluded(l) => l + 1,
+            // TODO: There are another way of optimizing [0..r)
+            Bound::Unbounded => 0,
+        };
+
         assert!(l <= r && r <= self.n);
         if l == r {
             return F::identity_element();
@@ -124,7 +144,22 @@ impl<F: MapMonoid> LazySegtree<F> {
             self.update(p >> i);
         }
     }
-    pub fn apply_range(&mut self, mut l: usize, mut r: usize, f: F::F) {
+    pub fn apply_range<R>(&mut self, range: R, f: F::F)
+    where
+        R: RangeBounds<usize>,
+    {
+        let mut r = match range.end_bound() {
+            Bound::Included(r) => r + 1,
+            Bound::Excluded(r) => *r,
+            Bound::Unbounded => self.n,
+        };
+        let mut l = match range.start_bound() {
+            Bound::Included(l) => *l,
+            Bound::Excluded(l) => l + 1,
+            // TODO: There are another way of optimizing [0..r)
+            Bound::Unbounded => 0,
+        };
+
         assert!(l <= r && r <= self.n);
         if l == r {
             return;
@@ -287,7 +322,10 @@ where
 }
 
 // TODO is it useful?
-use std::fmt::{Debug, Error, Formatter, Write};
+use std::{
+    fmt::{Debug, Error, Formatter, Write},
+    ops::{Bound, RangeBounds},
+};
 impl<F> Debug for LazySegtree<F>
 where
     F: MapMonoid,
@@ -314,6 +352,8 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::ops::{Bound::*, RangeBounds};
+
     use crate::{LazySegtree, MapMonoid, Max};
 
     struct MaxAdd;
@@ -361,8 +401,12 @@ mod tests {
         internal[6] = 0;
         check_segtree(&internal, &mut segtree);
 
-        segtree.apply_range(3, 8, 2);
+        segtree.apply_range(3..8, 2);
         internal[3..8].iter_mut().for_each(|e| *e += 2);
+        check_segtree(&internal, &mut segtree);
+
+        segtree.apply_range(2..=5, 7);
+        internal[2..=5].iter_mut().for_each(|e| *e += 7);
         check_segtree(&internal, &mut segtree);
     }
 
@@ -373,12 +417,20 @@ mod tests {
         for i in 0..n {
             assert_eq!(segtree.get(i), base[i]);
         }
+
+        check(base, segtree, ..);
         for i in 0..=n {
+            check(base, segtree, ..i);
+            check(base, segtree, i..);
+            if i < n {
+                check(base, segtree, ..=i);
+            }
             for j in i..=n {
-                assert_eq!(
-                    segtree.prod(i, j),
-                    base[i..j].iter().max().copied().unwrap_or(i32::min_value())
-                );
+                check(base, segtree, i..j);
+                if j < n {
+                    check(base, segtree, i..=j);
+                    check(base, segtree, (Excluded(i), Included(j)));
+                }
             }
         }
         assert_eq!(
@@ -412,5 +464,16 @@ mod tests {
                 );
             }
         }
+    }
+
+    fn check(base: &[i32], segtree: &mut LazySegtree<MaxAdd>, range: impl RangeBounds<usize>) {
+        let expected = base
+            .iter()
+            .enumerate()
+            .filter_map(|(i, a)| Some(a).filter(|_| range.contains(&i)))
+            .max()
+            .copied()
+            .unwrap_or(i32::min_value());
+        assert_eq!(segtree.prod(range), expected);
     }
 }
