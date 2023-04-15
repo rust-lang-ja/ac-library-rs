@@ -189,21 +189,24 @@ pub fn crt(r: &[i64], m: &[i64]) -> (i64, i64) {
 /// assert_eq!(math::floor_sum(6, 5, 4, 3), 13);
 /// ```
 #[allow(clippy::many_single_char_names)]
-pub fn floor_sum(n: i64, m: i64, mut a: i64, mut b: i64) -> i64 {
+pub fn floor_sum(n: i64, m: i64, a: i64, b: i64) -> i64 {
+    use std::num::Wrapping as W;
     assert!((0..1i64 << 32).contains(&n));
     assert!((1..1i64 << 32).contains(&m));
-    let mut ans = 0;
+    let mut ans = W(0 as u64);
+    let (wn, wm, mut wa, mut wb) = (W(n as u64), W(m as u64), W(a as u64), W(b as u64));
     if a < 0 {
-        let a2 = internal_math::safe_mod(a, m);
-        ans -= n * (n - 1) / 2 * ((a2 - a) / m);
-        a = a2;
+        let a2 = W(internal_math::safe_mod(a, m) as u64);
+        ans -= wn * (wn - W(1)) / W(2) * ((a2 - wa) / wm);
+        wa = a2;
     }
     if b < 0 {
-        let b2 = internal_math::safe_mod(b, m);
-        ans -= n * ((b2 - b) / m);
-        b = b2;
+        let b2 = W(internal_math::safe_mod(b, m) as u64);
+        ans -= wn * ((b2 - wb) / wm);
+        wb = b2;
     }
-    ans + internal_math::floor_sum_unsigned(n as u64, m as u64, a as u64, b as u64) as i64
+    let ret = ans + internal_math::floor_sum_unsigned(wn, wm, wa, wb);
+    ret.0 as i64
 }
 
 #[cfg(test)]

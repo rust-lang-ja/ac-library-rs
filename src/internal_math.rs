@@ -1,6 +1,6 @@
 // remove this after dependencies has been added
 #![allow(dead_code)]
-use std::mem::swap;
+use std::{mem::swap, num::Wrapping as W};
 
 /// # Arguments
 /// * `m` `1 <= m`
@@ -243,12 +243,17 @@ pub(crate) fn primitive_root(m: i32) -> i32 {
 /// `sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)`
 /* const */
 #[allow(clippy::many_single_char_names)]
-pub(crate) fn floor_sum_unsigned(mut n: u64, mut m: u64, mut a: u64, mut b: u64) -> u64 {
-    let mut ans = 0;
+pub(crate) fn floor_sum_unsigned(
+    mut n: W<u64>,
+    mut m: W<u64>,
+    mut a: W<u64>,
+    mut b: W<u64>,
+) -> W<u64> {
+    let mut ans = W(0);
     loop {
         if a >= m {
-            if n > 0 {
-                ans += n * (n - 1) / 2 * (a / m);
+            if n > W(0) {
+                ans += n * (n - W(1)) / W(2) * (a / m);
             }
             a %= m;
         }
