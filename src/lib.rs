@@ -11,11 +11,11 @@ pub mod segtree;
 pub mod string;
 pub mod twosat;
 
-pub(crate) mod internal_bit;
-pub(crate) mod internal_math;
-pub(crate) mod internal_queue;
-pub(crate) mod internal_scc;
-pub(crate) mod internal_type_traits;
+mod internal_bit;
+mod internal_math;
+mod internal_queue;
+mod internal_scc;
+mod internal_type_traits;
 
 pub use convolution::{convolution, convolution_i64};
 pub use dsu::Dsu;
@@ -29,7 +29,9 @@ pub use modint::{
     ModInt1000000007, ModInt998244353, Modulus, RemEuclidU32, StaticModInt,
 };
 pub use scc::SccGraph;
-pub use segtree::{Additive, Max, Min, Monoid, Multiplicative, Segtree};
+pub use segtree::{
+    Additive, BitwiseAnd, BitwiseOr, BitwiseXor, Max, Min, Monoid, Multiplicative, Segtree,
+};
 pub use string::{
     lcp_array, lcp_array_arbitrary, suffix_array, suffix_array_arbitrary, suffix_array_manual,
     z_algorithm, z_algorithm_arbitrary,

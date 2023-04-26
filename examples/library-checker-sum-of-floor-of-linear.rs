@@ -1,9 +1,9 @@
 #[macro_use]
-extern crate input as _;
+extern crate proconio as _;
 #[macro_use]
 extern crate proconio_derive as _;
 
-use ac_library_rs::math;
+use ac_library::math;
 
 #[fastout]
 fn main() {

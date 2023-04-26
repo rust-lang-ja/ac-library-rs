@@ -1,21 +1,25 @@
 [package]
 name = "ac-library-rs"
-version = "0.1.0"
-authors = ["rust-lang-ja Developers"]
+version = "0.2.0-alpha.1"
 edition = "2018"
+rust-version = "1.42"
 description = "A Rust port of AtCoder Library (ACL)."
 license = "CC0-1.0"
 repository = "https://github.com/rust-lang-ja/ac-library-rs"
 keywords = ["competitive"]
 categories = ["algorithms", "data-structures"]
-publish = false
+
+[package.metadata.docs.rs]
+rustdoc-args = ["--html-in-header", "./doc/katex-header.html"]
+
+[lib]
+name = "ac_library"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 
 [dev-dependencies]
-input = { path = "./crates/input" }
 proconio = "=0.3.6"
 proconio-derive = "0.2.1"
 rand = "0.7.3"

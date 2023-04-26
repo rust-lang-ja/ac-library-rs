@@ -1,7 +1,7 @@
 #[macro_use]
-extern crate input as _;
+extern crate proconio as _;
 
-use ac_library_rs::dsu::Dsu;
+use ac_library::dsu::Dsu;
 
 fn main() {
     input! {

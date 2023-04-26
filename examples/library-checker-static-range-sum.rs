@@ -1,9 +1,9 @@
 #[macro_use]
-extern crate input as _;
+extern crate proconio as _;
 #[macro_use]
 extern crate proconio_derive as _;
 
-use ac_library_rs::fenwicktree::FenwickTree;
+use ac_library::fenwicktree::FenwickTree;
 
 #[allow(clippy::needless_collect)]
 #[fastout]
@@ -20,6 +20,6 @@ fn main() {
         fenwick.add(i, a);
     }
     for (l, r) in lrs {
-        println!("{}", fenwick.sum(l, r));
+        println!("{}", fenwick.sum(l..r));
     }
 }
