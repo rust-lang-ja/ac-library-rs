@@ -276,7 +276,7 @@ mod tests {
         modulus!(M1, M2);
 
         fn test<M: Modulus>(rng: &mut ThreadRng) {
-            let mut gen_values = |n| gen_values::<Mod998244353>(rng, n);
+            let mut gen_values = |n| gen_values::<M>(rng, n);
             for (n, m) in (1..20).flat_map(|i| (1..20).map(move |j| (i, j))) {
                 let (a, b) = (gen_values(n), gen_values(m));
                 assert_eq!(conv_naive(&a, &b), super::convolution(&a, &b));
@@ -326,7 +326,7 @@ mod tests {
 
     fn simple_raw<T>()
     where
-        T: TryFrom<u32> + Copy + RemEuclidU32,
+        T: TryFrom<u32> + Copy + RemEuclidU32 + Eq,
         T::Error: fmt::Debug,
     {
         const M1: u32 = 998_244_353;
@@ -336,16 +336,21 @@ mod tests {
 
         fn test<T, M>(rng: &mut ThreadRng)
         where
-            T: TryFrom<u32> + Copy + RemEuclidU32,
+            T: TryFrom<u32> + Copy + RemEuclidU32 + Eq,
             T::Error: fmt::Debug,
             M: Modulus,
         {
-            let mut gen_raw_values = |n| gen_raw_values::<u32, Mod998244353>(rng, n);
+            let mut gen_raw_values = |n| {
+                gen_raw_values::<u32, M>(rng, n)
+                    .into_iter()
+                    .map(|x| x.try_into().unwrap())
+                    .collect::<Vec<T>>()
+            };
             for (n, m) in (1..20).flat_map(|i| (1..20).map(move |j| (i, j))) {
                 let (a, b) = (gen_raw_values(n), gen_raw_values(m));
-                assert_eq!(
-                    conv_raw_naive::<_, M>(&a, &b),
-                    super::convolution_raw::<_, M>(&a, &b),
+                assert!(
+                    conv_raw_naive::<T, M>(&a, &b) == super::convolution_raw::<T, M>(&a, &b),
+                    "values don't match",
                 );
             }
         }
