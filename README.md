@@ -1,7 +1,7 @@
 # ac-library-rs
 
 [![CI](https://github.com/rust-lang-ja/ac-library-rs/workflows/CI/badge.svg)](https://github.com/rust-lang-ja/ac-library-rs/actions?workflow=CI)
-[![Rust 2018 1.42.0+](https://img.shields.io/badge/rust%202018-1.42.0+-lightgray.svg)](https://www.rust-lang.org)
+[![Rust 2018 1.70.0+](https://img.shields.io/badge/rust%202018-1.70.0+-lightgray.svg)](https://www.rust-lang.org)
 [![Crates.io](https://img.shields.io/crates/v/ac-library-rs.svg)](https://crates.io/crates/ac-library-rs)
 [![License](https://img.shields.io/crates/l/ac-library-rs.svg)](https://crates.io/crates/ac-library-rs)
 

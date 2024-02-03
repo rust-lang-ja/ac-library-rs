@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         toolchain:
-          - 1.42.0-x86_64-unknown-linux-gnu
+          - 1.70.0-x86_64-unknown-linux-gnu
           - stable-x86_64-unknown-linux-gnu
 
     name: Rustfmt (${{ matrix.toolchain }})
@@ -43,16 +43,16 @@ jobs:
       fail-fast: false
       matrix:
         toolchain:
-          - 1.42.0-x86_64-pc-windows-msvc
-          - 1.42.0-x86_64-apple-darwin
-          - 1.42.0-x86_64-unknown-linux-gnu
+          - 1.70.0-x86_64-pc-windows-msvc
+          - 1.70.0-x86_64-apple-darwin
+          - 1.70.0-x86_64-unknown-linux-gnu
           - stable-x86_64-pc-windows-msvc
           - stable-x86_64-apple-darwin
           - stable-x86_64-unknown-linux-gnu
         include:
-          - { toolchain: 1.42.0-x86_64-pc-windows-msvc  , os: windows-2019 }
-          - { toolchain: 1.42.0-x86_64-apple-darwin     , os: macos-11     }
-          - { toolchain: 1.42.0-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { toolchain: 1.70.0-x86_64-pc-windows-msvc  , os: windows-2019 }
+          - { toolchain: 1.70.0-x86_64-apple-darwin     , os: macos-11     }
+          - { toolchain: 1.70.0-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
           - { toolchain: stable-x86_64-pc-windows-msvc  , os: windows-2019 }
           - { toolchain: stable-x86_64-apple-darwin     , os: macos-11     }
           - { toolchain: stable-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
@@ -97,7 +97,7 @@ jobs:
       fail-fast: false
       matrix:
         toolchain:
-          - 1.42.0-x86_64-unknown-linux-gnu
+          - 1.70.0-x86_64-unknown-linux-gnu
           - stable-x86_64-unknown-linux-gnu
         python-version:
           - '3.6' # https://packages.ubuntu.com/bionic/python3
@@ -136,14 +136,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup `1.60.0-x86_64-unknown-linux-gnu`
+      - name: Setup `1.70.0-x86_64-unknown-linux-gnu`
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: 1.60.0-x86_64-unknown-linux-gnu
+          toolchain: 1.70.0-x86_64-unknown-linux-gnu
 
-      - name: 'Override `1.60.0-x86_64-unknown-linux-gnu'
+      - name: 'Override `1.70.0-x86_64-unknown-linux-gnu'
         run: |
-          rustup override set 1.60.0-x86_64-unknown-linux-gnu
+          rustup override set 1.70.0-x86_64-unknown-linux-gnu
 
       - name: Setup Python 3.9
         uses: actions/setup-python@v4
