@@ -11,6 +11,8 @@ pub mod segtree;
 pub mod string;
 pub mod twosat;
 
+pub mod num_traits;
+
 mod internal_bit;
 mod internal_math;
 mod internal_queue;
