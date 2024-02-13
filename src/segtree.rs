@@ -137,22 +137,8 @@ impl<M: Monoid> From<Vec<M::S>> for Segtree<M> {
 }
 impl<M: Monoid> FromIterator<M::S> for Segtree<M> {
     fn from_iter<T: IntoIterator<Item = M::S>>(iter: T) -> Self {
-        let iter = iter.into_iter();
-        let n = iter.size_hint().0;
-        let log = ceil_pow2(n as u32) as usize;
-        let size = 1 << log;
-        let mut d = Vec::with_capacity(size * 2);
-        d.extend(
-            std::iter::repeat_with(M::identity)
-                .take(size)
-                .chain(iter)
-                .chain(std::iter::repeat_with(M::identity).take(size - n)),
-        );
-        let mut ret = Segtree { n, size, log, d };
-        for i in (1..size).rev() {
-            ret.update(i);
-        }
-        ret
+        let v = iter.into_iter().collect::<Vec<_>>();
+        v.into()
     }
 }
 impl<M: Monoid> Segtree<M> {
@@ -351,6 +337,18 @@ mod tests {
         segtree.set(6, 0);
         internal[6] = 0;
         check_segtree(&internal, &segtree);
+    }
+
+    #[test]
+    fn test_segtree_fromiter() {
+        let v = vec![1, 4, 1, 4, 2, 1, 3, 5, 6];
+        let base = v
+            .iter()
+            .copied()
+            .filter(|&x| x % 2 == 0)
+            .collect::<Vec<_>>();
+        let segtree: Segtree<Max<_>> = v.iter().copied().filter(|&x| x % 2 == 0).collect();
+        check_segtree(&base, &segtree);
     }
 
     //noinspection DuplicatedCode
