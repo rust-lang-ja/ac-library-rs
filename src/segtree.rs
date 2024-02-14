@@ -341,7 +341,7 @@ mod tests {
 
     #[test]
     fn test_segtree_fromiter() {
-        let v = vec![1, 4, 1, 4, 2, 1, 3, 5, 6];
+        let v = [1, 4, 1, 4, 2, 1, 3, 5, 6];
         let base = v
             .iter()
             .copied()
