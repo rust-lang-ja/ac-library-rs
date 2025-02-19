@@ -391,13 +391,13 @@ mod tests {
         }
 
         for i in 0..1000 {
-            let a = vec![i64::min_value() + i];
+            let a = vec![i64::MIN + i];
             let b = vec![1];
             assert_eq!(a, super::convolution_i64(&a, &b));
         }
 
         for i in 0..1000 {
-            let a = vec![i64::max_value() - i];
+            let a = vec![i64::MAX - i];
             let b = vec![1];
             assert_eq!(a, super::convolution_i64(&a, &b));
         }

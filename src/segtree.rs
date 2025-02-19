@@ -337,7 +337,7 @@ mod tests {
         check_segtree(&base, &segtree);
 
         let mut segtree = Segtree::<Max<_>>::new(n);
-        let mut internal = vec![i32::min_value(); n];
+        let mut internal = vec![i32::MIN; n];
         for i in 0..n {
             segtree.set(i, base[i]);
             internal[i] = base[i];
@@ -378,7 +378,7 @@ mod tests {
         }
         assert_eq!(
             segtree.all_prod(),
-            base.iter().max().copied().unwrap_or(i32::min_value())
+            base.iter().max().copied().unwrap_or(i32::MAX)
         );
         for k in 0..=10 {
             let f = |&x: &i32| x < k;
@@ -386,11 +386,7 @@ mod tests {
                 assert_eq!(
                     Some(segtree.max_right(i, f)),
                     (i..=n)
-                        .filter(|&j| f(&base[i..j]
-                            .iter()
-                            .max()
-                            .copied()
-                            .unwrap_or(i32::min_value())))
+                        .filter(|&j| f(&base[i..j].iter().max().copied().unwrap_or(i32::MIN)))
                         .max()
                 );
             }
@@ -398,11 +394,7 @@ mod tests {
                 assert_eq!(
                     Some(segtree.min_left(j, f)),
                     (0..=j)
-                        .filter(|&i| f(&base[i..j]
-                            .iter()
-                            .max()
-                            .copied()
-                            .unwrap_or(i32::min_value())))
+                        .filter(|&i| f(&base[i..j].iter().max().copied().unwrap_or(i32::MIN)))
                         .min()
                 );
             }
@@ -416,7 +408,7 @@ mod tests {
             .filter_map(|(i, a)| Some(a).filter(|_| range.contains(&i)))
             .max()
             .copied()
-            .unwrap_or(i32::min_value());
+            .unwrap_or(i32::MIN);
         assert_eq!(segtree.prod(range), expected);
     }
 }

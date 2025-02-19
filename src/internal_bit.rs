@@ -25,6 +25,6 @@ mod tests {
         assert_eq!(30, super::ceil_pow2(1 << 30));
         assert_eq!(31, super::ceil_pow2((1 << 30) + 1));
 
-        assert_eq!(32, super::ceil_pow2(u32::max_value()));
+        assert_eq!(32, super::ceil_pow2(u32::MAX));
     }
 }

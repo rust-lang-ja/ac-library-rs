@@ -163,7 +163,7 @@ mod tests {
 
         //Check the min distance between flags
         res.sort_unstable();
-        let mut min_distance = i32::max_value();
+        let mut min_distance = i32::MAX;
         for i in 1..res.len() {
             min_distance = std::cmp::min(min_distance, res[i] - res[i - 1]);
         }

@@ -2,11 +2,13 @@ name: CI
 
 on:
   schedule:
-    - cron: '0 0 * * 6'
+    - cron: "0 0 * * 6"
   push:
     branches:
-      - '*'
+      - "*"
   pull_request:
+    branches:
+      - "master"
 
 jobs:
   rustfmt:
@@ -22,15 +24,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: 'Setup `${{ matrix.toolchain }}`'
+      - name: "Setup `${{ matrix.toolchain }}`"
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
           components: rustfmt
 
-      - name: 'Override `${{ matrix.toolchain }}'
+      - name: "Override `${{ matrix.toolchain }}"
         run: |
           rustup override set ${{ matrix.toolchain }}
 
@@ -50,11 +52,11 @@ jobs:
           - stable-x86_64-apple-darwin
           - stable-x86_64-unknown-linux-gnu
         include:
-          - { toolchain: 1.70.0-x86_64-pc-windows-msvc  , os: windows-2019 }
-          - { toolchain: 1.70.0-x86_64-apple-darwin     , os: macos-11     }
+          - { toolchain: 1.70.0-x86_64-pc-windows-msvc, os: windows-2019 }
+          - { toolchain: 1.70.0-x86_64-apple-darwin, os: macos-11 }
           - { toolchain: 1.70.0-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
-          - { toolchain: stable-x86_64-pc-windows-msvc  , os: windows-2019 }
-          - { toolchain: stable-x86_64-apple-darwin     , os: macos-11     }
+          - { toolchain: stable-x86_64-pc-windows-msvc, os: windows-2019 }
+          - { toolchain: stable-x86_64-apple-darwin, os: macos-11 }
           - { toolchain: stable-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
 
     name: Build (${{ matrix.toolchain }})
@@ -66,15 +68,15 @@ jobs:
         if: matrix.os == 'windows-2019'
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: 'Setup `${{ matrix.toolchain }}`'
+      - name: "Setup `${{ matrix.toolchain }}`"
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
 
-      - name: 'Override `${{ matrix.toolchain }}`'
+      - name: "Override `${{ matrix.toolchain }}`"
         run: |
           rustup override set ${{ matrix.toolchain }}
 
@@ -100,23 +102,23 @@ jobs:
           - 1.70.0-x86_64-unknown-linux-gnu
           - stable-x86_64-unknown-linux-gnu
         python-version:
-          - '3.6' # https://packages.ubuntu.com/bionic/python3
-          - '3.8' # https://packages.ubuntu.com/focal/python3
+          - "3.6" # https://packages.ubuntu.com/bionic/python3
+          - "3.8" # https://packages.ubuntu.com/focal/python3
 
     name: Expand_test (${{ matrix.toolchain }}, ${{ matrix.python-version }})
     runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: 'Setup `${{ matrix.toolchain }}`'
+      - name: "Setup `${{ matrix.toolchain }}`"
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
           components: rustfmt
 
-      - name: 'Override `${{ matrix.toolchain }}`'
+      - name: "Override `${{ matrix.toolchain }}`"
         run: |
           rustup override set ${{ matrix.toolchain }}
 
@@ -134,21 +136,21 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup `1.70.0-x86_64-unknown-linux-gnu`
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: 1.70.0-x86_64-unknown-linux-gnu
 
-      - name: 'Override `1.70.0-x86_64-unknown-linux-gnu'
+      - name: "Override `1.70.0-x86_64-unknown-linux-gnu"
         run: |
           rustup override set 1.70.0-x86_64-unknown-linux-gnu
 
       - name: Setup Python 3.9
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install `oj`
         run: pip install online-judge-tools
