@@ -102,8 +102,8 @@ jobs:
           - 1.70.0-x86_64-unknown-linux-gnu
           - stable-x86_64-unknown-linux-gnu
         python-version:
-          - "3.6" # https://packages.ubuntu.com/bionic/python3
-          - "3.8" # https://packages.ubuntu.com/focal/python3
+          - "3.12"
+          - "3.13"
 
     name: Expand_test (${{ matrix.toolchain }}, ${{ matrix.python-version }})
     runs-on: ubuntu-24.04
@@ -123,7 +123,7 @@ jobs:
           rustup override set ${{ matrix.toolchain }}
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -148,7 +148,7 @@ jobs:
           rustup override set 1.70.0-x86_64-unknown-linux-gnu
 
       - name: Setup Python 3.9
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.9"
 
