@@ -20,7 +20,7 @@ jobs:
           - stable-x86_64-unknown-linux-gnu
 
     name: Rustfmt (${{ matrix.toolchain }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -52,12 +52,12 @@ jobs:
           - stable-x86_64-apple-darwin
           - stable-x86_64-unknown-linux-gnu
         include:
-          - { toolchain: 1.70.0-x86_64-pc-windows-msvc, os: windows-2019 }
-          - { toolchain: 1.70.0-x86_64-apple-darwin, os: macos-11 }
-          - { toolchain: 1.70.0-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
-          - { toolchain: stable-x86_64-pc-windows-msvc, os: windows-2019 }
-          - { toolchain: stable-x86_64-apple-darwin, os: macos-11 }
-          - { toolchain: stable-x86_64-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { toolchain: 1.70.0-x86_64-pc-windows-msvc, os: windows-2022 }
+          - { toolchain: 1.70.0-x86_64-apple-darwin, os: macos-14 }
+          - { toolchain: 1.70.0-x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { toolchain: stable-x86_64-pc-windows-msvc, os: windows-2022 }
+          - { toolchain: stable-x86_64-apple-darwin, os: macos-14 }
+          - { toolchain: stable-x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
 
     name: Build (${{ matrix.toolchain }})
     runs-on: ${{ matrix.os }}
@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Disable `core.autocrlf`
         run: git config --global core.autocrlf false
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2022'
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,7 +106,7 @@ jobs:
           - "3.8" # https://packages.ubuntu.com/focal/python3
 
     name: Expand_test (${{ matrix.toolchain }}, ${{ matrix.python-version }})
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -132,7 +132,7 @@ jobs:
 
   verify:
     name: Verify
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
