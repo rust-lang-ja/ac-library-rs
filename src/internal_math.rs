@@ -1,6 +1,6 @@
 // remove this after dependencies has been added
 #![allow(dead_code)]
-use std::mem::swap;
+use std::{mem::swap, num::Wrapping as W};
 
 /// # Arguments
 /// * `m` `1 <= m`
@@ -234,6 +234,46 @@ pub(crate) fn primitive_root(m: i32) -> i32 {
 }
 // omitted
 // template <int m> constexpr int primitive_root = primitive_root_constexpr(m);
+
+/// # Arguments
+/// * `n` `n < 2^32`
+/// * `m` `1 <= m < 2^32`
+///
+/// # Returns
+/// `sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)`
+/* const */
+#[allow(clippy::many_single_char_names)]
+pub(crate) fn floor_sum_unsigned(
+    mut n: W<u64>,
+    mut m: W<u64>,
+    mut a: W<u64>,
+    mut b: W<u64>,
+) -> W<u64> {
+    let mut ans = W(0);
+    loop {
+        if a >= m {
+            if n > W(0) {
+                ans += n * (n - W(1)) / W(2) * (a / m);
+            }
+            a %= m;
+        }
+        if b >= m {
+            ans += n * (b / m);
+            b %= m;
+        }
+
+        let y_max = a * n + b;
+        if y_max < m {
+            break;
+        }
+        // y_max < m * (n + 1)
+        // floor(y_max / m) <= n
+        n = y_max / m;
+        b = y_max % m;
+        std::mem::swap(&mut m, &mut a);
+    }
+    ans
+}
 
 #[cfg(test)]
 mod tests {
