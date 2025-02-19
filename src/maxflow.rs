@@ -162,9 +162,7 @@ where
         self.level[self.s] = 0;
         self.que.clear();
         self.que.push(self.s);
-        while !self.que.empty() {
-            let v = *self.que.front().unwrap();
-            self.que.pop();
+        while let Some(&v) = self.que.pop() {
             for e in &self.graph.g[v] {
                 if e.cap == Cap::zero() || self.level[e.to] >= 0 {
                     continue;
