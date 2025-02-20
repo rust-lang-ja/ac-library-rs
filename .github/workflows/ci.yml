@@ -46,17 +46,17 @@ jobs:
       matrix:
         toolchain:
           - 1.70.0-x86_64-pc-windows-msvc
-          - 1.70.0-x86_64-apple-darwin
+          - 1.70.0-aarch64-apple-darwin
           - 1.70.0-x86_64-unknown-linux-gnu
           - stable-x86_64-pc-windows-msvc
-          - stable-x86_64-apple-darwin
+          - stable-aarch64-apple-darwin
           - stable-x86_64-unknown-linux-gnu
         include:
           - { toolchain: 1.70.0-x86_64-pc-windows-msvc, os: windows-2022 }
-          - { toolchain: 1.70.0-x86_64-apple-darwin, os: macos-14 }
+          - { toolchain: 1.70.0-aarch64-apple-darwin, os: macos-14 }
           - { toolchain: 1.70.0-x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
           - { toolchain: stable-x86_64-pc-windows-msvc, os: windows-2022 }
-          - { toolchain: stable-x86_64-apple-darwin, os: macos-14 }
+          - { toolchain: stable-aarch64-apple-darwin, os: macos-14 }
           - { toolchain: stable-x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
 
     name: Build (${{ matrix.toolchain }})
