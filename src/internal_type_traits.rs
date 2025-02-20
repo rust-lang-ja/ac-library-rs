@@ -99,14 +99,14 @@ macro_rules! impl_integral {
             impl BoundedBelow for $ty {
                 #[inline]
                 fn min_value() -> Self {
-                    Self::min_value()
+                    Self::MIN
                 }
             }
 
             impl BoundedAbove for $ty {
                 #[inline]
                 fn max_value() -> Self {
-                    Self::max_value()
+                    Self::MAX
                 }
             }
 

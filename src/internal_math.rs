@@ -27,9 +27,9 @@ pub(crate) struct Barrett {
 impl Barrett {
     /// # Arguments
     /// * `m` `1 <= m`
-    /// (Note: `m <= 2^31` should also hold, which is undocumented in the original library.
-    /// See the [pull reqeust commment](https://github.com/rust-lang-ja/ac-library-rs/pull/3#discussion_r484661007)
-    /// for more details.)
+    ///   (Note: `m <= 2^31` should also hold, which is undocumented in the original library.
+    ///   See the [pull reqeust commment](https://github.com/rust-lang-ja/ac-library-rs/pull/3#discussion_r484661007)
+    ///   for more details.)
     pub(crate) fn new(m: u32) -> Barrett {
         Barrett {
             _m: m,
@@ -208,7 +208,7 @@ pub(crate) fn primitive_root(m: i32) -> i32 {
     while x % 2 == 0 {
         x /= 2;
     }
-    for i in (3..std::i32::MAX).step_by(2) {
+    for i in (3..i32::MAX).step_by(2) {
         if i as i64 * i as i64 > x as i64 {
             break;
         }
@@ -328,55 +328,49 @@ mod tests {
         assert_eq!(pow_mod(0, 0, 3), 1);
         assert_eq!(pow_mod(0, 0, 723), 1);
         assert_eq!(pow_mod(0, 0, 998244353), 1);
-        assert_eq!(pow_mod(0, 0, i32::max_value()), 1);
+        assert_eq!(pow_mod(0, 0, i32::MAX), 1);
 
         assert_eq!(pow_mod(0, 1, 1), 0);
         assert_eq!(pow_mod(0, 1, 3), 0);
         assert_eq!(pow_mod(0, 1, 723), 0);
         assert_eq!(pow_mod(0, 1, 998244353), 0);
-        assert_eq!(pow_mod(0, 1, i32::max_value()), 0);
+        assert_eq!(pow_mod(0, 1, i32::MAX), 0);
 
-        assert_eq!(pow_mod(0, i64::max_value(), 1), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 3), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 723), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 998244353), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), i32::max_value()), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 1), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 3), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 723), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 998244353), 0);
+        assert_eq!(pow_mod(0, i64::MAX, i32::MAX), 0);
 
         assert_eq!(pow_mod(1, 0, 1), 0);
         assert_eq!(pow_mod(1, 0, 3), 1);
         assert_eq!(pow_mod(1, 0, 723), 1);
         assert_eq!(pow_mod(1, 0, 998244353), 1);
-        assert_eq!(pow_mod(1, 0, i32::max_value()), 1);
+        assert_eq!(pow_mod(1, 0, i32::MAX), 1);
 
         assert_eq!(pow_mod(1, 1, 1), 0);
         assert_eq!(pow_mod(1, 1, 3), 1);
         assert_eq!(pow_mod(1, 1, 723), 1);
         assert_eq!(pow_mod(1, 1, 998244353), 1);
-        assert_eq!(pow_mod(1, 1, i32::max_value()), 1);
+        assert_eq!(pow_mod(1, 1, i32::MAX), 1);
 
-        assert_eq!(pow_mod(1, i64::max_value(), 1), 0);
-        assert_eq!(pow_mod(1, i64::max_value(), 3), 1);
-        assert_eq!(pow_mod(1, i64::max_value(), 723), 1);
-        assert_eq!(pow_mod(1, i64::max_value(), 998244353), 1);
-        assert_eq!(pow_mod(1, i64::max_value(), i32::max_value()), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 1), 0);
+        assert_eq!(pow_mod(1, i64::MAX, 3), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 723), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 998244353), 1);
+        assert_eq!(pow_mod(1, i64::MAX, i32::MAX), 1);
 
-        assert_eq!(pow_mod(i64::max_value(), 0, 1), 0);
-        assert_eq!(pow_mod(i64::max_value(), 0, 3), 1);
-        assert_eq!(pow_mod(i64::max_value(), 0, 723), 1);
-        assert_eq!(pow_mod(i64::max_value(), 0, 998244353), 1);
-        assert_eq!(pow_mod(i64::max_value(), 0, i32::max_value()), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 1), 0);
+        assert_eq!(pow_mod(i64::MAX, 0, 3), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 723), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 998244353), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, i32::MAX), 1);
 
-        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 1), 0);
-        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 3), 1);
-        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 723), 640);
-        assert_eq!(
-            pow_mod(i64::max_value(), i64::max_value(), 998244353),
-            683296792
-        );
-        assert_eq!(
-            pow_mod(i64::max_value(), i64::max_value(), i32::max_value()),
-            1
-        );
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 1), 0);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 3), 1);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 723), 640);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 998244353), 683296792);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, i32::MAX), 1);
 
         assert_eq!(pow_mod(2, 3, 1_000_000_007), 8);
         assert_eq!(pow_mod(5, 7, 1_000_000_007), 78125);
@@ -409,7 +403,7 @@ mod tests {
         assert!(!is_prime(1_000_000_000));
         assert!(is_prime(1_000_000_007));
 
-        assert!(is_prime(i32::max_value()));
+        assert!(is_prime(i32::MAX));
     }
 
     #[test]
@@ -442,8 +436,8 @@ mod tests {
             (57, 81, 3),
             (12345, 67890, 15),
             (-3141592 * 6535, 3141592 * 8979, 3141592),
-            (i64::max_value(), i64::max_value(), i64::max_value()),
-            (i64::min_value(), i64::max_value(), 1),
+            (i64::MAX, i64::MAX, i64::MAX),
+            (i64::MIN, i64::MAX, 1),
         ] {
             let (g_, x) = inv_gcd(a, b);
             assert_eq!(g, g_);
@@ -454,17 +448,7 @@ mod tests {
 
     #[test]
     fn test_primitive_root() {
-        for &p in &[
-            2,
-            3,
-            5,
-            7,
-            233,
-            200003,
-            998244353,
-            1_000_000_007,
-            i32::max_value(),
-        ] {
+        for &p in &[2, 3, 5, 7, 233, 200003, 998244353, 1_000_000_007, i32::MAX] {
             assert!(is_prime(p));
             let g = primitive_root(p);
             if p != 2 {
@@ -472,7 +456,7 @@ mod tests {
             }
 
             let q = p - 1;
-            for i in (2..i32::max_value()).take_while(|i| i * i <= q) {
+            for i in (2..i32::MAX).take_while(|i| i * i <= q) {
                 if q % i != 0 {
                     break;
                 }

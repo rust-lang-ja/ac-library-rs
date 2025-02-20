@@ -204,7 +204,7 @@ mod tests {
         assert_eq!(1, graph.add_edge(1, 2, 1, 0));
         assert_eq!(2, graph.add_edge(0, 2, 2, 1));
         let expected = [(0, 0), (3, 3)];
-        assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
+        assert_eq!(expected[..], *graph.slope(0, 2, i32::MAX));
     }
 
     #[test]
@@ -213,6 +213,6 @@ mod tests {
         assert_eq!(0, graph.add_edge(0, 1, 1, 1));
         assert_eq!(1, graph.add_edge(1, 2, 1, 0));
         let expected = [(0, 0), (1, 1)];
-        assert_eq!(expected[..], *graph.slope(0, 2, i32::max_value()));
+        assert_eq!(expected[..], *graph.slope(0, 2, i32::MAX));
     }
 }

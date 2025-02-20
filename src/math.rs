@@ -228,11 +228,11 @@ mod tests {
         assert_eq!(pow_mod(0, 1, 998244353), 0);
         assert_eq!(pow_mod(0, 1, 2u32.pow(31)), 0);
 
-        assert_eq!(pow_mod(0, i64::max_value(), 1), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 3), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 723), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 998244353), 0);
-        assert_eq!(pow_mod(0, i64::max_value(), 2u32.pow(31)), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 1), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 3), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 723), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 998244353), 0);
+        assert_eq!(pow_mod(0, i64::MAX, 2u32.pow(31)), 0);
 
         assert_eq!(pow_mod(1, 0, 1), 0);
         assert_eq!(pow_mod(1, 0, 3), 1);
@@ -246,29 +246,23 @@ mod tests {
         assert_eq!(pow_mod(1, 1, 998244353), 1);
         assert_eq!(pow_mod(1, 1, 2u32.pow(31)), 1);
 
-        assert_eq!(pow_mod(1, i64::max_value(), 1), 0);
-        assert_eq!(pow_mod(1, i64::max_value(), 3), 1);
-        assert_eq!(pow_mod(1, i64::max_value(), 723), 1);
-        assert_eq!(pow_mod(1, i64::max_value(), 998244353), 1);
-        assert_eq!(pow_mod(1, i64::max_value(), 2u32.pow(31)), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 1), 0);
+        assert_eq!(pow_mod(1, i64::MAX, 3), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 723), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 998244353), 1);
+        assert_eq!(pow_mod(1, i64::MAX, 2u32.pow(31)), 1);
 
-        assert_eq!(pow_mod(i64::max_value(), 0, 1), 0);
-        assert_eq!(pow_mod(i64::max_value(), 0, 3), 1);
-        assert_eq!(pow_mod(i64::max_value(), 0, 723), 1);
-        assert_eq!(pow_mod(i64::max_value(), 0, 998244353), 1);
-        assert_eq!(pow_mod(i64::max_value(), 0, 2u32.pow(31)), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 1), 0);
+        assert_eq!(pow_mod(i64::MAX, 0, 3), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 723), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 998244353), 1);
+        assert_eq!(pow_mod(i64::MAX, 0, 2u32.pow(31)), 1);
 
-        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 1), 0);
-        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 3), 1);
-        assert_eq!(pow_mod(i64::max_value(), i64::max_value(), 723), 640);
-        assert_eq!(
-            pow_mod(i64::max_value(), i64::max_value(), 998244353),
-            683296792
-        );
-        assert_eq!(
-            pow_mod(i64::max_value(), i64::max_value(), 2u32.pow(31)),
-            2147483647
-        );
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 1), 0);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 3), 1);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 723), 640);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 998244353), 683296792);
+        assert_eq!(pow_mod(i64::MAX, i64::MAX, 2u32.pow(31)), 2147483647);
 
         assert_eq!(pow_mod(2, 3, 1_000_000_007), 8);
         assert_eq!(pow_mod(5, 7, 1_000_000_007), 78125);
