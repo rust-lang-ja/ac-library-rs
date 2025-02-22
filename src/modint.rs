@@ -673,7 +673,7 @@ pub trait ModIntBase:
     #[inline]
     fn pow(self, mut n: u64) -> Self {
         let mut x = self;
-        let mut r = Self::raw(1);
+        let mut r = Self::raw(u32::from(Self::modulus() > 1));
         while n > 0 {
             if n & 1 == 1 {
                 r *= x;
@@ -1043,13 +1043,14 @@ macro_rules! impl_folding {
 
 impl_folding! {
     impl<M: Modulus> Sum<_>     for StaticModInt<M>  { fn sum(_)     -> _ { _(Self::raw(0), Add::add) } }
-    impl<M: Modulus> Product<_> for StaticModInt<M>  { fn product(_) -> _ { _(Self::raw(1), Mul::mul) } }
+    impl<M: Modulus> Product<_> for StaticModInt<M>  { fn product(_) -> _ { _(Self::raw(u32::from(Self::modulus() > 1)), Mul::mul) } }
     impl<I: Id     > Sum<_>     for DynamicModInt<I> { fn sum(_)     -> _ { _(Self::raw(0), Add::add) } }
-    impl<I: Id     > Product<_> for DynamicModInt<I> { fn product(_) -> _ { _(Self::raw(1), Mul::mul) } }
+    impl<I: Id     > Product<_> for DynamicModInt<I> { fn product(_) -> _ { _(Self::raw(u32::from(Self::modulus() > 1)), Mul::mul) } }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::modint::ModInt;
     use crate::modint::ModInt1000000007;
 
     #[test]
@@ -1156,5 +1157,18 @@ mod tests {
         c -= b;
         c /= b;
         assert_eq!(expected, c);
+    }
+
+    // Corner cases of "modint" when mod = 1
+    // https://github.com/rust-lang-ja/ac-library-rs/issues/110
+    #[test]
+    fn mod1_corner_case() {
+        ModInt::set_modulus(1); // !!
+
+        let x: ModInt = std::iter::empty::<ModInt>().product();
+        assert_eq!(x.val(), 0);
+
+        let y = ModInt::new(123).pow(0);
+        assert_eq!(y.val(), 0);
     }
 }
