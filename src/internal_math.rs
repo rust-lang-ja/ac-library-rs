@@ -321,14 +321,31 @@ mod tests {
 
         // test `2^31 < self._m < 2^32` case.
         // https://github.com/rust-lang-ja/ac-library-rs/pull/112
-        // https://github.com/atcoder/ac-library/issues/149
-        // https://github.com/atcoder/ac-library/pull/163
         let b = Barrett::new(3221225471);
         assert_eq!(b.umod(), 3221225471);
         assert_eq!(b.mul(3188445886, 2844002853), 1840468257);
         assert_eq!(b.mul(2834869488, 2779159607), 2084027561);
         assert_eq!(b.mul(3032263594, 3039996727), 2130247251);
         assert_eq!(b.mul(3029175553, 3140869278), 1892378237);
+        // https://github.com/atcoder/ac-library/issues/149
+        // https://github.com/atcoder/ac-library/pull/163
+        for m in u32::MAX - 20..=u32::MAX {
+            let b = Barrett::new(m);
+            let mut v: Vec<u32> = vec![];
+            for i in 0..10 {
+                v.push(i);
+                v.push(m - i);
+                v.push(m / 2 + i);
+                v.push(m / 2 - i);
+            }
+            for a in v {
+                let a2 = u64::from(a);
+                assert_eq!(
+                    (((a2 * a2) % u64::from(m) * a2) % u64::from(m)) as u32,
+                    b.mul(a, b.mul(a, a))
+                );
+            }
+        }
     }
 
     #[test]
