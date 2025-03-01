@@ -44,6 +44,7 @@
 ///     [&[0, 1][..], &[2, 3, 4][..]],
 /// );
 /// ```
+#[derive(Clone, Debug)]
 pub struct Dsu {
     n: usize,
     // root node: -1 * component size
