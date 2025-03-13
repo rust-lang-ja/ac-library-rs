@@ -27,7 +27,7 @@ where
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 struct _Edge {
     to: usize,
 }
@@ -35,6 +35,7 @@ struct _Edge {
 /// Reference:
 /// R. Tarjan,
 /// Depth-First Search and Linear Graph Algorithms
+#[derive(Clone, Debug)]
 pub struct SccGraph {
     n: usize,
     edges: Vec<(usize, _Edge)>,
