@@ -36,7 +36,7 @@ pub struct SccGraph {
 }
 
 impl SccGraph {
-    /// Creates a new `SccGraph` with `n` edges.
+    /// Creates a new `SccGraph` with `n` vertices and `0` edges.
     ///
     /// # Constraints
     ///
