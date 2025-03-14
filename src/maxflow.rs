@@ -207,13 +207,14 @@ where
     }
 }
 
-#[derive(Default)]
+#[derive(Clone, Debug, Default)]
 pub struct MfGraph<Cap> {
     _n: usize,
     pos: Vec<(usize, usize)>,
     g: Vec<Vec<_Edge<Cap>>>,
 }
 
+#[derive(Clone, Debug)]
 struct _Edge<Cap> {
     to: usize,
     rev: usize,
