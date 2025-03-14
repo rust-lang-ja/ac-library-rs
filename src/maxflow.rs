@@ -34,7 +34,7 @@ where
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Edge<Cap: Integral> {
     pub from: usize,
     pub to: usize,
