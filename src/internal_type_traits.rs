@@ -52,23 +52,11 @@ pub trait Integral:
     + fmt::Debug
     + fmt::Binary
     + fmt::Octal
-    + Zero
-    + One
+    + crate::num_traits::Zero
+    + crate::num_traits::One
     + BoundedBelow
     + BoundedAbove
 {
-}
-
-/// Class that has additive identity element
-pub trait Zero {
-    /// The additive identity element
-    fn zero() -> Self;
-}
-
-/// Class that has multiplicative identity element
-pub trait One {
-    /// The multiplicative identity element
-    fn one() -> Self;
 }
 
 pub trait BoundedBelow {
@@ -82,20 +70,6 @@ pub trait BoundedAbove {
 macro_rules! impl_integral {
     ($($ty:ty),*) => {
         $(
-            impl Zero for $ty {
-                #[inline]
-                fn zero() -> Self {
-                    0
-                }
-            }
-
-            impl One for $ty {
-                #[inline]
-                fn one() -> Self {
-                    1
-                }
-            }
-
             impl BoundedBelow for $ty {
                 #[inline]
                 fn min_value() -> Self {
