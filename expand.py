@@ -32,11 +32,12 @@ Options:
 output_header = '//https://github.com/rust-lang-ja/ac-library-rs\n'
 opt_list = ['help', 'all', 'output=']
 output_list_all = ('convolution', 'dsu', 'fenwicktree', 'lazysegtree', 'math',
-                   'maxflow',  'mincostflow', 'modint', 'scc',  'segtree',
-                   'string', 'twosat',
+                   'maxflow',  'mincostflow', 'modint', 'num_traits', 'scc',
+                   'segtree', 'string', 'twosat',
                    'internal_bit', 'internal_math', 'internal_queue',
                    'internal_scc', 'internal_type_traits',)
 dependency_list = {'convolution': ('internal_bit', 'modint',),
+                   'fenwicktree': ('num_traits',),
                    'lazysegtree': ('internal_bit', 'segtree'),
                    'math': ('internal_math',),
                    'maxflow': ('internal_type_traits', 'internal_queue',),
@@ -44,7 +45,8 @@ dependency_list = {'convolution': ('internal_bit', 'modint',),
                    'modint': ('internal_math',),
                    'scc': ('internal_scc',),
                    'segtree': ('internal_bit', 'internal_type_traits',),
-                   'twosat': ('internal_scc',), }
+                   'twosat': ('internal_scc',),
+                   'internal_type_traits': ('num_traits',), }
 src_path = 'src/'
 output_path = None
 
