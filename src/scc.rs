@@ -31,6 +31,7 @@ use crate::internal_scc;
 ///
 /// assert_eq!(graph.scc(), [&[0, 1, 2][..], &[3], &[4]]);
 /// ```
+#[derive(Clone, Debug)]
 pub struct SccGraph {
     internal: internal_scc::SccGraph,
 }
