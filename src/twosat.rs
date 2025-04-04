@@ -48,6 +48,7 @@ use crate::internal_scc;
 /// assert!(twosat.satisfiable());
 /// assert_eq!(twosat.answer(), [false, true, true]);
 /// ```
+#[derive(Clone, Debug)]
 pub struct TwoSat {
     n: usize,
     scc: internal_scc::SccGraph,
