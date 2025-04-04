@@ -8,6 +8,7 @@ pub struct MinCostFlowEdge<T> {
     pub cost: T,
 }
 
+#[derive(Clone, Debug)]
 pub struct MinCostFlowGraph<T> {
     pos: Vec<(usize, usize)>,
     g: Vec<Vec<_Edge<T>>>,
@@ -172,6 +173,7 @@ where
     }
 }
 
+#[derive(Clone, Debug)]
 struct _Edge<T> {
     to: usize,
     rev: usize,
