@@ -1,5 +1,6 @@
 use crate::internal_type_traits::Integral;
 
+#[derive(Clone, Debug)]
 pub struct MinCostFlowEdge<T> {
     pub from: usize,
     pub to: usize,
