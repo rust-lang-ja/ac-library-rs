@@ -1,6 +1,8 @@
+use std::fmt::{Debug, Error, Formatter};
 use std::ops::{Bound, RangeBounds};
 
 // Reference: https://en.wikipedia.org/wiki/Fenwick_tree
+#[derive(Clone)]
 pub struct FenwickTree<T> {
     n: usize,
     ary: Vec<T>,
@@ -52,6 +54,22 @@ impl<T: Clone + std::ops::AddAssign<T>> FenwickTree<T> {
             Bound::Unbounded => return self.accum(r),
         };
         self.accum(r) - self.accum(l)
+    }
+}
+
+impl<T: Clone + Debug + std::ops::AddAssign<T>> Debug for FenwickTree<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        f.debug_struct("FenwickTree")
+            .field("n", &self.n)
+            .field(
+                "accum",
+                &(1..=self.n)
+                    .map(|i| self.accum(i))
+                    .collect::<Vec<_>>(),
+            )
+            .field("e", &self.e)
+            .finish()?;
+        Ok(())
     }
 }
 
