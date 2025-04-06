@@ -63,9 +63,7 @@ impl<T: Clone + Debug + std::ops::AddAssign<T>> Debug for FenwickTree<T> {
             .field("n", &self.n)
             .field(
                 "accum",
-                &(1..=self.n)
-                    .map(|i| self.accum(i))
-                    .collect::<Vec<_>>(),
+                &(1..=self.n).map(|i| self.accum(i)).collect::<Vec<_>>(),
             )
             .field("e", &self.e)
             .finish()?;
