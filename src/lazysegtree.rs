@@ -291,6 +291,7 @@ impl<F: MapMonoid> LazySegtree<F> {
     }
 }
 
+#[derive(Clone)]
 pub struct LazySegtree<F>
 where
     F: MapMonoid,
