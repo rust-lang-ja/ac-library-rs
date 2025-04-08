@@ -298,6 +298,7 @@ impl<M: Monoid> Segtree<M> {
 // }
 // ```
 
+#[derive(Clone)]
 pub struct Segtree<M>
 where
     M: Monoid,
