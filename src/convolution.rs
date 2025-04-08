@@ -1,3 +1,16 @@
+//! Functions that calculate $(+, \times)$ convolution.
+//!
+//! Given two non-empty sequences $a_0, a_1, \ldots, a_{N - 1}$ and $b_0, b_1, \ldots, b_{M - 1}$, they calculate the sequence $c$ of length $N + M - 1$ defined by
+//!
+//! \\[
+//!   c_i = \sum_ {j = 0}^i a_j b_{i - j}
+//! \\]
+//!
+//! # Major changes from the original ACL
+//!
+//! - Separated the overloaded `convolution` into `convolution<_>` and `convolution_raw<_, _>`.
+//! - Renamed `convolution_ll` to `convolution_i64`.
+
 macro_rules! modulus {
     ($($name:ident),*) => {
         $(
@@ -29,6 +42,54 @@ use std::{
     fmt,
 };
 
+/// Calculates the $(+, \times)$ convolution in $\mathbb{Z}/p\mathbb{Z}$.
+///
+/// See the [module-level documentation] for more details.
+///
+/// Returns a empty `Vec` if `a` or `b` is empty.
+///
+/// # Constraints
+///
+/// - $2 \leq m \leq 2 \times 10^9$
+/// - $m$ is a prime number.
+/// - $\exists c \text{ s.t. } 2^c \mid (m - 1), |a| + |b| - 1 \leq 2^c$
+///
+/// where $m$ is `M::VALUE`.
+///
+/// # Complexity
+///
+/// - $O(n \log n + \log m)$ where $n = |a| + |b|$.
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::ModInt1000000007 as Mint;
+/// use proconio::{input, source::once::OnceSource};
+///
+/// input! {
+///     from OnceSource::from(
+///         "3\n\
+///          1 2 3\n\
+///          3\n\
+///          -1 -2 -3\n",
+///     ),
+///     a: [Mint],
+///     b: [Mint],
+/// }
+///
+/// assert_eq!(
+///     ac_library_rs::convolution(&a, &b),
+///     [
+///         Mint::new(-1),
+///         Mint::new(-4),
+///         Mint::new(-10),
+///         Mint::new(-12),
+///         Mint::new(-9),
+///     ],
+/// );
+/// ```
+///
+/// [module-level documentation]: ./index.html
 #[allow(clippy::many_single_char_names)]
 pub fn convolution<M>(a: &[StaticModInt<M>], b: &[StaticModInt<M>]) -> Vec<StaticModInt<M>>
 where
@@ -68,6 +129,61 @@ where
     a
 }
 
+/// Calculates the $(+, \times)$ convolution in $\mathbb{Z}/p\mathbb{Z}$.
+///
+/// See the [module-level documentation] for more details.
+///
+/// Returns a empty `Vec` if `a` or `b` is empty.
+///
+/// # Constraints
+///
+/// - $2 \leq m \leq 2 \times 10^9$
+/// - $m$ is a prime number.
+/// - $\exists c \text{ s.t. } 2^c \mid (m - 1), |a| + |b| - 1 \leq 2^c$
+/// - $(0, m] \subseteq$ `T`
+///
+/// where $m$ is `M::VALUE`.
+///
+/// # Complexity
+///
+/// - $O(n \log n + \log m)$ where $n = |a| + |b|$.
+///
+/// # Panics
+///
+/// Panics if any element of the result ($\in [0,$ `M::VALUE`$)$) is outside of the range of `T`.
+///
+/// # Example
+///
+/// ```
+/// use ac_library_rs::{Mod1000000007 as M, Modulus as _};
+/// use proconio::{input, source::once::OnceSource};
+///
+/// const M: i32 = M::VALUE as _;
+///
+/// input! {
+///     from OnceSource::from(
+///         "3\n\
+///          1 2 3\n\
+///          3\n\
+///          -1 -2 -3\n",
+///     ),
+///     a: [i32],
+///     b: [i32],
+/// }
+///
+/// assert_eq!(
+///     ac_library_rs::convolution::convolution_raw::<_, M>(&a, &b),
+///     [
+///         (-1i32).rem_euclid(M),
+///         (-4i32).rem_euclid(M),
+///         (-10i32).rem_euclid(M),
+///         (-12i32).rem_euclid(M),
+///         (-9i32).rem_euclid(M),
+///     ],
+/// );
+/// ```
+///
+/// [module-level documentation]: ./index.html
 pub fn convolution_raw<T, M>(a: &[T], b: &[T]) -> Vec<T>
 where
     T: RemEuclidU32 + TryFrom<u32> + Clone,
@@ -86,6 +202,44 @@ where
         .collect()
 }
 
+/// Calculates the $(+, \times)$ convolution in `i64`.
+///
+/// See the [module-level documentation] for more details.
+///
+/// Returns a empty `Vec` if `a` or `b` is empty.
+///
+/// # Constraints
+///
+/// - $|a| + |b| - 1 \leq 2^{24}$
+/// - All elements of the result are inside of the range of `i64`
+///
+/// # Complexity
+///
+/// - $O(n \log n)$ where $n = |a| + |b|$.
+///
+/// # Example
+///
+/// ```
+/// use proconio::{input, source::once::OnceSource};
+///
+/// input! {
+///     from OnceSource::from(
+///         "3\n\
+///          1 2 3\n\
+///          3\n\
+///          -1 -2 -3\n",
+///     ),
+///     a: [i64],
+///     b: [i64],
+/// }
+///
+/// assert_eq!(
+///     ac_library_rs::convolution_i64(&a, &b),
+///     [-1, -4, -10, -12, -9],
+/// );
+/// ```
+///
+/// [module-level documentation]: ./index.html
 #[allow(clippy::many_single_char_names)]
 pub fn convolution_i64(a: &[i64], b: &[i64]) -> Vec<i64> {
     const M1: u64 = 754_974_721; // 2^24
