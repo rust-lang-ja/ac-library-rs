@@ -1,6 +1,7 @@
 use std::ops::{Bound, RangeBounds};
 
 // Reference: https://en.wikipedia.org/wiki/Fenwick_tree
+#[derive(Clone)]
 pub struct FenwickTree<T> {
     n: usize,
     ary: Vec<T>,
