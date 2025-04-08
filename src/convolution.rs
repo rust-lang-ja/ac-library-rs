@@ -63,7 +63,7 @@ use std::{
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::ModInt1000000007 as Mint;
+/// use ac_library::ModInt1000000007 as Mint;
 /// use proconio::{input, source::once::OnceSource};
 ///
 /// input! {
@@ -78,7 +78,7 @@ use std::{
 /// }
 ///
 /// assert_eq!(
-///     ac_library_rs::convolution(&a, &b),
+///     ac_library::convolution(&a, &b),
 ///     [
 ///         Mint::new(-1),
 ///         Mint::new(-4),
@@ -155,7 +155,7 @@ where
 /// # Example
 ///
 /// ```
-/// use ac_library_rs::{Mod1000000007 as M, Modulus as _};
+/// use ac_library::{Mod1000000007 as M, Modulus as _};
 /// use proconio::{input, source::once::OnceSource};
 ///
 /// const M: i32 = M::VALUE as _;
@@ -172,7 +172,7 @@ where
 /// }
 ///
 /// assert_eq!(
-///     ac_library_rs::convolution::convolution_raw::<_, M>(&a, &b),
+///     ac_library::convolution::convolution_raw::<_, M>(&a, &b),
 ///     [
 ///         (-1i32).rem_euclid(M),
 ///         (-4i32).rem_euclid(M),
@@ -234,7 +234,7 @@ where
 /// }
 ///
 /// assert_eq!(
-///     ac_library_rs::convolution_i64(&a, &b),
+///     ac_library::convolution_i64(&a, &b),
 ///     [-1, -4, -10, -12, -9],
 /// );
 /// ```
