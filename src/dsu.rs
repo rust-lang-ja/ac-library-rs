@@ -134,11 +134,7 @@ impl Dsu {
     /// - $O(\alpha(n))$ amortized
     pub fn leader(&mut self, a: usize) -> usize {
         assert!(a < self.n);
-        if self.parent_or_size[a] < 0 {
-            return a;
-        }
-        self.parent_or_size[a] = self.leader(self.parent_or_size[a] as usize) as i32;
-        self.parent_or_size[a] as usize
+        self._leader(a)
     }
 
     /// Returns the size of the connected component that contains the vertex $a$.
@@ -185,6 +181,14 @@ impl Dsu {
             .into_iter()
             .filter(|x| !x.is_empty())
             .collect::<Vec<Vec<usize>>>()
+    }
+
+    fn _leader(&mut self, a: usize) -> usize {
+        if self.parent_or_size[a] < 0 {
+            return a;
+        }
+        self.parent_or_size[a] = self._leader(self.parent_or_size[a] as usize) as i32;
+        self.parent_or_size[a] as usize
     }
 }
 
