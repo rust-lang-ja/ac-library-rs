@@ -242,10 +242,12 @@ pub fn suffix_array(s: &str) -> Vec<usize> {
 // Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
 // Applications
 pub fn lcp_array_arbitrary<T: Ord>(s: &[T], sa: &[usize]) -> Vec<usize> {
+    assert!(s.len() == sa.len());
     let n = s.len();
     assert!(n >= 1);
     let mut rnk = vec![0; n];
     for i in 0..n {
+        assert!(sa[i] < n);
         rnk[sa[i]] = i;
     }
     let mut lcp = vec![0; n - 1];
