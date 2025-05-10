@@ -289,6 +289,15 @@ impl<F: MapMonoid> LazySegtree<F> {
         } {}
         0
     }
+
+    /// Returns the number of elements.
+    pub fn len(&self) -> usize {
+        self.n
+    }
+    /// Returns if the container is empty.
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 #[derive(Clone)]
@@ -381,6 +390,9 @@ mod tests {
         let n = base.len();
         let mut segtree: LazySegtree<MaxAdd> = base.clone().into();
         check_segtree(&base, &mut segtree);
+
+        assert_eq!(segtree.len(), n);
+        assert!(!segtree.is_empty());
 
         let mut segtree = LazySegtree::<MaxAdd>::new(n);
         let mut internal = vec![i32::MIN; n];
