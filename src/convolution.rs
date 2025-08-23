@@ -536,8 +536,6 @@ mod tests {
         const M1M3: u64 = M1 * M3;
         const M1M2: u64 = M1 * M2;
 
-        // modulus!(M1, M2, M3);
-
         for i in -1000..=1000 {
             let a = vec![0u64.wrapping_sub(M1M2 + M1M3 + M2M3) as i64 + i];
             let b = vec![1];
