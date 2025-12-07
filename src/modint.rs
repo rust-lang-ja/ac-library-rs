@@ -141,7 +141,7 @@ impl<M: Modulus> StaticModInt<M> {
         }
     }
 
-    /// Retruns the representative.
+    /// Returns the representative.
     ///
     /// Corresponds to `atcoder::static_modint::val` in the original ACL.
     #[inline]
@@ -157,7 +157,7 @@ impl<M: Modulus> StaticModInt<M> {
         <Self as ModIntBase>::pow(self, n)
     }
 
-    /// Retruns the multiplicative inverse of `self`.
+    /// Returns the multiplicative inverse of `self`.
     ///
     /// Corresponds to `atcoder::static_modint::inv` in the original ACL.
     ///
@@ -389,7 +389,7 @@ impl<I: Id> DynamicModInt<I> {
         }
     }
 
-    /// Retruns the representative.
+    /// Returns the representative.
     ///
     /// Corresponds to `atcoder::static_modint::val` in the original ACL.
     #[inline]
@@ -405,7 +405,7 @@ impl<I: Id> DynamicModInt<I> {
         <Self as ModIntBase>::pow(self, n)
     }
 
-    /// Retruns the multiplicative inverse of `self`.
+    /// Returns the multiplicative inverse of `self`.
     ///
     /// Corresponds to `atcoder::dynamic_modint::inv` in the original ACL.
     ///
@@ -601,7 +601,7 @@ pub trait ModIntBase:
     /// ```
     fn raw(val: u32) -> Self;
 
-    /// Retruns the representative.
+    /// Returns the representative.
     ///
     /// Corresponds to `atcoder::static_modint::val` and `atcoder::dynamic_modint::val` in the original ACL.
     ///
@@ -616,7 +616,7 @@ pub trait ModIntBase:
     /// ```
     fn val(self) -> u32;
 
-    /// Retruns the multiplicative inverse of `self`.
+    /// Returns the multiplicative inverse of `self`.
     ///
     /// Corresponds to `atcoder::static_modint::inv` and `atcoder::dynamic_modint::inv` in the original ACL.
     ///
