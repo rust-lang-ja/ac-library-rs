@@ -322,9 +322,8 @@ where
     }
 }
 
-// TODO is it useful?
 use std::{
-    fmt::{Debug, Error, Formatter, Write},
+    fmt::{Debug, Error, Formatter},
     ops::{Bound, RangeBounds},
 };
 impl<F> Debug for LazySegtree<F>
@@ -334,19 +333,34 @@ where
     <F::M as Monoid>::S: Debug,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        for i in 0..self.log {
-            for j in 0..1 << i {
-                f.write_fmt(format_args!(
-                    "{:?}[{:?}]\t",
-                    self.d[(1 << i) + j],
-                    self.lz[(1 << i) + j]
-                ))?;
-            }
-            f.write_char('\n')?;
-        }
-        for i in 0..self.size {
-            f.write_fmt(format_args!("{:?}\t", self.d[self.size + i]))?;
-        }
+        f.debug_struct("LazySegtree")
+            .field("n", &self.n)
+            .field("size", &self.size)
+            .field("log", &self.log)
+            .field(
+                "d",
+                &(0..self.log)
+                    .map(|i| {
+                        (0..1 << i)
+                            .map(|j| self.d[(1 << i) + j].clone())
+                            .collect::<Vec<_>>()
+                    })
+                    .chain(vec![(0..self.size)
+                        .map(|i| self.d[self.size + i].clone())
+                        .collect::<Vec<_>>()])
+                    .collect::<Vec<_>>(),
+            )
+            .field(
+                "lz",
+                &(0..self.log)
+                    .map(|i| {
+                        (0..1 << i)
+                            .map(|j| self.lz[(1 << i) + j].clone())
+                            .collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>(),
+            )
+            .finish()?;
         Ok(())
     }
 }
