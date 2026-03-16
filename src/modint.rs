@@ -206,6 +206,17 @@ impl<M: Modulus> ModIntBase for StaticModInt<M> {
     }
 }
 
+impl<M: Modulus> FromStr for StaticModInt<M> {
+    type Err = Infallible;
+
+    #[inline]
+    fn from_str(s: &str) -> Result<Self, Infallible> {
+        Ok(s.parse::<i64>()
+            .map(Self::new)
+            .unwrap_or_else(|_| todo!("parsing as an arbitrary precision integer?")))
+    }
+}
+
 /// Represents a modulus.
 ///
 /// # Example
@@ -512,7 +523,6 @@ impl Default for Barrett {
 /// [`DynamicModInt`]: ../struct.DynamicModInt.html
 pub trait ModIntBase:
     Default
-    + FromStr
     + From<i8>
     + From<i16>
     + From<i32>
@@ -764,13 +774,6 @@ trait InternalImplementations: ModIntBase {
     }
 
     #[inline]
-    fn from_str_impl(s: &str) -> Result<Self, Infallible> {
-        Ok(s.parse::<i64>()
-            .map(Self::new)
-            .unwrap_or_else(|_| todo!("parsing as an arbitrary precision integer?")))
-    }
-
-    #[inline]
     fn hash_impl(this: &Self, state: &mut impl Hasher) {
         this.val().hash(state)
     }
@@ -839,15 +842,6 @@ macro_rules! impl_basic_traits {
             #[inline]
             fn default() -> Self {
                 Self::default_impl()
-            }
-        }
-
-        impl <$generic_param: $generic_param_bound> FromStr for $self {
-            type Err = Infallible;
-
-            #[inline]
-            fn from_str(s: &str) -> Result<Self, Infallible> {
-                Self::from_str_impl(s)
             }
         }
 
