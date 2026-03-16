@@ -898,6 +898,55 @@ macro_rules! impl_basic_traits {
             }
         }
 
+        #[cfg(feature = "num-traits")]
+        impl<$generic_param: $generic_param_bound> num_traits::Zero for $self {
+            #[inline]
+            fn zero() -> Self {
+                Self::new(0)
+            }
+            #[inline]
+            fn is_zero(&self) -> bool {
+                self == &Self::zero()
+            }
+        }
+
+        #[cfg(not(feature = "num-traits"))]
+        impl<$generic_param: $generic_param_bound> $crate::num_traits::Zero for $self {
+            #[inline]
+            fn zero() -> Self {
+                Self::new(0)
+            }
+        }
+
+        #[cfg(feature = "num-traits")]
+        impl<$generic_param: $generic_param_bound> num_traits::One for $self {
+            #[inline]
+            fn one() -> Self {
+                Self::new(1)
+            }
+            #[inline]
+            fn is_one(&self) -> bool {
+                self == &Self::one()
+            }
+        }
+
+        #[cfg(not(feature = "num-traits"))]
+        impl<$generic_param: $generic_param_bound> $crate::num_traits::One for $self {
+            #[inline]
+            fn one() -> Self {
+                Self::new(1)
+            }
+        }
+
+        #[cfg(feature = "num-traits")]
+        impl<$generic_param: $generic_param_bound> num_traits::Pow<u64> for $self {
+            type Output=$self;
+            #[inline]
+            fn pow(self, rhs: u64) -> Self::Output {
+                self.pow(rhs)
+            }
+        }
+
         impl_basic_traits!($($rest)*);
     };
 }

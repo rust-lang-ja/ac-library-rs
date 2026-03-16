@@ -1,23 +1,23 @@
 use std::ops::{Bound, RangeBounds};
 
+use crate::num_traits::Zero;
+
 // Reference: https://en.wikipedia.org/wiki/Fenwick_tree
 #[derive(Clone)]
 pub struct FenwickTree<T> {
     n: usize,
     ary: Vec<T>,
-    e: T,
 }
 
-impl<T: Clone + std::ops::AddAssign<T>> FenwickTree<T> {
-    pub fn new(n: usize, e: T) -> Self {
+impl<T: Clone + std::ops::AddAssign<T> + Zero> FenwickTree<T> {
+    pub fn new(n: usize) -> Self {
         FenwickTree {
             n,
-            ary: vec![e.clone(); n],
-            e,
+            ary: vec![T::zero(); n],
         }
     }
     pub fn accum(&self, mut idx: usize) -> T {
-        let mut sum = self.e.clone();
+        let mut sum = T::zero();
         while idx > 0 {
             sum += self.ary[idx - 1].clone();
             idx &= idx - 1;
@@ -63,7 +63,7 @@ mod tests {
 
     #[test]
     fn fenwick_tree_works() {
-        let mut bit = FenwickTree::new(5, 0i64);
+        let mut bit = FenwickTree::<i64>::new(5);
         // [1, 2, 3, 4, 5]
         for i in 0..5 {
             bit.add(i, i as i64 + 1);
