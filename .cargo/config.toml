@@ -1,8 +1,0 @@
-[build]
-# This works both on local `cargo doc` and on docs.rs because we don't have any `normal` dependency.
-# In most cases, `package.metadata.docs.rs` is recommended.
-#
-# See also:
-# - https://docs.rs/rustdoc-katex-demo
-# - https://docs.rs/rust-latex-doc-minimal-example
-rustdocflags = ["--html-in-header", "./doc/katex-header.html"]
