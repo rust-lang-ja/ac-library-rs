@@ -46,7 +46,7 @@ use std::{
 ///
 /// See the [module-level documentation] for more details.
 ///
-/// Returns a empty `Vec` if `a` or `b` is empty.
+/// Returns an empty `Vec` if `a` or `b` is empty.
 ///
 /// # Constraints
 ///
@@ -133,14 +133,14 @@ where
 ///
 /// See the [module-level documentation] for more details.
 ///
-/// Returns a empty `Vec` if `a` or `b` is empty.
+/// Returns an empty `Vec` if `a` or `b` is empty.
 ///
 /// # Constraints
 ///
 /// - $2 \leq m \leq 2 \times 10^9$
 /// - $m$ is a prime number.
 /// - $\exists c \text{ s.t. } 2^c \mid (m - 1), |a| + |b| - 1 \leq 2^c$
-/// - $(0, m] \subseteq$ `T`
+/// - $[0, m) \subseteq$ `T`
 ///
 /// where $m$ is `M::VALUE`.
 ///
@@ -206,7 +206,7 @@ where
 ///
 /// See the [module-level documentation] for more details.
 ///
-/// Returns a empty `Vec` if `a` or `b` is empty.
+/// Returns an empty `Vec` if `a` or `b` is empty.
 ///
 /// # Constraints
 ///
